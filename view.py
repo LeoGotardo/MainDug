@@ -142,4 +142,5 @@ class View:
         loginButton = self.createButton
 
 if __name__ == "__main__":
+    # Instância um objeto View para testar a classe
     view = View()
