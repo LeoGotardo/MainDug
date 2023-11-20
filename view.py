@@ -142,4 +142,4 @@ class View:
         loginButton = self.createButton
 
 if __name__ == "__main__":
-    view = View()
+    view = View(ft.Page)
