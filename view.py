@@ -1,5 +1,4 @@
 import customtkinter as ctk
-import tkinter as tk
 from controller import Controller
 
 
@@ -10,10 +9,10 @@ class View:
         self.app = ctk.CTk()
 
         self.primaryC = "black"
-        self.secC = "light_blue"
+        self.secC = "white"
         self.theme = ctk.set_appearance_mode('dark')
 
-        self.login(ctk.CTkFrame)
+        self.login()
 
 
     def createButton(self, text, func):
@@ -22,7 +21,7 @@ class View:
             master=self.app,
             text=text,
             command=func,
-            text_font=("RobotoSlab", 12),
+            font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
             corner_radius=10,
@@ -33,15 +32,12 @@ class View:
         return button
 
 
-    def createEntry(self, place, password, see, auto_focus):
+    def createEntry(self, place):
         # Cria um rótulo personalizado
         entry = ctk.CTkEntry(
             master=self.app,
             placeholder_text=place,
-            show=not password,
-            reveal=see,
-            autofocus=auto_focus,
-            text_font=("RobotoSlab", 12),
+            font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.secC,
             border_width=2,
@@ -52,98 +48,87 @@ class View:
         return entry
 
 
-    def sort(self, elements, align, page: ctk.CTkFrame):
-        # Adiciona elementos à página em uma linha com alinhamento específico
-        for element in elements:
-            page.add(element, align=align)
-
-
-    def validLogin(self, login, password, page):
+    def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
         itens = self.c.verify(login, password)
         if itens[0] == True:
             self.pageSwitch("Logged", itens[1])
         else:
-            self.alert(itens[2], page)
+            self.alert(itens[2])
 
 
-    def addCad(self, login, password, passwordConfirm, page):
+    def addCad(self, login, password, passwordConfirm):
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.credencialADD(login, password, passwordConfirm)
         if error == "Valid Cadaster":
-            self.alert("Sussesfull Login", page)
+            self.alert("Sussesfull Login", self.app)
         else:
-            self.alert(error, page)
+            self.alert(error, self.app)
 
 
-    def colorChange(self, goTo, page):
+    def colorChange(self, goTo):
         # Altera as cores da interface e muda para a página desejada
         color1 = self.primaryC
         color2 = self.secC
         self.primaryC = color2
         self.secC = color1
-        self.pageSwitch(goTo, None, page)
+        self.pageSwitch(goTo, None)
 
 
-    def alert(self, text, page: ctk.CTkFrame):
+    def alert(self, text):
         # Exibe um alerta na página
         ctk.CTkMessageBox.show_info("Alerta", text, text_font=("RobotoSlab", 12), text_color=self.secC, border_color=self.primaryC)
 
 
-    def pageSwitch(self, goTo, id, page: ctk.CTkFrame):
+    def pageSwitch(self, goTo, id):
         # Altera para a página desejada com base na ação fornecida
         if goTo == "Signup":
-            page.clean()
-            self.signup(page)
+            self.app.clean()
+            self.signup(self.app)
         elif goTo == "Login":
-            page.clean()
-            self.login(page)
+            self.app.clean()
+            self.login(self.app)
         elif goTo == "Logged":
-            page.clean()
-            self.logged(page)
+            self.app.clean()
+            self.logged(self.app)
         elif goTo == "Edit":
-            page.clean()
-            self.edit(page, id)
+            self.app.clean()
+            self.edit(self.app, id)
         return goTo
 
 
-    def login(self, page: ctk.CTkFrame):
+    def login(self):
         # Configura a página de login
-        page.title = "Login"
-        page.vertical_alignment = "center"
-        page.horizontal_alignment = "center"
-        page.bgcolor = self.primaryC
+        self.app.title = "Login"
+        self.app.vertical_alignment = "center"
+        self.app.horizontal_alignment = "center"
+        self.app.bgcolor = self.primaryC
+        self.app.geometry("500x500")
 
         title = ctk.CTkTextbox(self.app)
 
-        loginLabel = self.createEntry("Login", False, False, True)
-        passwordLabel = self.createEntry("Password", True, True, False)
+        loginLabel = self.createEntry("Login")
+        passwordLabel = self.createEntry("Password")
 
-        loginButton = self.createButton("Login",lambda e: self.validLogin(loginLabel.value, passwordLabel.value, page))
-        signupButton = self.createButton("Signup",lambda e: self.pageSwitch("Signup", None, page))
+        loginButton = self.createButton("Login",lambda: self.validLogin(loginLabel.value, passwordLabel.value, self.app))
+        signupButton = self.createButton("Signup",lambda: self.pageSwitch("Signup", None))
+        self.app.mainloop()
 
-        elements = [title, loginLabel, passwordLabel, loginButton, signupButton]
-        self.sort(elements, ctk.MainAxisAlignment.CENTER, page)
-
-
-    def signup(self, page: ctk.CTkFrame):
+    def signup(self):
         # Configura a página de cadastro
-        page.title = "Signup"
-        page.vertical_alignment = "center"
-        page.horizontal_alignment = "center"
-        page.bgcolor = self.primaryC
+        self.app.title = "Signup"
+        self.app.vertical_alignment = "center"
+        self.app.horizontal_alignment = "center"
+        self.app.bgcolor = self.primaryC
 
         title = ctk.CTkTextbox(self.app)
 
-        loginLabel = self.createEntry("Login", False, False, True)
-        passwordLabel = self.createEntry("Password", True, True, False)
-        passwordConfirmLabel = self.createEntry("Password Confirm", True, True, False)
+        loginLabel = self.createEntry("Login")
+        passwordLabel = self.createEntry("Password")
+        passwordConfirmLabel = self.createEntry("Password Confirm")
 
-        signupButton = self.createButton("Signup",lambda e: [self.addCad(loginLabel.value,passwordLabel.value,passwordConfirmLabel.value,page)])
-
-        elements = [title, loginLabel, passwordLabel, passwordConfirmLabel, signupButton]
-        self.sort(elements, ctk.MainAxisAlignment.CENTER, page)
-
+        signupButton = self.createButton("Signup",lambda: [self.addCad(loginLabel.value,passwordLabel.value,passwordConfirmLabel.value,self.app)])
+        self.app.mainloop()
 
 if __name__ == "__main__":
     view = View()
