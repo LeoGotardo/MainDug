@@ -2,7 +2,7 @@ import customtkinter as ctk
 from controller import Controller
 
 
-class View:
+class View(ctk.CTk):
     def __init__(self):
         self.c = Controller()
         tablExist = self.c.start()
@@ -42,10 +42,9 @@ class View:
             border_color=self.secC,
             border_width=2,
             height=40,
-            width=200
+            width=200,
         )
         entry.pack()
-        return entry
 
 
     def validLogin(self, login, password):
@@ -112,6 +111,7 @@ class View:
 
         loginButton = self.createButton("Login",lambda: self.validLogin(loginLabel.value, passwordLabel.value, self.app))
         signupButton = self.createButton("Signup",lambda: self.pageSwitch("Signup", None))
+        self.app.mainloop()
 
 
     def signup(self):
@@ -128,8 +128,9 @@ class View:
         passwordConfirmLabel = self.createEntry("Password Confirm")
 
         signupButton = self.createButton("Signup",lambda: [self.addCad(loginLabel.value,passwordLabel.value,passwordConfirmLabel.value,self.app)])
+        self.app.mainloop()
+
 
 if __name__ == "__main__":
     view = View()
-    view.mainloop()
     
