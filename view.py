@@ -112,7 +112,7 @@ class View:
 
         loginButton = self.createButton("Login",lambda: self.validLogin(loginLabel.value, passwordLabel.value, self.app))
         signupButton = self.createButton("Signup",lambda: self.pageSwitch("Signup", None))
-        self.app.mainloop()
+
 
     def signup(self):
         # Configura a página de cadastro
@@ -128,7 +128,8 @@ class View:
         passwordConfirmLabel = self.createEntry("Password Confirm")
 
         signupButton = self.createButton("Signup",lambda: [self.addCad(loginLabel.value,passwordLabel.value,passwordConfirmLabel.value,self.app)])
-        self.app.mainloop()
 
 if __name__ == "__main__":
     view = View()
+    view.mainloop()
+    
