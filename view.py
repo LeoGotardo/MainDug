@@ -84,7 +84,7 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
-            corner_radius=10,
+            corner_radius=20,
             height=40,
             width=100
         )
@@ -96,7 +96,7 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
-            corner_radius=10,
+            corner_radius=20,
             height=40,
             width=100
         )
@@ -162,7 +162,7 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
-            corner_radius=10,
+            corner_radius=20,
             height=40,
             width=100
         )
@@ -174,7 +174,7 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
-            corner_radius=10,
+            corner_radius=20,
             height=40,
             width=100
         )
