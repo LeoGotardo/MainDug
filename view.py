@@ -6,7 +6,7 @@ from controller import Controller
 class View(ctk.CTk):
     def __init__(self):
         self.c = Controller()
-        tablExist = self.c.start()
+        self.tablExist = self.c.start()
         self.app = ctk.CTk()
 
         self.primaryC = "black"
@@ -16,21 +16,6 @@ class View(ctk.CTk):
         self.login()
 
         self.app.mainloop()
-
-    def createButton(self, text, func, frame, column, row):
-        # Cria um botão personalizado
-        button = ctk.CTkButton(
-            master=frame,
-            text=text,
-            command=func,
-            font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
-            corner_radius=10,
-            height=40,
-            width=100
-        )
-        button.grid(column=column, row=row)
 
 
     def validLogin(self, login, password):
@@ -66,10 +51,11 @@ class View(ctk.CTk):
 
         title = ctk.CTkLabel(
             master=self.loginFrame,
-            text="Login"
+            text="Login",
+            
         )
 
-        self.loginEntry = ctk.CTkEntry(
+        loginEntry = ctk.CTkEntry(
             master=self.loginFrame,
             placeholder_text="Login",
             font=("RobotoSlab", 12),
@@ -80,7 +66,7 @@ class View(ctk.CTk):
             width=200
         )
 
-        self.passwordEntry = ctk.CTkEntry(
+        passwordEntry = ctk.CTkEntry(
             master=self.loginFrame,
             placeholder_text="Password",
             font=("RobotoSlab", 12),
@@ -92,8 +78,35 @@ class View(ctk.CTk):
             show="*"
         )
 
-        loginButton = self.createButton("Login", lambda: self.validLogin(self.loginEntry.get(), self.passwordEntry.get(), self.app), self.loginFrame, 2, 3)
-        signupButton = self.createButton("Signup", lambda: [self.loginFrame.destroy(), self.signup()], self.loginFrame, 2, 4)
+        loginButton = ctk.CTkButton(
+            master=self.loginFrame,
+            text="Login",
+            command=lambda: self.validLogin(loginEntry.get(), passwordEntry.get()),
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=10,
+            height=40,
+            width=100
+        )
+
+        signupButton = ctk.CTkButton(
+            master=self.loginFrame,
+            text="Signup",
+            command=lambda: [self.loginFrame.destroy(), self.signup()],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=10,
+            height=40,
+            width=100
+        )
+
+        title.pack(padx=10, pady=10)
+        loginEntry.pack(padx=10, pady=10)
+        passwordEntry.pack(padx=10, pady=10)
+        loginButton.pack(padx=10, pady=10)
+        signupButton.pack(padx=10, pady=10)
 
 
     def signup(self):
@@ -166,6 +179,13 @@ class View(ctk.CTk):
             height=40,
             width=100
         )
+
+        title.pack(padx=10, pady=10)
+        signupEntry.pack(padx=10, pady=10)
+        passwordEntry.pack(padx=10, pady=10)
+        passwordConfirmEntry.pack(padx=10, pady=10)
+        signupButton.pack(padx=10, pady=10)
+        loginButton.pack(padx=10, pady=10)
 
 
     def logged(self, id):
