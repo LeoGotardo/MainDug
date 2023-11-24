@@ -1,5 +1,4 @@
 import customtkinter as ctk
-import os
 from tkinter import messagebox as msg
 from controller import Controller
 
@@ -18,13 +17,6 @@ class View(ctk.CTk):
 
         self.app.mainloop()
 
-
-    
-    def createLabel(self, text, frame, column, row):
-        label = ctk.CTkLabel(master=frame, text=text)
-        label.grid(column=column, row=row)
-
-
     def createButton(self, text, func, frame, column, row):
         # Cria um botão personalizado
         button = ctk.CTkButton(
@@ -39,23 +31,6 @@ class View(ctk.CTk):
             width=100
         )
         button.grid(column=column, row=row)
-
-
-    def createEntry(self, place, frame, column, row, password):
-        # Cria um rótulo personalizado
-        entry = ctk.CTkEntry(
-            master=frame,
-            placeholder_text=place,
-            font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.secC,
-            border_width=2,
-            height=40,
-            width=200
-        )
-        if password == True:
-            entry.configure(show="*")
-        entry.grid(column=column, row=row)
 
 
     def validLogin(self, login, password):
@@ -89,32 +64,108 @@ class View(ctk.CTk):
         self.app.bgcolor = self.primaryC
         self.loginFrame.pack(fill="both", expand=True)
 
-        title = self.createLabel("Login", self.loginFrame, 2, 0)
-        
+        title = ctk.CTkLabel(
+            master=self.loginFrame,
+            text="Login"
+        )
 
-        loginEntry = self.createEntry("Login", self.loginFrame, 2, 1, False)
-        passwordEntry = self.createEntry("Password", self.loginFrame, 2, 2, True)
+        self.loginEntry = ctk.CTkEntry(
+            master=self.loginFrame,
+            placeholder_text="Login",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200
+        )
 
-        loginButton = self.createButton("Login", lambda: self.validLogin(loginEntry.get(), passwordEntry.get(), self.app), self.loginFrame, 2, 3)
+        self.passwordEntry = ctk.CTkEntry(
+            master=self.loginFrame,
+            placeholder_text="Password",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
+
+        loginButton = self.createButton("Login", lambda: self.validLogin(self.loginEntry.get(), self.passwordEntry.get(), self.app), self.loginFrame, 2, 3)
         signupButton = self.createButton("Signup", lambda: [self.loginFrame.destroy(), self.signup()], self.loginFrame, 2, 4)
 
 
     def signup(self):
         # Configura a página de cadastro
-        os.system("cls")
         self.signupFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Signup")
         self.app.bgcolor = self.primaryC
         self.signupFrame.pack(fill="both", expand=True)
 
-        title = self.createLabel("Signup", self.signupFrame, 2, 0)
+        title = ctk.CTkLabel(
+            master=self.signupFrame, 
+            text="Signup"
+        )
 
-        loginEntry = self.createEntry("Login", self.signupFrame, 2, 1, False)
-        passwordEntry = self.createEntry("Password", self.signupFrame, 2, 2, True)
-        passwordConfirmEntry = self.createEntry("Password Confirm", self.signupFrame, 2, 3, True)
+        signupEntry = ctk.CTkEntry(
+            master=self.signupFrame,
+            placeholder_text="Login",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200
+        )
 
-        signupButton = self.createButton("Signup", lambda: [self.addCad(loginEntry.get(),passwordEntry.get(),passwordConfirmEntry.get(),self.app)], self.signupFrame, 2, 4)
-        loginButton = self.createButton("Login", lambda:[self.signupFrame.destroy(), self.login()], self.signupFrame, 2, 5)
+        passwordEntry = ctk.CTkEntry(
+            master=self.signupFrame,
+            placeholder_text="Password",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
+
+        passwordConfirmEntry = ctk.CTkEntry(
+            master=self.signupFrame,
+            placeholder_text="Password Confirm",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
+
+        signupButton = ctk.CTkButton(
+            master=self.signupFrame,
+            text="Signup",
+            command=lambda: [self.addCad(signupEntry.get(), passwordEntry.get(), passwordConfirmEntry.get(), self.app)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=10,
+            height=40,
+            width=100
+        )
+        
+        loginButton = ctk.CTkButton(
+            master=self.signupFrame,
+            text="Login",
+            command=lambda:[self.signupFrame.destroy(), self.login()],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=10,
+            height=40,
+            width=100
+        )
 
 
     def logged(self, id):
