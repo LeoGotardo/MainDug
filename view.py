@@ -51,8 +51,7 @@ class View(ctk.CTk):
 
         title = ctk.CTkLabel(
             master=self.loginFrame,
-            text="Login",
-            
+            text="Login"
         )
 
         loginEntry = ctk.CTkEntry(
