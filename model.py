@@ -33,7 +33,7 @@ class Model:
         # Verifica se um login específico existe na coleção 'Logins'
         has = self.has(login)
 
-        if has != []:
+        if has != {}:
             return True
         else:
             return False
@@ -80,18 +80,32 @@ class Model:
 
     def verify(self, login, password):
         # Verifica se um login e senha são válidos e retorna o ID do usuário
-        if self.verifyLogin(login) == False:
+        if self.verifyLogin(login) == True:
             if self.validPass(login, password) == True:
-                ret = self.findID(login)
-                id = ret[1]
+                ret = self.findID(login, password)
+
                 valid = ret[0]
+                ret[2] = None 
+                
                 if valid == True:
-                    return id
+                    return ret
             else:
-                return self.error.append("Invalid Password")
+                self.error.append("Invalid Password")
+                
+                ret[0] = False
+                ret[1] = None
+                ret[2] = self.error
+                
+                return ret
         else:
             self.error.append("Invalid Login")
-            return self.error
+            
+            ret[0] = False
+            ret[1] = None
+            ret[2] = self.error
+
+            return ret
+
 
 
     def loginValid(self, login):
@@ -116,10 +130,10 @@ class Model:
         # Verifica se um login e senha são válidos
         login = self.Login.find({"login": login} and {"Password": password})
         
-        if login == []:
-            return False
+        if login != {}:
+            return True
         else:
-            return True 
+            return False 
 
 
     def edit(self, id, paramter):
@@ -127,15 +141,15 @@ class Model:
         self.Login.update_one({})
 
 
-    def findID(self, login):
+    def findID(self, login, password):
         # Encontra o ID de um usuário com base no login
-        id = self.Login.find({"login": login})
+        id = self.Login.find({"login": login} and {"Password": password})
         ret = [None, id]
 
-        if id == {}:
-            ret[0] = False
-        else:
+        if id != {}:
             ret[0] = True
+        else:
+            ret[0] = False
 
         return ret
 

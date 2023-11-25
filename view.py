@@ -21,6 +21,7 @@ class View(ctk.CTk):
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
         itens = self.c.verify(login, password)
+        print(itens)
         if itens[0] == True:
             self.loginFrame.destroy()
             self.logged(itens[1])
