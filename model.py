@@ -85,7 +85,7 @@ class Model:
                 ret = self.findID(login, password)
 
                 valid = ret[0]
-                ret[2] = None 
+                ret.append(None)
                 
                 if valid == True:
                     return ret
@@ -94,7 +94,7 @@ class Model:
                 
                 ret[0] = False
                 ret[1] = None
-                ret[2] = self.error
+                ret.append(self.error)
                 
                 return ret
         else:
@@ -102,7 +102,7 @@ class Model:
             
             ret[0] = False
             ret[1] = None
-            ret[2] = self.error
+            ret.append(self.error)
 
             return ret
 
