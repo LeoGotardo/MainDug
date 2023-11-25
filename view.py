@@ -33,9 +33,9 @@ class View(ctk.CTk):
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.credencialADD(login, password, passwordConfirm)
         if error == "Valid Cadaster":
-            self.alert("Sussesfull Login", self.app)
+            self.alert("Sussesfull Login")
         else:
-            self.alert(error, self.app)
+            self.alert(error)
 
 
     def alert(self, text):
@@ -159,7 +159,7 @@ class View(ctk.CTk):
         signupButton = ctk.CTkButton(
             master=self.signupFrame,
             text="Signup",
-            command=lambda: [self.addCad(signupEntry.get(), passwordEntry.get(), passwordConfirmEntry.get(), self.app)],
+            command=lambda: [self.addCad(signupEntry.get(), passwordEntry.get(), passwordConfirmEntry.get())],
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,

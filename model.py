@@ -45,7 +45,7 @@ class Model:
             self.validPass(password)
 
 
-    def has(self, Name, ):
+    def has(self, Name):
         # Retorna uma lista de todos os logins na coleção 'Logins'
         every = self.Login.find({"login": Name})
         self.logins = []
@@ -58,8 +58,12 @@ class Model:
     def credencialADD(self, login, password, passwordCondirm):
         # Adiciona credenciais se válidas, caso contrário, retorna uma mensagem de erro
         if self.credencialValid(login, password, passwordCondirm) == True:
-            self.cad(login, password)
-            return "Valid Cadaster"
+            if self.validPass(login, password) == False:
+                self.cad(login, password)
+                return "Valid Cadaster"
+            else:
+                self.error.append("Login already exists.")
+                return self.error
         else:
             return self.error
 
@@ -128,7 +132,7 @@ class Model:
 
     def validPass(self, login, password):
         # Verifica se um login e senha são válidos
-        login = self.Login.find({"login": login} and {"Password": password})
+        login = self.Login.find({"login": login},{ "$and": {"Password": password}})
         
         if login != {}:
             return True
@@ -143,8 +147,13 @@ class Model:
 
     def findID(self, login, password):
         # Encontra o ID de um usuário com base no login
-        id = self.Login.find({"login": login} and {"Password": password})
-        ret = [None, id]
+        ret = [None]
+
+        id = self.Login.find({"login": login},{ "$and": {"Password": password}})
+
+        for result in id:
+            ret.append(result["_id"])
+
 
         if id != {}:
             ret[0] = True
