@@ -1,8 +1,6 @@
 from pymongo import MongoClient
 
 
-from pymongo import MongoClient
-
 class Model:
     def __init__(self):
         # Configuração de conexão com o MongoDB
@@ -83,7 +81,7 @@ class Model:
     def verify(self, login, password):
         # Verifica se um login e senha são válidos e retorna o ID do usuário
         if self.verifyLogin(login) == False:
-            if self.validPass(password) == True:
+            if self.validPass(login, password) == True:
                 ret = self.findID(login)
                 id = ret[1]
                 valid = ret[0]
@@ -132,7 +130,14 @@ class Model:
     def findID(self, login):
         # Encontra o ID de um usuário com base no login
         id = self.Login.find({"login": login})
-        return id
+        ret = [None, id]
+
+        if id == {}:
+            ret[0] = False
+        else:
+            ret[0] = True
+
+        return ret
 
 
     def erase(self, id):
