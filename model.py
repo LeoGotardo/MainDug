@@ -1,8 +1,10 @@
 from pymongo import MongoClient
+import os
 
 
 class Model:
     def __init__(self):
+        os.system("cls")
         # Configuração de conexão com o MongoDB
         self.root = "LeoGotardo"
         self.password = "GUDP6TDvj9vdzGEH"
@@ -15,7 +17,7 @@ class Model:
         self.error = []
 
         # Debug: exibe o conteúdo da coleção 'user_shopping_list'
-        print(self.client['user_shopping_list'])
+        print(MongoClient(self.CONNECTION_STRING))
 
 
     def cad(self, login, Password):
@@ -32,8 +34,9 @@ class Model:
     def verifyLogin(self, login):
         # Verifica se um login específico existe na coleção 'Logins'
         has = self.has(login)
+        print(has)
 
-        if has != {}:
+        if has != []:
             return True
         else:
             return False
@@ -94,19 +97,11 @@ class Model:
                 if valid == True:
                     return ret
             else:
-                self.error.append("Invalid Password")
-                
-                ret[0] = False
-                ret[1] = None
-                ret.append(self.error)
+                ret = [False, None, "Invalid Login"]
                 
                 return ret
-        else:
-            self.error.append("Invalid Login")
-            
-            ret[0] = False
-            ret[1] = None
-            ret.append(self.error)
+        else:  
+            ret = [False, None, "Invalid Login"]
 
             return ret
 
@@ -114,7 +109,7 @@ class Model:
 
     def loginValid(self, login):
         # Verifica se um login é válido
-        if self.verifyLogin(login) == True or login != "":
+        if self.verifyLogin(login) == True and login != "":
             return True
         else:
             return False
@@ -132,30 +127,35 @@ class Model:
 
     def validPass(self, login, password):
         # Verifica se um login e senha são válidos
-        login = self.Login.find({"login": login},{ "$and": {"Password": password}})
+        login = self.Login.find({"$and": [{"login": login}, {"Password": password}]})
         
-        if login != {}:
+        if login != []:
             return True
         else:
             return False 
 
 
-    def edit(self, id, paramter):
+    def edit(self, id, parameter, new):
         # Atualiza informações de um usuário na coleção 'Logins'
-        self.Login.update_one({})
+        if parameter == "login":
+            self.Login.update_one({id}, {"$set": {"login": new}})
+        elif parameter == "password":
+            self.Login.update_one({id}, {"$set": {"Password": new}})
+
 
 
     def findID(self, login, password):
         # Encontra o ID de um usuário com base no login
-        ret = [None]
+        ret = []
 
-        id = self.Login.find({"login": login},{ "$and": {"Password": password}})
+        id = self.Login.find({"$and": [{"login": login}, {"Password": password}]})
 
         for result in id:
             ret.append(result["_id"])
 
+        print(ret)
 
-        if id != {}:
+        if type(id) != []:
             ret[0] = True
         else:
             ret[0] = False

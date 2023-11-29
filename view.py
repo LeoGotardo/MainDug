@@ -21,7 +21,7 @@ class View(ctk.CTk):
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
         itens = self.c.verify(login, password)
-        print(itens)
+        print(itens, login, password)
         if itens[0] == True:
             self.loginFrame.destroy()
             self.logged(itens[1])
@@ -189,12 +189,191 @@ class View(ctk.CTk):
 
 
     def logged(self, id):
-        pass
+        self.loggedFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Logged")
+        self.app.bgcolor = self.primaryC
+        self.signupFrame.pack(fill="both", expand=True)
+
+        title = ctk.CTkLabel(
+            master=self.signupFrame, 
+            text="Logged"
+        )
+
+        loginEditButton = ctk.CTkButton(
+            master=self.signupFrame,
+            text="Edit Login",
+            command=lambda: [self.loggedFrame.destroy(), self.editLogin(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        passEditButton = ctk.CTkButton(
+            master=self.signupFrame,
+            text="Edit Password",
+            command=lambda: [self.loggedFrame.destroy(), self.editPass(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        eraseButton = ctk.CTkButton(
+            master=self.signupFrame,
+            text="Erase Account",
+            command=lambda: [self.loggedFrame.destroy(), self.erase(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+        
+        exitButton = ctk.CTkButton(
+            master=self.signupFrame,
+            text="Exit",
+            command=lambda:[self.loggedFrame.destroy(), self.login()],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        title.pack(padx=10, pady=10)
+        loginEditButton.pack(padx=10, pady=10)
+        passEditButton.pack(padx=10, pady=10)
+        eraseButton.pack(padx=10, pady=10)
+        exitButton.pack(padx=10, pady=10)
 
 
-    def edit(self, id):
-        pass
-    
+    def editLogin(self, id):
+        self.editLoginFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Edit Login")
+        self.app.bgcolor = self.primaryC
+        self.editLoginFrame.pack(fill="both", expand=True)
+
+        title = ctk.CTkLabel(
+            master=self.editLoginFrame, 
+            text="New Login"
+        )
+
+        loginEntry = ctk.CTkEntry(
+            master=self.editLoginFrame,
+            placeholder_text="New Login",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200
+        )
+
+        loginEditButton = ctk.CTkButton(
+            master=self.editLoginFrame,
+            text="Edit Login",
+            command=lambda: [self.m.edit(id, "login", loginEntry.get())],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        backButton = ctk.CTkButton(
+            master=self.editLoginFrame,
+            text="Back",
+            command=lambda: [self.editLoginFrame.destroy(), self.loggedFrame(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        title.pack(padx=10, pady=10)
+        loginEntry.pack(padx=10, pady=10)
+        loginEditButton.pack(padx=10, pady=10)
+        backButton.pack(padx=10, pady=10)
+
+
+    def editPass(self, id):
+        self.editPasswordFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Edit Password")
+        self.app.bgcolor = self.primaryC
+        self.editPasswordFrame.pack(fill="both", expand=True)
+
+        title = ctk.CTkLabel(
+            master=self.editPasswordFrame, 
+            text="New Password"
+        )
+
+        passwordEntry = ctk.CTkEntry(
+            master=self.editPasswordFrame,
+            placeholder_text="New Password",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
+
+        passwordConfirmEntry = ctk.CTkEntry(
+            master=self.editPasswordFrame,
+            placeholder_text="New Password Confirm",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
+
+        passEditButton = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="Edit Password",
+            command=lambda: [self.m.edit(id, "password", passwordEntry.get())],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        backButton = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="Back",
+            command=lambda: [self.editPasswordFrame.destroy(), self.loggedFrame(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        title.pack(padx=10, pady=10)
+        passwordEntry.pack(padx=10, pady=10)
+        passwordConfirmEntry.pack(padx=10, pady=10)
+        passEditButton.pack(padx=10, pady=10)
+        backButton.pack(padx=10, pady=10)
+
+
+    def erase(self, id):
+        self.alert()
 
 if __name__ == "__main__":
     view = View()

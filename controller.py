@@ -31,6 +31,10 @@ class Controller:
         # Chama a função erase do Model e retorna o resultado
         return self.m.erase(id)
 
+    def edit(self, id, parameter, new):
+        # Chama a função edit do Model e rotorna o resultado
+        return self.m.edit(id, parameter, new)
+
     def valid(self, login, password):
         # Chama a função valid do Model e retorna o resultado
         return self.m.valid(login, password)
