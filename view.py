@@ -17,6 +17,14 @@ class View(ctk.CTk):
 
         self.app.mainloop()
 
+    
+    def isNew(self, id, paramter, new):
+        new = self.c.same(id, paramter, new)
+        if new == "new":
+            self.c.edit(id, paramter, new)
+        else:
+            self.alert(new)
+
 
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
@@ -279,7 +287,7 @@ class View(ctk.CTk):
         loginEditButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Edit Login",
-            command=lambda:[self.c.edit(id, "login", loginEntry.get())],
+            command=lambda:[self.c.isNew(id, "login", loginEntry.get())],
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
@@ -291,7 +299,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Back",
-            command=lambda: [self.editLoginFrame.destroy(), self.loggedFrame(id)],
+            command=lambda: [self.editLoginFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,

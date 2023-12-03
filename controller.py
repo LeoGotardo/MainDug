@@ -38,6 +38,10 @@ class Controller:
     def valid(self, login, password):
         # Chama a função valid do Model e retorna o resultado
         return self.m.valid(login, password)
+    
+    def same(slef, id, paramter, new):
+        # Chama a função isNew do Model e retorna o resultado
+        return self.m.isNew(id, paramter, new)
 
 if __name__ == "__main__":
     # Cria uma instância do Controller para testar a classe

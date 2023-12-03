@@ -135,19 +135,38 @@ class Model:
             return True
         else:
             return False 
+        
+
+    def isNew(self, id, paramter, new):
+        if paramter == "login":
+            login = self.Login.find({'_id': id}, 'login':)
+
+            for result in id:
+                login.append(result["login"])
+            if login == new:
+                self.error.append(f"Login is alredy {}")
+                return 
 
 
     def edit(self, id, parameter, new):
         # Atualiza informações de um usuário na coleção 'Logins'
         if parameter == "login":
-            self.Login.update_one({"_id": id}, {"$set": {"login": new}})
+            self.Login.update_one({"_id": id}, {"$set": {'login': new}})
+            done = f"Login updated to {new}"
+            return done
+            return 
         elif parameter == "password":
-            self.Login.update_one({"_id": id}, {"$set": {"Password": new}})
+            self.Login.update_one({'_id': id}, {"$set": {'Password': new}})
+            done = f"Password updated to {new}"
+            return done
+        else:
+            self.error.append("Paramter_Error")
+            return self.error
 
 
 
     def findID(self, login, password):
-        # Encontra o ID de um usuário com base no login
+        # Encontra o ID de um usuário com base no login e a senha
         ret = []
 
         id = self.Login.find({"$and": [{"login": login}, {"Password": password}]})
