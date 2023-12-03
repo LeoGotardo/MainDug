@@ -17,7 +17,9 @@ class Model:
         self.error = []
 
         # Debug: exibe o conteúdo da coleção 'user_shopping_list'
-        print(MongoClient(self.CONNECTION_STRING))
+        print("------------------------------------------------------------------------------------------------------------------------------------\nConnection String: ",
+               MongoClient(self.CONNECTION_STRING),
+              "\n------------------------------------------------------------------------------------------------------------------------------------")
 
 
     def cad(self, login, Password):
@@ -34,7 +36,7 @@ class Model:
     def verifyLogin(self, login):
         # Verifica se um login específico existe na coleção 'Logins'
         has = self.has(login)
-        print(has)
+        print("Has Login and password:",has,"\n------------------------------------------------------------------------------------------------------------------------------------")
 
         if has != []:
             return True
@@ -138,9 +140,9 @@ class Model:
     def edit(self, id, parameter, new):
         # Atualiza informações de um usuário na coleção 'Logins'
         if parameter == "login":
-            self.Login.update_one({id}, {"$set": {"login": new}})
+            self.Login.update_one({"_id": id}, {"$set": {"login": new}})
         elif parameter == "password":
-            self.Login.update_one({id}, {"$set": {"Password": new}})
+            self.Login.update_one({"_id": id}, {"$set": {"Password": new}})
 
 
 
@@ -153,7 +155,7 @@ class Model:
         for result in id:
             ret.append(result["_id"])
 
-        print(ret)
+        print("Findded ID:",ret, "\n------------------------------------------------------------------------------------------------------------------------------------")
 
         if type(id) != []:
             ret[0] = True

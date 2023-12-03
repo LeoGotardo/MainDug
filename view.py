@@ -21,7 +21,7 @@ class View(ctk.CTk):
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
         itens = self.c.verify(login, password)
-        print(itens, login, password)
+        print(f"Itens:{itens}\nLogin:{login}\nPassword:{password}\n------------------------------------------------------------------------------------------------------------------------------------")
         if itens[0] == True:
             self.loginFrame.destroy()
             self.logged(itens[1])
@@ -192,15 +192,15 @@ class View(ctk.CTk):
         self.loggedFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Logged")
         self.app.bgcolor = self.primaryC
-        self.signupFrame.pack(fill="both", expand=True)
+        self.loggedFrame.pack(fill="both", expand=True)
 
         title = ctk.CTkLabel(
-            master=self.signupFrame, 
+            master=self.loggedFrame, 
             text="Logged"
         )
 
         loginEditButton = ctk.CTkButton(
-            master=self.signupFrame,
+            master=self.loggedFrame,
             text="Edit Login",
             command=lambda: [self.loggedFrame.destroy(), self.editLogin(id)],
             font=("RobotoSlab", 12),
@@ -212,7 +212,7 @@ class View(ctk.CTk):
         )
 
         passEditButton = ctk.CTkButton(
-            master=self.signupFrame,
+            master=self.loggedFrame,
             text="Edit Password",
             command=lambda: [self.loggedFrame.destroy(), self.editPass(id)],
             font=("RobotoSlab", 12),
@@ -224,7 +224,7 @@ class View(ctk.CTk):
         )
 
         eraseButton = ctk.CTkButton(
-            master=self.signupFrame,
+            master=self.loggedFrame,
             text="Erase Account",
             command=lambda: [self.loggedFrame.destroy(), self.erase(id)],
             font=("RobotoSlab", 12),
@@ -236,7 +236,7 @@ class View(ctk.CTk):
         )
         
         exitButton = ctk.CTkButton(
-            master=self.signupFrame,
+            master=self.loggedFrame,
             text="Exit",
             command=lambda:[self.loggedFrame.destroy(), self.login()],
             font=("RobotoSlab", 12),
@@ -279,7 +279,7 @@ class View(ctk.CTk):
         loginEditButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Edit Login",
-            command=lambda: [self.m.edit(id, "login", loginEntry.get())],
+            command=lambda:[self.c.edit(id, "login", loginEntry.get())],
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
