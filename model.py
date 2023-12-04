@@ -139,7 +139,7 @@ class Model:
 
     def isNew(self, id, paramter, new):
         if paramter == "login":
-            login = self.Login.find({'_id': id}, 'login': new)
+            login = self.Login.find({'_id': id}, {'login': new})
 
             for result in id:
                 login.append(result["login"])
@@ -149,7 +149,7 @@ class Model:
             else:
                 self.edit(id, paramter, new)
         elif paramter == "password":
-            password = self.password.find({'_id': id}, 'password': new)
+            password = self.password.find({'_id': id}, {'password': new})
 
             for result in id:
                 password.append(result["password"])
