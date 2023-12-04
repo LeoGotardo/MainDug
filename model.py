@@ -139,13 +139,25 @@ class Model:
 
     def isNew(self, id, paramter, new):
         if paramter == "login":
-            login = self.Login.find({'_id': id}, 'login':)
+            login = self.Login.find({'_id': id}, 'login': new)
 
             for result in id:
                 login.append(result["login"])
             if login == new:
-                self.error.append(f"Login is alredy {}")
-                return 
+                self.error.append(f"Login is alredy {new}")
+                return self.error
+            else:
+                self.edit(id, paramter, new)
+        elif paramter == "password":
+            password = self.password.find({'_id': id}, 'password': new)
+
+            for result in id:
+                password.append(result["password"])
+            if password == new:
+                self.error.append(f"Password is alredy {new}")
+                return self.error
+            else:
+                self.edit(id, paramter, new)
 
 
     def edit(self, id, parameter, new):
