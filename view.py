@@ -22,6 +22,9 @@ class View(ctk.CTk):
         new = self.c.same(id, paramter, new)
         if new == "new":
             self.c.edit(id, paramter, new)
+            self.alert("Sussesfull Operation")
+            self.editLoginFrame.destroy()
+            self.logged()
         else:
             self.alert(new)
 
@@ -287,7 +290,7 @@ class View(ctk.CTk):
         loginEditButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Edit Login",
-            command=lambda:[self.c.isNew(id, "login", loginEntry.get())],
+            command=lambda:[self.isNew(id, "login", loginEntry.get())],
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
@@ -385,4 +388,3 @@ class View(ctk.CTk):
 
 if __name__ == "__main__":
     view = View()
-    

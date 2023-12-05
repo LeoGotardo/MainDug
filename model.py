@@ -141,7 +141,7 @@ class Model:
         if paramter == "login":
             login = self.Login.find({'_id': id}, {'login': new})
 
-            for result in id:
+            for result in login:
                 login.append(result["login"])
             if login == new:
                 self.error.append(f"Login is alredy {new}")

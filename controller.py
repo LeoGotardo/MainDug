@@ -39,7 +39,7 @@ class Controller:
         # Chama a função valid do Model e retorna o resultado
         return self.m.valid(login, password)
     
-    def same(slef, id, paramter, new):
+    def same(self, id, paramter, new):
         # Chama a função isNew do Model e retorna o resultado
         return self.m.isNew(id, paramter, new)
 
