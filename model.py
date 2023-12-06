@@ -8,7 +8,7 @@ class Model:
         # Configuração de conexão com o MongoDB
         self.root = "LeoGotardo"
         self.password = "GUDP6TDvj9vdzGEH"
-        self.CONNECTION_STRING = f"mongodb+srv://{self.root}:{self.password}@cluster0.gcolnp2.mongodb.net/"
+        self.CONNECTION_STRING = f"mongodb://localhost:27017"
         self.client = MongoClient(self.CONNECTION_STRING)
         self.bd = self.client["Belle"]
         self.Login = self.bd["Logins"]
@@ -35,19 +35,16 @@ class Model:
 
     def verifyLogin(self, login):
         # Verifica se um login específico existe na coleção 'Logins'
-        has = self.has(login)
-        print("Has Login and password:",has,"\n------------------------------------------------------------------------------------------------------------------------------------")
+        hasLogin = self.has(login)
+        print("Has Login and password:",hasLogin,"\n------------------------------------------------------------------------------------------------------------------------------------")
 
-        if has != []:
-            return True
-        else:
-            return False
+        return bool(hasLogin)
 
 
     def valid(self, login, password):
         # Verifica se um login e senha são válidos
         if self.verifyLogin(login, "Login") == False:
-            self.validPass(password)
+            self.validPass(login,password)
 
 
     def has(self, Name):
@@ -62,15 +59,15 @@ class Model:
 
     def credencialADD(self, login, password, passwordCondirm):
         # Adiciona credenciais se válidas, caso contrário, retorna uma mensagem de erro
-        if self.credencialValid(login, password, passwordCondirm) == True:
-            if self.validPass(login, password) == False:
-                self.cad(login, password)
-                return "Valid Cadaster"
-            else:
-                self.error.append("Login already exists.")
-                return self.error
-        else:
+        if bool(self.has(login)):
+            self.error.append("acho q tem")
             return self.error
+        if not password == passwordCondirm:
+            self.error.append("senha nao ingal")
+            return self.error
+        self.cad(login, password)
+        self.error.append("Valid Login")
+        return self.error
 
 
     def credencialValid(self, login, password, passwordConfirm):
@@ -140,24 +137,26 @@ class Model:
     def isNew(self, id, paramter, new):
         if paramter == "login":
             login = self.Login.find({'_id': id}, {'login': new})
+            logins =[]
 
             for result in login:
-                login.append(result["login"])
-            if login == new:
+                logins.append(result["login"])
+            if logins == new:
                 self.error.append(f"Login is alredy {new}")
                 return self.error
             else:
-                self.edit(id, paramter, new)
+                return "new"
         elif paramter == "password":
-            password = self.password.find({'_id': id}, {'password': new})
+            passwords = self.password.find({'_id': id}, {'password': new})
+            password = []
 
-            for result in id:
+            for result in passwords:
                 password.append(result["password"])
             if password == new:
                 self.error.append(f"Password is alredy {new}")
                 return self.error
             else:
-                self.edit(id, paramter, new)
+                return "new"
 
 
     def edit(self, id, parameter, new):
@@ -165,8 +164,7 @@ class Model:
         if parameter == "login":
             self.Login.update_one({"_id": id}, {"$set": {'login': new}})
             done = f"Login updated to {new}"
-            return done
-            return 
+            return done 
         elif parameter == "password":
             self.Login.update_one({'_id': id}, {"$set": {'Password': new}})
             done = f"Password updated to {new}"
