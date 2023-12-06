@@ -41,9 +41,10 @@ class View(ctk.CTk):
 
 
     def addCad(self, login, password, passwordConfirm):
+        print(login, password, passwordConfirm)
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.credencialADD(login, password, passwordConfirm)
-        if error == "Valid Cadaster":
+        if error == "Valid Login":
             self.alert("Sussesfull Login")
         else:
             self.alert(error)
