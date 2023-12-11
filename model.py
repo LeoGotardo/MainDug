@@ -143,9 +143,9 @@ class Model:
                 logins.append(result["login"])
             if logins == new:
                 self.error.append(f"Login is alredy {new}")
-                return self.error
-            else:
                 return "new"
+            else:
+                return "isNew"
         elif paramter == "password":
             passwords = self.password.find({'_id': id}, {'password': new})
             password = []
@@ -154,20 +154,22 @@ class Model:
                 password.append(result["password"])
             if password == new:
                 self.error.append(f"Password is alredy {new}")
-                return self.error
-            else:
                 return "new"
+            else:
+                return "isNew"
+        else:
+            return "Invalid Paramter"
 
 
-    def edit(self, id, parameter, new):
+    def edit(self, id, parameter, newPar):
         # Atualiza informações de um usuário na coleção 'Logins'
         if parameter == "login":
-            self.Login.update_one({"_id": id}, {"$set": {'login': new}})
-            done = f"Login updated to {new}"
+            self.Login.update_one({"_id": id}, {"$set": {'login': newPar}})
+            done = f"Login updated to {newPar}"
             return done 
         elif parameter == "password":
-            self.Login.update_one({'_id': id}, {"$set": {'Password': new}})
-            done = f"Password updated to {new}"
+            self.Login.update_one({'_id': id}, {"$set": {'Password': newPar}})
+            done = f"Password updated to {newPar}"
             return done
         else:
             self.error.append("Paramter_Error")

@@ -18,13 +18,13 @@ class View(ctk.CTk):
         self.app.mainloop()
 
     
-    def isNew(self, id, paramter, new):
-        new = self.c.same(id, paramter, new)
+    def isNew(self, id, paramter, newPar):
+        new = self.c.same(id, paramter, newPar)
         if new == "new":
-            self.c.edit(id, paramter, new)
-            self.alert("Sussesfull Operation")
+            sull = self.c.edit(id, paramter, newPar)
+            self.alert(sull)
             self.editLoginFrame.destroy()
-            self.logged()
+            self.logged(id)
         else:
             self.alert(new)
 
