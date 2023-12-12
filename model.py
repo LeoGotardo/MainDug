@@ -1,203 +1,399 @@
-from pymongo import MongoClient
+import customtkinter as ctk
+from tkinter import messagebox as msg
+from controller import Controller
 import Debug as d
-import os
 
 
-class Model:
+class View(ctk.CTk):
     def __init__(self):
-        os.system("cls")
-        # Configuração de conexão com o MongoDB
-        self.root = "LeoGotardo"
-        self.password = "GUDP6TDvj9vdzGEH"
-        self.CONNECTION_STRING = f"mongodb://localhost:27017"
-        self.client = MongoClient(self.CONNECTION_STRING)
-        self.bd = self.client["Belle"]
-        self.Logins = self.bd["Logins"]
+        self.c = Controller()
+        self.tablExist = self.c.start()
+        self.app = ctk.CTk()
 
+        self.primaryC = "black"
+        self.secC = "white"
+        self.theme = ctk.set_appearance_mode('dark')
+        self.app.geometry("500x500")
+        self.login()
 
-        # Lista para armazenar mensagens de erro
-        self.error = []
+        self.app.mainloop()
 
-        # Debug: exibe o conteúdo da coleção.
-        print(f"{d.Margin}{d.Default}Connection String:{MongoClient(self.CONNECTION_STRING)}\n{d.Margin}")
+    
+    def isNew(self, id, paramter, newPar):
+        new = self.c.same(id, paramter, newPar)
+        if new == "new":
+            sull = self.c.edit(id, paramter, newPar)
 
-    def cad(self, login, Password):
-        # Adiciona um novo usuário à coleção 'Logins'
-        User = {
-            "Login": login,
-            "Password": Password
-        }
-        self.Logins.insert_one(User)
+            self.alert(sull, "Done")
 
-        return id  # Retorna o ID do usuário (não está implementado corretamente)
-
-
-    def verifyLogin(self, login):
-        # Verifica se um login específico existe na coleção 'Logins'
-        hasLogin = self.has(login)
-        print("Has Login and password:",hasLogin, d.Margin)
-
-        return bool(hasLogin)
-
-
-    def valid(self, login, password):
-        # Verifica se um login e senha são válidos
-        if self.verifyLogin(login, "Login") == False:
-            self.validPass(login,password)
-
-
-    def has(self, Name):
-        # Retorna uma lista de todos os logins na coleção 'Logins'
-        every = self.Logins.find({"Login": Name})
-        self.logins = []
-
-        for result in every:
-            self.logins.append(result["Login"])
-        return self.logins
-
-
-    def credencialADD(self, login, password, passwordCondirm):
-        # Adiciona credenciais se válidas, caso contrário, retorna uma mensagem de erro
-        if bool(self.has(login)):
-            self.error.append("acho q tem")
-            return self.error
-        if not password == passwordCondirm:
-            self.error.append("senha nao ingal")
-            return self.error
-        self.cad(login, password)
-        self.error.append("Valid Login")
-        return self.error
-
-
-    def credencialValid(self, login, password, passwordConfirm):
-        # Verifica se as credenciais são válidas
-        if self.loginValid(login) == True:
-            if self.passValid(password, passwordConfirm) == True:
-                validPass = True
-                return validPass
-            else:
-                self.error.append("Invalid Password")
-                return False
+            self.editLoginFrame.destroy()
+            self.logged(id)
         else:
-            self.error.append("Invalid Login")
-            return False
+            self.alert(new, "Error")
 
 
-    def verify(self, login, password):
-        # Verifica se um login e senha são válidos e retorna o ID do usuário
-        if self.verifyLogin(login) == True:
-            if self.validPass(login, password) == True:
-                ret = self.findID(login, password)
-
-                valid = ret[0]
-                ret.append(None)
-                
-                if valid == True:
-                    return ret
-            else:
-                ret = [False, None, "Invalid Login"]
-                
-                return ret
-        else:  
-            ret = [False, None, "Invalid Login"]
-
-            return ret
-
-
-
-    def loginValid(self, login):
-        # Verifica se um login é válido
-        if self.verifyLogin(login) == True and login != "":
-            return True
+    def validLogin(self, login, password):
+        # Verifica se o login é válido e realiza a ação apropriada
+        itens = self.c.verify(login, password)
+        print(f"{d.Default}Itens:{itens}\nLogin:{login}\nPassword:{password}")
+        print(d.Margin)
+        if itens[0] == True:
+            self.loginFrame.destroy()
+            self.logged(itens[1])
         else:
-            return False
+            self.alert(itens[2], "Error")
 
 
-    def passValid(self, password, passwordConfirm):
-        # Verifica se uma senha é válida
-        if password == passwordConfirm:
-            return True
-        elif password == "" or passwordConfirm == "":
-            return False
+    def addCad(self, login, password, passwordConfirm):
+        print(login, password, passwordConfirm)
+        # Adiciona um novo usuário e exibe uma mensagem apropriada
+        error = self.c.credencialADD(login, password, passwordConfirm)
+        if error == "Valid Login":
+
+            self.alert("Sussesfull Login","Done")
+
         else:
-            self.error.append("Invalid Password")
+            self.alert(error,"Error")
 
 
-    def validPass(self, login, password):
-        # Verifica se um login e senha são válidos
-        login = self.Logins.find({"$and": [{"Login": login}, {"Password": password}]})
+    def alert(self, text, error):
+        # Exibe um alerta na página
+        if error == "Error":
+            msg.showwarning(title=error,message=text)
+        else:
+            msg.showinfo(title=error, message=text)
+
+    def login(self):
+        # Configura a página de login
+        self.loginFrame = ctk.CTkFrame(master=self.app)
+        self.app.title ("Login")
+        self.app.bgcolor = self.primaryC
+        self.loginFrame.pack(fill="both", expand=True)
+
+        title = ctk.CTkLabel(
+            master=self.loginFrame,
+            text="Login"
+        )
+
+        loginEntry = ctk.CTkEntry(
+            master=self.loginFrame,
+            placeholder_text="Login",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200
+        )
+
+        passwordEntry = ctk.CTkEntry(
+            master=self.loginFrame,
+            placeholder_text="Password",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
+
+        loginButton = ctk.CTkButton(
+            master=self.loginFrame,
+            text="Login",
+            command=lambda: self.validLogin(loginEntry.get(), passwordEntry.get()),
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        signupButton = ctk.CTkButton(
+            master=self.loginFrame,
+            text="Signup",
+            command=lambda: [self.loginFrame.destroy(), self.signup()],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        title.pack(padx=10, pady=10)
+        loginEntry.pack(padx=10, pady=10)
+        passwordEntry.pack(padx=10, pady=10)
+        loginButton.pack(padx=10, pady=10)
+        signupButton.pack(padx=10, pady=10)
+
+
+    def signup(self):
+        # Configura a página de cadastro
+        self.signupFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Signup")
+        self.app.bgcolor = self.primaryC
+        self.signupFrame.pack(fill="both", expand=True)
+
+        title = ctk.CTkLabel(
+            master=self.signupFrame, 
+            text="Signup"
+        )
+
+        signupEntry = ctk.CTkEntry(
+            master=self.signupFrame,
+            placeholder_text="Login",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200
+        )
+
+        passwordEntry = ctk.CTkEntry(
+            master=self.signupFrame,
+            placeholder_text="Password",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
+
+        passwordConfirmEntry = ctk.CTkEntry(
+            master=self.signupFrame,
+            placeholder_text="Password Confirm",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
+
+        signupButton = ctk.CTkButton(
+            master=self.signupFrame,
+            text="Signup",
+            command=lambda: [self.addCad(signupEntry.get(), passwordEntry.get(), passwordConfirmEntry.get())],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
         
-        if login != []:
-            return True
-        else:
-            return False 
+        loginButton = ctk.CTkButton(
+            master=self.signupFrame,
+            text="Login",
+            command=lambda:[self.signupFrame.destroy(), self.login()],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        title.pack(padx=10, pady=10)
+        signupEntry.pack(padx=10, pady=10)
+        passwordEntry.pack(padx=10, pady=10)
+        passwordConfirmEntry.pack(padx=10, pady=10)
+        signupButton.pack(padx=10, pady=10)
+        loginButton.pack(padx=10, pady=10)
+
+
+    def logged(self, id):
+        self.loggedFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Logged")
+        self.app.bgcolor = self.primaryC
+        self.loggedFrame.pack(fill="both", expand=True)
+
+        title = ctk.CTkLabel(
+            master=self.loggedFrame, 
+            text="Logged"
+        )
+
+        loginEditButton = ctk.CTkButton(
+            master=self.loggedFrame,
+            text="Edit Login",
+            command=lambda: [self.loggedFrame.destroy(), self.editLogin(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        passEditButton = ctk.CTkButton(
+            master=self.loggedFrame,
+            text="Edit Password",
+            command=lambda: [self.loggedFrame.destroy(), self.editPass(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        eraseButton = ctk.CTkButton(
+            master=self.loggedFrame,
+            text="Erase Account",
+            command=lambda: [self.loggedFrame.destroy(), self.erase(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
         
+        exitButton = ctk.CTkButton(
+            master=self.loggedFrame,
+            text="Exit",
+            command=lambda:[self.loggedFrame.destroy(), self.login()],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
 
-    def isNew(self, id, paramter, new):
-        if paramter == "login":
-
-            login = self.Logins.find({'_id': id}, {'Login': new})
-            logins = []
-
-            for result in login:
-                logins.append(result["Login"])
-            if len(logins) > 0 :
-                self.error.append(f"Login is alredy {new}")
-                return "notNew"
-            else:
-                print(f"{d.Default}login:{login}\nlogins: {logins}{d.Margin}")
-                return "new"
-        elif paramter == "password":
-            password = self.password.find({'_id': id}, {'Password': new})
-            passwords = []
-
-            for result in password:
-                passwords.append(result["Password"])
-            if len(passwords) > 0:
-                self.error.append(f"Password is alredy {new}")
-                return "notNew"
-            else:
-                print(f"{d.Default}login:{login}\nlogins: {logins} {d.Margin}")
-                return "new"
-        else:
-            return "Invalid Paramter"
+        title.pack(padx=10, pady=10)
+        loginEditButton.pack(padx=10, pady=10)
+        passEditButton.pack(padx=10, pady=10)
+        eraseButton.pack(padx=10, pady=10)
+        exitButton.pack(padx=10, pady=10)
 
 
-    def edit(self, id, parameter, newPar):
-        # Atualiza informações de um usuário na coleção 'Logins'
-        if parameter == "login":
-            done = f"Password updated to {newPar}"
-            return done
-        else:
-            self.error.append("Paramter_Error")
-            return self.error
+    def editLogin(self, id):
+        self.editLoginFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Edit Login")
+        self.app.bgcolor = self.primaryC
+        self.editLoginFrame.pack(fill="both", expand=True)
+
+        title = ctk.CTkLabel(
+            master=self.editLoginFrame, 
+            text="New Login"
+        )
+
+        loginEntry = ctk.CTkEntry(
+            master=self.editLoginFrame,
+            placeholder_text="New Login",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200
+        )
+
+        loginEditButton = ctk.CTkButton(
+            master=self.editLoginFrame,
+            text="Edit Login",
+            command=lambda:[self.isNew(id, "login", loginEntry.get())],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        backButton = ctk.CTkButton(
+            master=self.editLoginFrame,
+            text="Back",
+            command=lambda: [self.editLoginFrame.destroy(), self.logged(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        title.pack(padx=10, pady=10)
+        loginEntry.pack(padx=10, pady=10)
+        loginEditButton.pack(padx=10, pady=10)
+        backButton.pack(padx=10, pady=10)
 
 
+    def editPass(self, id):
+        self.editPasswordFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Edit Password")
+        self.app.bgcolor = self.primaryC
+        self.editPasswordFrame.pack(fill="both", expand=True)
 
-    def findID(self, login, password):
-        # Encontra o ID de um usuário com base no login e a senha
-        ret = []
+        title = ctk.CTkLabel(
+            master=self.editPasswordFrame, 
+            text="New Password"
+        )
 
-        id = self.Logins.find({"$and": [{"Login": login}, {"Password": password}]})
+        passwordEntry = ctk.CTkEntry(
+            master=self.editPasswordFrame,
+            placeholder_text="New Password",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
 
-        for result in id:
-            ret.append(result["_id"])
+        passwordConfirmEntry = ctk.CTkEntry(
+            master=self.editPasswordFrame,
+            placeholder_text="New Password Confirm",
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.secC,
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
 
-        print(d.Margin, "Findded ID:", ret, d.Margin)
+        passEditButton = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="Edit Password",
+            command=lambda: [self.m.edit(id, "password", passwordEntry.get())],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
 
-        if type(id) != []:
-            ret[0] = True
-        else:
-            ret[0] = False
+        backButton = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="Back",
+            command=lambda: [self.editPasswordFrame.destroy(), self.logged(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
 
-        return ret
+        title.pack(padx=10, pady=10)
+        passwordEntry.pack(padx=10, pady=10)
+        passwordConfirmEntry.pack(padx=10, pady=10)
+        passEditButton.pack(padx=10, pady=10)
+        backButton.pack(padx=10, pady=10)
 
 
     def erase(self, id):
-        # Exclui um usuário com base no ID
-        self.Logins.delete_one({id})
-
+        self.alert("OK", "Done")
 
 if __name__ == "__main__":
-    # Instância um objeto Model para testar a classe
-    model = Model()
+    view = View()
