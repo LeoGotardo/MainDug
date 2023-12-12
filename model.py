@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import Debug as d
 import os
 
 
@@ -11,24 +12,22 @@ class Model:
         self.CONNECTION_STRING = f"mongodb://localhost:27017"
         self.client = MongoClient(self.CONNECTION_STRING)
         self.bd = self.client["Belle"]
-        self.Login = self.bd["Logins"]
+        self.Logins = self.bd["Logins"]
+
 
         # Lista para armazenar mensagens de erro
         self.error = []
 
-        # Debug: exibe o conteúdo da coleção 'user_shopping_list'
-        print("------------------------------------------------------------------------------------------------------------------------------------\nConnection String: ",
-               MongoClient(self.CONNECTION_STRING),
-              "\n------------------------------------------------------------------------------------------------------------------------------------")
-
+        # Debug: exibe o conteúdo da coleção.
+        print(f"{d.Margin}{d.Default}Connection String:{MongoClient(self.CONNECTION_STRING)}\n{d.Margin}")
 
     def cad(self, login, Password):
         # Adiciona um novo usuário à coleção 'Logins'
         User = {
-            "login": login,
+            "Login": login,
             "Password": Password
         }
-        self.Login.insert_one(User)
+        self.Logins.insert_one(User)
 
         return id  # Retorna o ID do usuário (não está implementado corretamente)
 
@@ -36,7 +35,7 @@ class Model:
     def verifyLogin(self, login):
         # Verifica se um login específico existe na coleção 'Logins'
         hasLogin = self.has(login)
-        print("Has Login and password:",hasLogin,"\n------------------------------------------------------------------------------------------------------------------------------------")
+        print("Has Login and password:",hasLogin, d.Margin)
 
         return bool(hasLogin)
 
@@ -49,11 +48,11 @@ class Model:
 
     def has(self, Name):
         # Retorna uma lista de todos os logins na coleção 'Logins'
-        every = self.Login.find({"login": Name})
+        every = self.Logins.find({"Login": Name})
         self.logins = []
 
         for result in every:
-            self.logins.append(result["login"])
+            self.logins.append(result["Login"])
         return self.logins
 
 
@@ -126,7 +125,7 @@ class Model:
 
     def validPass(self, login, password):
         # Verifica se um login e senha são válidos
-        login = self.Login.find({"$and": [{"login": login}, {"Password": password}]})
+        login = self.Logins.find({"$and": [{"Login": login}, {"Password": password}]})
         
         if login != []:
             return True
@@ -136,27 +135,30 @@ class Model:
 
     def isNew(self, id, paramter, new):
         if paramter == "login":
-            login = self.Login.find({'_id': id}, {'login': new})
-            logins =[]
+
+            login = self.Logins.find({'_id': id}, {'Login': new})
+            logins = []
 
             for result in login:
-                logins.append(result["login"])
-            if logins == new:
+                logins.append(result["Login"])
+            if len(logins) > 0 :
                 self.error.append(f"Login is alredy {new}")
-                return "new"
+                return "notNew"
             else:
-                return "isNew"
+                print(f"{d.Default}login:{login}\nlogins: {logins}{d.Margin}")
+                return "new"
         elif paramter == "password":
-            passwords = self.password.find({'_id': id}, {'password': new})
-            password = []
+            password = self.password.find({'_id': id}, {'Password': new})
+            passwords = []
 
-            for result in passwords:
-                password.append(result["password"])
-            if password == new:
+            for result in password:
+                passwords.append(result["Password"])
+            if len(passwords) > 0:
                 self.error.append(f"Password is alredy {new}")
-                return "new"
+                return "notNew"
             else:
-                return "isNew"
+                print(f"{d.Default}login:{login}\nlogins: {logins} {d.Margin}")
+                return "new"
         else:
             return "Invalid Paramter"
 
@@ -164,11 +166,6 @@ class Model:
     def edit(self, id, parameter, newPar):
         # Atualiza informações de um usuário na coleção 'Logins'
         if parameter == "login":
-            self.Login.update_one({"_id": id}, {"$set": {'login': newPar}})
-            done = f"Login updated to {newPar}"
-            return done 
-        elif parameter == "password":
-            self.Login.update_one({'_id': id}, {"$set": {'Password': newPar}})
             done = f"Password updated to {newPar}"
             return done
         else:
@@ -181,12 +178,12 @@ class Model:
         # Encontra o ID de um usuário com base no login e a senha
         ret = []
 
-        id = self.Login.find({"$and": [{"login": login}, {"Password": password}]})
+        id = self.Logins.find({"$and": [{"Login": login}, {"Password": password}]})
 
         for result in id:
             ret.append(result["_id"])
 
-        print("Findded ID:",ret, "\n------------------------------------------------------------------------------------------------------------------------------------")
+        print(d.Margin, "Findded ID:", ret, d.Margin)
 
         if type(id) != []:
             ret[0] = True
@@ -198,7 +195,7 @@ class Model:
 
     def erase(self, id):
         # Exclui um usuário com base no ID
-        self.Login.delete_one({id})
+        self.Logins.delete_one({id})
 
 
 if __name__ == "__main__":
