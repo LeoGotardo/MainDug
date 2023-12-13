@@ -9,7 +9,7 @@ class Model:
         # Configuração de conexão com o MongoDB
         self.root = "LeoGotardo"
         self.password = "GUDP6TDvj9vdzGEH"
-        self.CONNECTION_STRING = f"mongodb://localhost:27017"
+        self.CONNECTION_STRING = f"mongodb+srv://{self.root}:{self.password}@cluster0.gcolnp2.mongodb.net/"
         self.client = MongoClient(self.CONNECTION_STRING)
         self.bd = self.client["Belle"]
         self.Logins = self.bd["Logins"]
@@ -19,7 +19,7 @@ class Model:
         self.error = []
 
         # Debug: exibe o conteúdo da coleção.
-        print(f"{d.Margin}{d.Default}Connection String:{MongoClient(self.CONNECTION_STRING)}\n{d.Margin}")
+        print(f"{d.Margin}{d.Default}Connection String:{MongoClient(self.CONNECTION_STRING)}{d.Margin}")
 
     def cad(self, login, Password):
         # Adiciona um novo usuário à coleção 'Logins'
@@ -35,7 +35,7 @@ class Model:
     def verifyLogin(self, login):
         # Verifica se um login específico existe na coleção 'Logins'
         hasLogin = self.has(login)
-        print("Has Login and password:",hasLogin, d.Margin)
+        print(d.Margin,"Has Login and password:",hasLogin, d.Margin)
 
         return bool(hasLogin)
 
@@ -145,7 +145,7 @@ class Model:
                 self.error.append(f"Login is alredy {new}")
                 return "notNew"
             else:
-                print(f"{d.Default}login:{login}\nlogins: {logins}{d.Margin}")
+                print(f"{d.Margin}{d.Default}login:{login}\nlogins: {logins}{d.Margin}")
                 return "new"
         elif paramter == "password":
             password = self.password.find({'_id': id}, {'Password': new})
@@ -157,7 +157,7 @@ class Model:
                 self.error.append(f"Password is alredy {new}")
                 return "notNew"
             else:
-                print(f"{d.Default}login:{login}\nlogins: {logins} {d.Margin}")
+                print(f"{d.Margin}{d.Default}login:{login}\nlogins: {logins} {d.Margin}")
                 return "new"
         else:
             return "Invalid Paramter"

@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from tkinter import messagebox as msg
 from controller import Controller
+import Debug as d
 
 
 class View(ctk.CTk):
@@ -32,7 +33,7 @@ class View(ctk.CTk):
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
         itens = self.c.verify(login, password)
-        print(f"Itens:{itens}\nLogin:{login}\nPassword:{password}\n------------------------------------------------------------------------------------------------------------------------------------")
+        print(f"{d.Margin}{d.Default}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
         if itens[0] == True:
             self.loginFrame.destroy()
             self.logged(itens[1])
@@ -41,7 +42,7 @@ class View(ctk.CTk):
 
 
     def addCad(self, login, password, passwordConfirm):
-        print(login, password, passwordConfirm)
+        print(f"{d.Default}Login:{login} \nPassword:{password}\nPasswordConfirm:{passwordConfirm}{d.Margin}")
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.credencialADD(login, password, passwordConfirm)
         if error == "Valid Login":
