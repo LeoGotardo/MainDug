@@ -61,11 +61,13 @@ class View(ctk.CTk):
         self.loginFrame = ctk.CTkFrame(master=self.app)
         self.app.title ("Login")
         self.app.bgcolor = self.primaryC
-        self.loginFrame.pack(fill="both", expand=True)
+        self.loginFrame.pack(fill=ctk.BOTH, expand=True)
 
         title = ctk.CTkLabel(
             master=self.loginFrame,
-            text="Login"
+            text="Login",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+
         )
 
         loginEntry = ctk.CTkEntry(
@@ -131,7 +133,8 @@ class View(ctk.CTk):
 
         title = ctk.CTkLabel(
             master=self.signupFrame, 
-            text="Signup"
+            text="Signup",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
         )
 
         signupEntry = ctk.CTkEntry(
@@ -193,23 +196,24 @@ class View(ctk.CTk):
             width=100
         )
 
-        title.pack(padx=10, pady=10)
-        signupEntry.pack(padx=10, pady=10)
-        passwordEntry.pack(padx=10, pady=10)
-        passwordConfirmEntry.pack(padx=10, pady=10)
-        signupButton.pack(padx=10, pady=10)
-        loginButton.pack(padx=10, pady=10)
+        title.pack(fill=ctk.BOTH, padx=10, pady=10)
+        signupEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
+        passwordEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
+        passwordConfirmEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
+        signupButton.pack(fill=ctk.BOTH, padx=10, pady=10)
+        loginButton.pack(fill=ctk.BOTH, padx=10, pady=10)
 
 
     def logged(self, id):
         self.loggedFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Logged")
         self.app.bgcolor = self.primaryC
-        self.loggedFrame.pack(fill="both", expand=True)
+        self.loggedFrame.pack(fill=ctk.BOTH, expand=True)
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
-            text="Logged"
+            text="Logged",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
         )
 
         loginEditButton = ctk.CTkButton(
@@ -260,22 +264,23 @@ class View(ctk.CTk):
             width=100
         )
 
-        title.pack(padx=10, pady=10)
-        loginEditButton.pack(padx=10, pady=10)
-        passEditButton.pack(padx=10, pady=10)
-        eraseButton.pack(padx=10, pady=10)
-        exitButton.pack(padx=10, pady=10)
+        title.pack(fill=ctk.BOTH, padx=10, pady=10)
+        loginEditButton.pack(fill=ctk.BOTH, padx=10, pady=10)
+        passEditButton.pack(fill=ctk.BOTH, padx=10, pady=10)
+        eraseButton.pack(fill=ctk.BOTH, padx=10, pady=10)
+        exitButton.pack(fill=ctk.BOTH, padx=10, pady=10)
 
 
     def editLogin(self, id):
         self.editLoginFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Login")
         self.app.bgcolor = self.primaryC
-        self.editLoginFrame.pack(fill="both", expand=True)
+        self.editLoginFrame.pack(fill=ctk.BOTH, expand=True)
 
         title = ctk.CTkLabel(
             master=self.editLoginFrame, 
-            text="New Login"
+            text="New Login",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
         )
 
         loginEntry = ctk.CTkEntry(
@@ -313,21 +318,22 @@ class View(ctk.CTk):
             width=100
         )
 
-        title.pack(padx=10, pady=10)
-        loginEntry.pack(padx=10, pady=10)
-        loginEditButton.pack(padx=10, pady=10)
-        backButton.pack(padx=10, pady=10)
+        title.pack(fill=ctk.BOTH, padx=10, pady=10)
+        loginEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
+        loginEditButton.pack(fill=ctk.BOTH, padx=10, pady=10)
+        backButton.pack(fill=ctk.BOTH, padx=10, pady=10)
 
 
     def editPass(self, id):
         self.editPasswordFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Password")
         self.app.bgcolor = self.primaryC
-        self.editPasswordFrame.pack(fill="both", expand=True)
+        self.editPasswordFrame.pack(fill=ctk.BOTH, expand=True)
 
         title = ctk.CTkLabel(
             master=self.editPasswordFrame, 
-            text="New Password"
+            text="New Password",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
         )
 
         passwordEntry = ctk.CTkEntry(
@@ -378,11 +384,11 @@ class View(ctk.CTk):
             width=100
         )
 
-        title.pack(padx=10, pady=10)
-        passwordEntry.pack(padx=10, pady=10)
-        passwordConfirmEntry.pack(padx=10, pady=10)
-        passEditButton.pack(padx=10, pady=10)
-        backButton.pack(padx=10, pady=10)
+        title.pack(fill=ctk.BOTH, padx=10, pady=10)
+        passwordEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
+        passwordConfirmEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
+        passEditButton.pack(fill=ctk.BOTH, padx=10, pady=10)
+        backButton.pack(fill=ctk.BOTH, padx=10, pady=10)
 
 
     def erase(self, id):
