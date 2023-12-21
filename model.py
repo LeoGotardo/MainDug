@@ -163,9 +163,14 @@ class Model:
             return "Invalid Paramter"
 
 
-    def edit(self, id, parameter, newPar):
+    def edit(self, user_id, parameter, newPar):
         # Atualiza informações de um usuário na coleção 'Logins'
         if parameter == "login":
+            self.Logins.update_one({'_id': user_id} ,{'$set': {parameter:newPar}})
+            done = f"Login updated to {newPar}"
+            return done
+        elif parameter == "password":
+            self.Logins.update_one({'_id': user_id} ,{'$set': {parameter:newPar}})
             done = f"Password updated to {newPar}"
             return done
         else:

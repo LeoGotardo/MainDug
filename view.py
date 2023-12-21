@@ -23,11 +23,11 @@ class View(ctk.CTk):
         new = self.c.same(id, paramter, newPar)
         if new == "new":
             sull = self.c.edit(id, paramter, newPar)
-            self.alert(sull)
+            self.alert("Susses", sull)
             self.editLoginFrame.destroy()
             self.logged(id)
         else:
-            self.alert(new)
+            self.alert("ERROR",new)
 
 
     def validLogin(self, login, password):
@@ -38,7 +38,7 @@ class View(ctk.CTk):
             self.loginFrame.destroy()
             self.logged(itens[1])
         else:
-            self.alert(itens[2])
+            self.alert("ERROR",itens[2])
 
 
     def addCad(self, login, password, passwordConfirm):
@@ -46,14 +46,14 @@ class View(ctk.CTk):
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.credencialADD(login, password, passwordConfirm)
         if error == "Valid Login":
-            self.alert("Sussesfull Login")
+            self.alert("Susses","Sussesfull Login")
         else:
-            self.alert(error)
+            self.alert("ERROR",error)
 
 
-    def alert(self, text):
+    def alert(self, title, text):
         # Exibe um alerta na página
-        msg.showwarning(title="Error",message=text)
+        msg.showwarning(title=title,message=text)
 
 
     def login(self):
@@ -392,7 +392,8 @@ class View(ctk.CTk):
 
 
     def erase(self, id):
-        self.alert()
+        self.alert("Susses", "Erase")
+
 
 if __name__ == "__main__":
     view = View()
