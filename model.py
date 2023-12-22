@@ -89,10 +89,9 @@ class Model:
             if self.validPass(login, password) == True:
                 ret = self.findID(login, password)
 
-                valid = ret[0]
                 ret.append(None)
                 
-                if valid == True:
+                if ret[1] == True:
                     return ret
             else:
                 ret = [False, None, "Invalid Login"]
@@ -101,6 +100,7 @@ class Model:
         else:  
             ret = [False, None, "Invalid Login"]
 
+            print(d.Margin, ret, d.Margin)
             return ret
 
 
@@ -135,30 +135,33 @@ class Model:
 
     def isNew(self, id, paramter, new):
         if paramter == "login":
-
             login = self.Logins.find({'_id': id}, {'Login': new})
             logins = []
 
             for result in login:
                 logins.append(result["Login"])
-            if len(logins) > 0 :
+            if type(logins[0]) == 'bson.objectid.ObjectId':
                 self.error.append(f"Login is alredy {new}")
+                print(f"{d.Margin}{d.Default}login:{login}\nlogins: {logins}\nlogin type = {type(logins[0])}{d.Margin}")
                 return "notNew"
             else:
-                print(f"{d.Margin}{d.Default}login:{login}\nlogins: {logins}{d.Margin}")
+                print(f"{d.Margin}{d.Default}login:{login}\nlogins: {logins}\nlogin type = {type(logins[0])}{d.Margin}")
                 return "new"
+            
         elif paramter == "password":
-            password = self.password.find({'_id': id}, {'Password': new})
+            password = self.Logins.find({'_id': id}, {'Password': new})
             passwords = []
 
             for result in password:
                 passwords.append(result["Password"])
-            if len(passwords) > 0:
+            if type(passwords[0]) == 'bson.objectid.ObjectId':
                 self.error.append(f"Password is alredy {new}")
+                print(f"{d.Margin}{d.Default}login:{password}\nlogins: {passwords} {d.Margin}")
                 return "notNew"
             else:
-                print(f"{d.Margin}{d.Default}login:{login}\nlogins: {logins} {d.Margin}")
+                print(f"{d.Margin}{d.Default}login:{password}\nlogins: {passwords} {d.Margin}")
                 return "new"
+            
         else:
             return "Invalid Paramter"
 
@@ -166,11 +169,11 @@ class Model:
     def edit(self, user_id, parameter, newPar):
         # Atualiza informações de um usuário na coleção 'Logins'
         if parameter == "login":
-            self.Logins.update_one({'_id': user_id} ,{'$set': {parameter:newPar}})
-            done = f"Login updated to {newPar}"
+            self.Logins.update_one({'_id': user_id} ,{'$set': {"Login":newPar}})
+            done = f"Login of {user_id} updated to {newPar}"
             return done
         elif parameter == "password":
-            self.Logins.update_one({'_id': user_id} ,{'$set': {parameter:newPar}})
+            self.Logins.update_one({'_id': user_id} ,{'$set': {"Password":newPar}})
             done = f"Password updated to {newPar}"
             return done
         else:
@@ -186,15 +189,18 @@ class Model:
         id = self.Logins.find({"$and": [{"Login": login}, {"Password": password}]})
 
         for result in id:
-            ret.append(result["_id"])
+            ret.append(result["_id"])  
+        if len(ret) == 0:
+            ret.append(None)
 
-        print(d.Margin, "Findded ID:", ret, d.Margin)
+        print(d.Margin, "Findded ID:", d.Red,ret, "Id Type = ", type(ret[0]), d.Margin)
 
         if type(id) != []:
-            ret[0] = True
+            ret.append(True)
         else:
-            ret[0] = False
+            ret.append(False)
 
+        print(f"{d.Margin}{d.Red}{ret}{d.Margin}")
         return ret
 
 
