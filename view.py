@@ -19,13 +19,21 @@ class View(ctk.CTk):
         self.app.mainloop()
 
     
-    def isNew(self, id, paramter, newPar):
+    def isNew(self, id, paramter, newPar, frame):
         new = self.c.same(id, paramter, newPar)
         if new == "new":
             sull = self.c.edit(id, paramter, newPar)
             self.alert("Susses", sull)
-            self.editLoginFrame.destroy()
-            self.logged(id)
+
+            if frame == "editLoguin":
+                self.editLoginFrame.destroy()
+                self.logged(id)
+            elif frame == "editPassword":
+                self.editPasswordFrame.destroy()
+                self.logged(id)
+            elif frame == "eraseFrame":
+                self.eraseFrame.destroy()
+                self.logged(id)
         else:
             self.alert("ERROR",new)
 
@@ -34,9 +42,9 @@ class View(ctk.CTk):
         # Verifica se o login é válido e realiza a ação apropriada
         itens = self.c.verify(login, password)
         print(f"{d.Margin}{d.Default}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
-        if itens[0] == True:
+        if itens[1] == True:
             self.loginFrame.destroy()
-            self.logged(itens[1])
+            self.logged(itens[0])
         else:
             self.alert("ERROR",itens[2])
 
@@ -196,12 +204,12 @@ class View(ctk.CTk):
             width=100
         )
 
-        title.pack(fill=ctk.BOTH, padx=10, pady=10)
-        signupEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
-        passwordEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
-        passwordConfirmEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
-        signupButton.pack(fill=ctk.BOTH, padx=10, pady=10)
-        loginButton.pack(fill=ctk.BOTH, padx=10, pady=10)
+        title.pack(padx=10, pady=10)
+        signupEntry.pack(padx=10, pady=10)
+        passwordEntry.pack(padx=10, pady=10)
+        passwordConfirmEntry.pack(padx=10, pady=10)
+        signupButton.pack(padx=10, pady=10)
+        loginButton.pack(padx=10, pady=10)
 
 
     def logged(self, id):
@@ -264,11 +272,11 @@ class View(ctk.CTk):
             width=100
         )
 
-        title.pack(fill=ctk.BOTH, padx=10, pady=10)
-        loginEditButton.pack(fill=ctk.BOTH, padx=10, pady=10)
-        passEditButton.pack(fill=ctk.BOTH, padx=10, pady=10)
-        eraseButton.pack(fill=ctk.BOTH, padx=10, pady=10)
-        exitButton.pack(fill=ctk.BOTH, padx=10, pady=10)
+        title.pack(padx=10, pady=10)
+        loginEditButton.pack(padx=10, pady=10)
+        passEditButton.pack(padx=10, pady=10)
+        eraseButton.pack(padx=10, pady=10)
+        exitButton.pack(padx=10, pady=10)
 
 
     def editLogin(self, id):
@@ -297,7 +305,7 @@ class View(ctk.CTk):
         loginEditButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Edit Login",
-            command=lambda:[self.isNew(id, "login", loginEntry.get())],
+            command=lambda:[self.isNew(id, "login", loginEntry.get(), "editLogin")],
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
@@ -318,10 +326,10 @@ class View(ctk.CTk):
             width=100
         )
 
-        title.pack(fill=ctk.BOTH, padx=10, pady=10)
-        loginEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
-        loginEditButton.pack(fill=ctk.BOTH, padx=10, pady=10)
-        backButton.pack(fill=ctk.BOTH, padx=10, pady=10)
+        title.pack(padx=10, pady=10)
+        loginEntry.pack(padx=10, pady=10)
+        loginEditButton.pack(padx=10, pady=10)
+        backButton.pack(padx=10, pady=10)
 
 
     def editPass(self, id):
@@ -363,7 +371,7 @@ class View(ctk.CTk):
         passEditButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Edit Password",
-            command=lambda: [self.m.edit(id, "password", passwordEntry.get())],
+            command=lambda: [self.isNew(id, "password", passwordEntry.get(), "editPassword")],
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
@@ -384,15 +392,20 @@ class View(ctk.CTk):
             width=100
         )
 
-        title.pack(fill=ctk.BOTH, padx=10, pady=10)
-        passwordEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
-        passwordConfirmEntry.pack(fill=ctk.BOTH, padx=10, pady=10)
-        passEditButton.pack(fill=ctk.BOTH, padx=10, pady=10)
-        backButton.pack(fill=ctk.BOTH, padx=10, pady=10)
+        title.pack(padx=10, pady=10)
+        passwordEntry.pack(padx=10, pady=10)
+        passwordConfirmEntry.pack(padx=10, pady=10)
+        passEditButton.pack(padx=10, pady=10)
+        backButton.pack(padx=10, pady=10)
 
 
     def erase(self, id):
-        self.alert("Susses", "Erase")
+    # Configura a página Erase
+        self.eraseFrame = ctk.CTkFrame(master=self.app)
+        self.app.title ("Erase")
+        self.app.bgcolor = self.primaryC
+        self.loginFrame.pack(fill=ctk.BOTH, expand=True)
+
 
 
 if __name__ == "__main__":
