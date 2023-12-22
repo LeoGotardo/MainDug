@@ -24,8 +24,7 @@ class Controller:
 
     def verify(self, login, password):
         # Chama a função verify do Model e retorna o resultado
-        itens = self.m.verify(login, password)
-        return itens
+        return self.m.verify(login, password)
 
     def erase(self, id):
         # Chama a função erase do Model e retorna o resultado
