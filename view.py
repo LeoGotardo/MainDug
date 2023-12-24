@@ -44,12 +44,12 @@ class View(ctk.CTk):
         if response == "yes":
             try:
                 # Perform account deletion logic here
-                self.m.erase(id)
-                print(f"Account {id} deleted successfully.")
+                self.c.erase(id)
+                print(f"{d.Margin}Account {id} deleted successfully.{d.Margin}")
                 self.eraseFrame.destroy()
-                self.__init__()
+                self.login()
             except Exception as e:
-                print(f"Account deletion failed: {e}")
+                print(f"{d.Margin}Account deletion failed: {e}{d.Margin}")
                 msg.showerror("Error", "An error occurred while deleting the account.")
         else:
             print("Account deletion canceled.")
@@ -57,7 +57,7 @@ class View(ctk.CTk):
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
         itens = self.c.verify(login, password)
-        print(f"{d.Margin}{d.Default}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
+        print(f"{d.Margin}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
         if itens[1] == True:
             self.loginFrame.destroy()
             self.logged(itens[0])
@@ -66,13 +66,13 @@ class View(ctk.CTk):
 
 
     def addCad(self, login, password, passwordConfirm):
-        print(f"{d.Default}Login:{login} \nPassword:{password}\nPasswordConfirm:{passwordConfirm}{d.Margin}")
+        print(f"{d.Margin}Login:{login} \nPassword:{password}\nPasswordConfirm:{passwordConfirm}{d.Margin}")
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.credencialADD(login, password, passwordConfirm)
-        if error == "Valid Login":
+        if error[0] == "Valid Login":
             self.alert("Susses","Sussesfull Login")
         else:
-            self.alert("ERROR",error)
+            self.alert("ERROR",error[0])
 
 
     def alert(self, title, text):

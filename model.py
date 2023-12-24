@@ -37,7 +37,7 @@ class Model:
         hasLogin = self.has(login)
         print(d.Margin,"Has Login and password:",hasLogin, d.Margin)
 
-        return bool(hasLogin)
+        return hasLogin
 
 
     def valid(self, login, password):
@@ -49,24 +49,32 @@ class Model:
     def has(self, Name):
         # Retorna uma lista de todos os logins na coleção 'Logins'
         every = self.Logins.find({"Login": Name})
-        self.logins = []
+        logins = []
 
         for result in every:
-            self.logins.append(result["Login"])
-        return self.logins
+            logins.append(result["Login"])
+
+        if len(logins) == 0:
+            logins.append(1)
+
+        if type(logins[0]) == 'bson.objectid.ObjectId':
+            self.error.append("Login alrady exists")
+            return self.error
+        else:
+            return False
+
 
 
     def credencialADD(self, login, password, passwordCondirm):
-        # Adiciona credenciais se válidas, caso contrário, retorna uma mensagem de erro
-        if bool(self.has(login)):
-            self.error.append("acho q tem")
+        # Adiciona credenciais se válidas, caso contrário, retorna uma mensagem de error
+        if password == passwordCondirm:
+            if self.has == False:
+                self.cad(login, password)
+                self.error.append("Valid Login")
+                return self.error
+        else:
+            self.error.append("Passwords do not metch ")
             return self.error
-        if not password == passwordCondirm:
-            self.error.append("senha nao ingal")
-            return self.error
-        self.cad(login, password)
-        self.error.append("Valid Login")
-        return self.error
 
 
     def credencialValid(self, login, password, passwordConfirm):
@@ -207,7 +215,9 @@ class Model:
 
     def erase(self, id):
         # Exclui um usuário com base no ID
-        self.Logins.delete_one({id})
+        self.Logins.delete_one({'_id':id})
+        print(f"{d.Margin}Sucsses.{d.Margin}")
+        return True
 
 
 if __name__ == "__main__":
