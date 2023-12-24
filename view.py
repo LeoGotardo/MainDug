@@ -9,7 +9,6 @@ class View(ctk.CTk):
         self.c = Controller()
         self.tablExist = self.c.start()
         self.app = ctk.CTk()
-        self.app.iconbitmap(default="MD_Icon.ico")
 
         self.primaryC = "black"
         self.secC = "white"
@@ -87,6 +86,7 @@ class View(ctk.CTk):
         self.app.title ("Login")
         self.app.bgcolor = self.primaryC
         self.loginFrame.pack(fill=ctk.BOTH, expand=True)
+        self.app.iconbitmap(default="icons/Alien.ico")
 
         title = ctk.CTkLabel(
             master=self.loginFrame,
@@ -155,6 +155,7 @@ class View(ctk.CTk):
         self.app.title("Signup")
         self.app.bgcolor = self.primaryC
         self.signupFrame.pack(fill="both", expand=True)
+        self.app.iconbitmap(default="icons/Heart.ico")
 
         title = ctk.CTkLabel(
             master=self.signupFrame, 
@@ -234,6 +235,7 @@ class View(ctk.CTk):
         self.app.title("Logged")
         self.app.bgcolor = self.primaryC
         self.loggedFrame.pack(fill=ctk.BOTH, expand=True)
+        self.app.iconbitmap(default="icons/Star.ico")
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
@@ -422,6 +424,7 @@ class View(ctk.CTk):
         self.app.title ("Erase")
         self.app.bgcolor = self.primaryC
         self.eraseFrame.pack(fill=ctk.BOTH, expand=True)
+        self.app.iconbitmap(default="icons/Skull.ico")
 
         title = ctk.CTkLabel(
             master=self.eraseFrame, 
