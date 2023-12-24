@@ -9,6 +9,7 @@ class View(ctk.CTk):
         self.c = Controller()
         self.tablExist = self.c.start()
         self.app = ctk.CTk()
+        self.app.iconbitmap(default="MD_Icon.ico")
 
         self.primaryC = "black"
         self.secC = "white"
@@ -20,7 +21,7 @@ class View(ctk.CTk):
 
     
     def isNew(self, id, paramter, newPar, frame):
-        new = self.c.same(id, paramter, newPar)
+        new = self.c.isNew(id, paramter, newPar)
         if new == "new":
             sull = self.c.edit(id, paramter, newPar)
             self.alert("Susses", sull)
@@ -37,6 +38,22 @@ class View(ctk.CTk):
         else:
             self.alert("ERROR",new)
 
+    def delete(self, id):
+        response = msg.askquestion(title="Delete Account",
+                               message="Are you sure you want to delete this account? This action cannot be undone.",
+                               icon="warning")  # Use askquestion for a clear yes/no choice
+        if response == "yes":
+            try:
+                # Perform account deletion logic here
+                self.m.erase(id)
+                print(f"Account {id} deleted successfully.")
+                self.eraseFrame.destroy()
+                self.__init__()
+            except Exception as e:
+                print(f"Account deletion failed: {e}")
+                msg.showerror("Error", "An error occurred while deleting the account.")
+        else:
+            print("Account deletion canceled.")
 
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
@@ -383,7 +400,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Back",
-            command=lambda: [self.editPasswordFrame.destroy(), self.loggedFrame(id)],
+            command=lambda: [self.editPasswordFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
@@ -404,7 +421,43 @@ class View(ctk.CTk):
         self.eraseFrame = ctk.CTkFrame(master=self.app)
         self.app.title ("Erase")
         self.app.bgcolor = self.primaryC
-        self.loginFrame.pack(fill=ctk.BOTH, expand=True)
+        self.eraseFrame.pack(fill=ctk.BOTH, expand=True)
+
+        title = ctk.CTkLabel(
+            master=self.eraseFrame, 
+            text="Erase Account",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+        )
+
+        eraseButton = ctk.CTkButton(
+            master=self.eraseFrame,
+            text="ERASE ACCOUNT",
+            command=lambda: [self.delete(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color="#000000",
+            hover_color="#000000",
+            fg_color="red",
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        backButton = ctk.CTkButton(
+            master=self.eraseFrame,
+            text="Back",
+            command=lambda: [self.eraseFrame.destroy(), self.logged(id)],
+            font=("RobotoSlab", 12),
+            text_color=self.secC,
+            border_color=self.primaryC,
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        title.pack(padx=10, pady=10)
+        eraseButton.pack(padx=10, pady=10)
+        backButton.pack(padx=10, pady=10)
 
 
 

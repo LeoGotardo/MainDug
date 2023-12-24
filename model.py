@@ -154,12 +154,13 @@ class Model:
 
             for result in password:
                 passwords.append(result["Password"])
+            print(f"{d.Margin}Passwords: {passwords}{d.Margin}")
             if type(passwords[0]) == 'bson.objectid.ObjectId':
                 self.error.append(f"Password is alredy {new}")
-                print(f"{d.Margin}{d.Default}login:{password}\nlogins: {passwords} {d.Margin}")
+                print(f"{d.Margin}{d.Default}Password:{password}\nPasswords: {passwords} {d.Margin}")
                 return "notNew"
             else:
-                print(f"{d.Margin}{d.Default}login:{password}\nlogins: {passwords} {d.Margin}")
+                print(f"{d.Margin}{d.Default}Password:{password}\nPasswords: {passwords} {d.Margin}")
                 return "new"
             
         else:
