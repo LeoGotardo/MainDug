@@ -19,7 +19,7 @@ class Model:
         self.error = []
 
         # Debug: exibe o conteúdo da coleção.
-        print(f"{d.Margin}{d.Default}Connection String:{MongoClient(self.CONNECTION_STRING)}{d.Margin}")
+        print(f"{d.Margin}Connection String:{MongoClient(self.CONNECTION_STRING)}{d.Margin}")
 
     def cad(self, login, Password):
         # Adiciona um novo usuário à coleção 'Logins'
@@ -35,9 +35,13 @@ class Model:
     def verifyLogin(self, login):
         # Verifica se um login específico existe na coleção 'Logins'
         hasLogin = self.has(login)
-        print(d.Margin,"Has Login and password:",hasLogin, d.Margin)
 
-        return hasLogin
+        if hasLogin == False: 
+            print(d.Margin,"Has Login and password:",hasLogin, d.Margin)
+            return True
+        else:
+            print(d.Margin,"Has Login and password:",hasLogin, d.Margin)
+            return False
 
 
     def valid(self, login, password):
@@ -53,12 +57,12 @@ class Model:
 
         for result in every:
             logins.append(result["Login"])
-
+            
         if len(logins) == 0:
             logins.append(1)
 
         if type(logins[0]) == 'bson.objectid.ObjectId':
-            self.error.append("Login alrady exists")
+            self.error[0] = "Login alrady exists"
             return self.error
         else:
             return False
@@ -67,28 +71,17 @@ class Model:
 
     def credencialADD(self, login, password, passwordCondirm):
         # Adiciona credenciais se válidas, caso contrário, retorna uma mensagem de error
-        if password == passwordCondirm:
+        if self.passValid(password, passwordCondirm) == True:
             if self.has == False:
                 self.cad(login, password)
-                self.error.append("Valid Login")
+                self.error[0] = "Valid Login"
+                return self.error
+            else:
+                self.error[0] = "This user alredy exists."
                 return self.error
         else:
-            self.error.append("Passwords do not metch ")
+            self.error[0] = "Passwords do not metch"
             return self.error
-
-
-    def credencialValid(self, login, password, passwordConfirm):
-        # Verifica se as credenciais são válidas
-        if self.loginValid(login) == True:
-            if self.passValid(password, passwordConfirm) == True:
-                validPass = True
-                return validPass
-            else:
-                self.error.append("Invalid Password")
-                return False
-        else:
-            self.error.append("Invalid Login")
-            return False
 
 
     def verify(self, login, password):
@@ -123,12 +116,12 @@ class Model:
 
     def passValid(self, password, passwordConfirm):
         # Verifica se uma senha é válida
-        if password == passwordConfirm:
-            return True
-        elif password == "" or passwordConfirm == "":
+        if password == passwordConfirm and password == "" or passwordConfirm == "":
+            self.error[0] = "Invalid Password"
             return False
         else:
-            self.error.append("Invalid Password")
+            self.error[0] = "Invalid Password"
+            return False
 
 
     def validPass(self, login, password):
@@ -149,11 +142,11 @@ class Model:
             for result in login:
                 logins.append(result["Login"])
             if type(logins[0]) == 'bson.objectid.ObjectId':
-                self.error.append(f"Login is alredy {new}")
-                print(f"{d.Margin}{d.Default}login:{login}\nlogins: {logins}\nlogin type = {type(logins[0])}{d.Margin}")
+                self.error[1] = f"Login is alredy {new}"
+                print(f"{d.Margin}login:{login}\nlogins: {logins}\nlogin type = {type(logins[0])}{d.Margin}")
                 return "notNew"
             else:
-                print(f"{d.Margin}{d.Default}login:{login}\nlogins: {logins}\nlogin type = {type(logins[0])}{d.Margin}")
+                print(f"{d.Margin}login:{login}\nlogins: {logins}\nlogin type = {type(logins[0])}{d.Margin}")
                 return "new"
             
         elif paramter == "password":
@@ -164,11 +157,11 @@ class Model:
                 passwords.append(result["Password"])
             print(f"{d.Margin}Passwords: {passwords}{d.Margin}")
             if type(passwords[0]) == 'bson.objectid.ObjectId':
-                self.error.append(f"Password is alredy {new}")
-                print(f"{d.Margin}{d.Default}Password:{password}\nPasswords: {passwords} {d.Margin}")
+                self.error[1] = f"Password is alredy {new}"
+                print(f"{d.Margin}Password:{password}\nPasswords: {passwords} {d.Margin}")
                 return "notNew"
             else:
-                print(f"{d.Margin}{d.Default}Password:{password}\nPasswords: {passwords} {d.Margin}")
+                print(f"{d.Margin}Password:{password}\nPasswords: {passwords} {d.Margin}")
                 return "new"
             
         else:
@@ -186,7 +179,7 @@ class Model:
             done = f"Password updated to {newPar}"
             return done
         else:
-            self.error.append("Paramter_Error")
+            self.error[1] = "Paramter_Error"
             return self.error
 
 
