@@ -56,23 +56,28 @@ class View(ctk.CTk):
 
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
-        itens = self.c.verify(login, password)
-        print(f"{d.Margin}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
-        if itens[1] == True:
-            self.loginFrame.destroy()
-            self.logged(itens[0])
+        if login != '' or password != '':
+            itens = self.c.verify(login, password)
+            print(f"{d.Margin}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
+            if itens[1] == True:
+                self.loginFrame.destroy()
+                self.logged(itens[0])
+            else:
+                self.alert("ERROR",itens[2])
         else:
-            self.alert("ERROR",itens[2])
+            self.alert("ERROR", "Login or Password can't be empty")
 
 
     def addCad(self, login, password, passwordConfirm):
         print(f"{d.Margin}Login:{login} \nPassword:{password}\nPasswordConfirm:{passwordConfirm}{d.Margin}")
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.credencialADD(login, password, passwordConfirm)
+        print(f"{d.Margin}error = {error}{d.Margin}")
         if error[0] == "Valid Login":
             self.alert("Susses","Sussesfull Login")
         else:
             self.alert("ERROR",error[0])
+            
 
 
     def alert(self, title, text):
@@ -121,7 +126,7 @@ class View(ctk.CTk):
         loginButton = ctk.CTkButton(
             master=self.loginFrame,
             text="Login",
-            command=lambda: self.validLogin(loginEntry.get(), passwordEntry.get()),
+            command=lambda: [loginEntry.delete(0, 'end'), passwordEntry.delete(0, 'end'), self.validLogin(loginEntry.get(), passwordEntry.get())],
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
