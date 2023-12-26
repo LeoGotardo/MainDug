@@ -111,6 +111,8 @@ class View(ctk.CTk):
             width=200
         )
 
+        login = loginEntry.get()
+
         passwordEntry = ctk.CTkEntry(
             master=self.loginFrame,
             placeholder_text="Password",
@@ -123,10 +125,12 @@ class View(ctk.CTk):
             show="*"
         )
 
+        passwrord = passwordEntry.get()
+
         loginButton = ctk.CTkButton(
             master=self.loginFrame,
             text="Login",
-            command=lambda: [loginEntry.delete(0, 'end'), passwordEntry.delete(0, 'end'), self.validLogin(loginEntry.get(), passwordEntry.get())],
+            command=lambda: [loginEntry.delete(0, 'end'), passwordEntry.delete(0, 'end'), self.validLogin(login, passwrord)],
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
@@ -168,11 +172,11 @@ class View(ctk.CTk):
             font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
         )
 
-        signupEntry = ctk.CTkEntry(
+        loginEntry = ctk.CTkEntry(
             master=self.signupFrame,
             placeholder_text="Login",
             font=("RobotoSlab", 12),
-            text_color=self.secC,
+            text_color=self.sec
             border_color=self.secC,
             border_width=2,
             height=40,
@@ -203,10 +207,14 @@ class View(ctk.CTk):
             show="*"
         )
 
+        login = loginEntry.get()
+        password = password.get()
+        passwordConfirm = passwordConfirm.get()
+
         signupButton = ctk.CTkButton(
             master=self.signupFrame,
             text="Signup",
-            command=lambda: [self.addCad(signupEntry.get(), passwordEntry.get(), passwordConfirmEntry.get())],
+            command=lambda: [loginEntry.delete(0, 'end'),passwordEntry.delete(0, 'end'), passwordConfirmEntry.delete(0, 'end'), self.addCad(login, password, passwordConfirm)],
             font=("RobotoSlab", 12),
             text_color=self.secC,
             border_color=self.primaryC,
@@ -228,7 +236,7 @@ class View(ctk.CTk):
         )
 
         title.pack(padx=10, pady=10)
-        signupEntry.pack(padx=10, pady=10)
+        loginEntry.pack(padx=10, pady=10)
         passwordEntry.pack(padx=10, pady=10)
         passwordConfirmEntry.pack(padx=10, pady=10)
         signupButton.pack(padx=10, pady=10)
