@@ -1,8 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox as msg
 from controller import Controller
-import PIL as P
-from PIL import ImageTk as imgTK
 from PIL import Image as img
 import Debug as d
 
