@@ -1,6 +1,9 @@
 import customtkinter as ctk
 from tkinter import messagebox as msg
 from controller import Controller
+import PIL as P
+from PIL import ImageTk as imgTK
+from PIL import Image as img
 import Debug as d
 
 
@@ -10,10 +13,10 @@ class View(ctk.CTk):
         self.tablExist = self.c.start()
         self.app = ctk.CTk()
 
-        self.primaryC = "black"
-        self.secC = "white"
         self.theme = ctk.set_appearance_mode('dark')
         self.app.geometry("500x500")
+        self.see = ctk.CTkImage(dark_image=img.open("icons/see.ico"))
+        self.unsee = ctk.CTkImage(dark_image=img.open("icons/unsee.ico"))
         self.login()
 
         self.app.mainloop()
@@ -64,8 +67,12 @@ class View(ctk.CTk):
                 self.logged(itens[0])
             else:
                 self.alert("ERROR",itens[2])
+                self.loginFrame.destroy()
+                self.login()
         else:
             self.alert("ERROR", "Login or Password can't be empty")
+            self.loginFrame.destroy()
+            self.login()
 
 
     def addCad(self, login, password, passwordConfirm):
@@ -75,9 +82,29 @@ class View(ctk.CTk):
         print(f"{d.Margin}error = {error}{d.Margin}")
         if error[0] == "Valid Login":
             self.alert("Susses","Sussesfull Login")
+            self.signupFrame.destroy()
+            self.login()
         else:
             self.alert("ERROR",error[0])
-            
+            self.signupFrame.destroy()
+            self.signup()
+
+    
+    def seePass(self, entry, button):
+        if entry.cget('show') == "*":
+            entry.configure(show="")
+            button.configure(image=self.unsee)
+        elif entry.cget('show') == "":
+            entry.configure(show="*")
+            button.configure(image=self.see)
+
+    def theme(frame, button):
+        if frame.cget('set_appearance_mode') == 'dark':
+            frame.configure(ctk.set_appearance_mode('ligth'))
+            button.configure(image='icons/Dark.ico')
+        elif frame.cget('set_appearance_mode') == 'ligth':
+            frame.configure(ctk.set_appearance_mode('dark'))
+            button.configure(image='icons/White.ico')
 
 
     def alert(self, title, text):
@@ -88,10 +115,10 @@ class View(ctk.CTk):
     def login(self):
         # Configura a página de login
         self.loginFrame = ctk.CTkFrame(master=self.app)
-        self.app.title ("Login")
-        self.app.bgcolor = self.primaryC
+        self.app.title("Login")
         self.loginFrame.pack(fill=ctk.BOTH, expand=True)
         self.app.iconbitmap(default="icons/Alien.ico")
+        ctk.set_appearance_mode('dark')
 
         title = ctk.CTkLabel(
             master=self.loginFrame,
@@ -104,36 +131,39 @@ class View(ctk.CTk):
             master=self.loginFrame,
             placeholder_text="Login",
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.secC,
             border_width=2,
             height=40,
             width=200
         )
 
-        login = loginEntry.get()
-
         passwordEntry = ctk.CTkEntry(
             master=self.loginFrame,
             placeholder_text="Password",
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.secC,
             border_width=2,
             height=40,
             width=200,
             show="*"
         )
 
-        passwrord = passwordEntry.get()
+        showPass = ctk.CTkButton(
+            master=self.loginFrame,
+            text="",
+            command=lambda:[self.seePass(passwordEntry, showPass)],
+            font=("RobotoSlab", 12),
+            fg_color='#343638',
+            hover_color='#343638',
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.see
+        )
 
         loginButton = ctk.CTkButton(
             master=self.loginFrame,
             text="Login",
-            command=lambda: [loginEntry.delete(0, 'end'), passwordEntry.delete(0, 'end'), self.validLogin(login, passwrord)],
+            command=lambda: [self.validLogin(loginEntry.get(), passwordEntry.get())],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
@@ -144,16 +174,29 @@ class View(ctk.CTk):
             text="Signup",
             command=lambda: [self.loginFrame.destroy(), self.signup()],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
         )
 
+        theme = ctk.CTkButton(
+            master=self.loginFrame,
+            text="",
+            command=lambda:[self.theme(self.loginFrame, theme)],
+            font=("RobotoSlab", 12),
+            fg_color='#343638',
+            hover_color='#343638',
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=img.open("icons/White.ico")
+        )
+
+
         title.pack(padx=10, pady=10)
         loginEntry.pack(padx=10, pady=10)
         passwordEntry.pack(padx=10, pady=10)
+        showPass.pack(padx=10, pady=10)
         loginButton.pack(padx=10, pady=10)
         signupButton.pack(padx=10, pady=10)
 
@@ -162,22 +205,22 @@ class View(ctk.CTk):
         # Configura a página de cadastro
         self.signupFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Signup")
-        self.app.bgcolor = self.primaryC
         self.signupFrame.pack(fill="both", expand=True)
         self.app.iconbitmap(default="icons/Heart.ico")
+        ctk.set_appearance_mode('dark')
 
         title = ctk.CTkLabel(
             master=self.signupFrame, 
             text="Signup",
-            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+            font=ctk.CTkFont(family="Helvetica",
+                            size=36, weight="bold",
+                            slant="italic")
         )
 
         loginEntry = ctk.CTkEntry(
             master=self.signupFrame,
             placeholder_text="Login",
             font=("RobotoSlab", 12),
-            text_color=self.sec
-            border_color=self.secC,
             border_width=2,
             height=40,
             width=200
@@ -187,40 +230,57 @@ class View(ctk.CTk):
             master=self.signupFrame,
             placeholder_text="Password",
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.secC,
             border_width=2,
             height=40,
             width=200,
             show="*"
+        )
+
+        showpass = ctk.CTkButton(
+            master=self.signupFrame,
+            command=lambda:[self.seePass(passwordEntry, showpass)],
+            text="",
+            font=("RobotoSlab", 12),
+            fg_color='#343638',
+            hover_color='#343638',
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.see
         )
 
         passwordConfirmEntry = ctk.CTkEntry(
             master=self.signupFrame,
             placeholder_text="Password Confirm",
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.secC,
             border_width=2,
             height=40,
+            bg_color='black',
             width=200,
             show="*"
         )
-
-        login = loginEntry.get()
-        password = password.get()
-        passwordConfirm = passwordConfirm.get()
+        
+        showPassConfirm = ctk.CTkButton(
+            master=self.signupFrame,
+            text="",
+            command=lambda:[self.seePass(passwordConfirmEntry, showPassConfirm)],
+            font=("RobotoSlab", 12),
+            fg_color='#343638',
+            hover_color='#343638',
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.see
+        )
 
         signupButton = ctk.CTkButton(
             master=self.signupFrame,
             text="Signup",
-            command=lambda: [loginEntry.delete(0, 'end'),passwordEntry.delete(0, 'end'), passwordConfirmEntry.delete(0, 'end'), self.addCad(login, password, passwordConfirm)],
+            command=lambda: [self.addCad(loginEntry.get(), passwordEntry.get(), passwordConfirmEntry.get())],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
-            width=100
+            width=100,
         )
         
         loginButton = ctk.CTkButton(
@@ -228,27 +288,41 @@ class View(ctk.CTk):
             text="Login",
             command=lambda:[self.signupFrame.destroy(), self.login()],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
         )
 
+        theme = ctk.CTkButton(
+            master=self.signupFrame,
+            text="",
+            command=lambda:[self.theme(self.signupFrame, theme)],
+            font=("RobotoSlab", 12),
+            fg_color='#343638',
+            hover_color='#343638',
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=img.open("icons/White.ico")
+        )
+
         title.pack(padx=10, pady=10)
         loginEntry.pack(padx=10, pady=10)
         passwordEntry.pack(padx=10, pady=10)
+        showpass.pack(padx=10, pady=10)
         passwordConfirmEntry.pack(padx=10, pady=10)
+        showPassConfirm.pack(padx=10, pady=10)
         signupButton.pack(padx=10, pady=10)
         loginButton.pack(padx=10, pady=10)
+        theme.pack(padx=10, pady=10)
 
 
     def logged(self, id):
         self.loggedFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Logged")
-        self.app.bgcolor = self.primaryC
         self.loggedFrame.pack(fill=ctk.BOTH, expand=True)
         self.app.iconbitmap(default="icons/Star.ico")
+        ctk.set_appearance_mode('dark')
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
@@ -261,8 +335,6 @@ class View(ctk.CTk):
             text="Edit Login",
             command=lambda: [self.loggedFrame.destroy(), self.editLogin(id)],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
@@ -273,8 +345,6 @@ class View(ctk.CTk):
             text="Edit Password",
             command=lambda: [self.loggedFrame.destroy(), self.editPass(id)],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
@@ -285,8 +355,6 @@ class View(ctk.CTk):
             text="Erase Account",
             command=lambda: [self.loggedFrame.destroy(), self.erase(id)],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
@@ -297,25 +365,38 @@ class View(ctk.CTk):
             text="Exit",
             command=lambda:[self.loggedFrame.destroy(), self.login()],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
         )
+
+        theme = ctk.CTkButton(
+            master=self.loggedFrame,
+            text="",
+            command=lambda:[self.theme(self.loggedFrame, theme)],
+            font=("RobotoSlab", 12),
+            fg_color='#343638',
+            hover_color='#343638',
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=img.open("icons/White.ico")
+        )
+
 
         title.pack(padx=10, pady=10)
         loginEditButton.pack(padx=10, pady=10)
         passEditButton.pack(padx=10, pady=10)
         eraseButton.pack(padx=10, pady=10)
         exitButton.pack(padx=10, pady=10)
+        theme.pack(padx=10, pady=10)
 
 
     def editLogin(self, id):
         self.editLoginFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Login")
-        self.app.bgcolor = self.primaryC
         self.editLoginFrame.pack(fill=ctk.BOTH, expand=True)
+        ctk.set_appearance_mode('dark')
 
         title = ctk.CTkLabel(
             master=self.editLoginFrame, 
@@ -327,8 +408,6 @@ class View(ctk.CTk):
             master=self.editLoginFrame,
             placeholder_text="New Login",
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.secC,
             border_width=2,
             height=40,
             width=200
@@ -339,8 +418,6 @@ class View(ctk.CTk):
             text="Edit Login",
             command=lambda:[self.isNew(id, "login", loginEntry.get(), "editLogin")],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
@@ -351,24 +428,37 @@ class View(ctk.CTk):
             text="Back",
             command=lambda: [self.editLoginFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
         )
 
+        theme = ctk.CTkButton(
+            master=self.editLoginFrame,
+            text="",
+            command=lambda:[self.theme(self.editLoginFrame, theme)],
+            font=("RobotoSlab", 12),
+            fg_color='#343638',
+            hover_color='#343638',
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=img.open("icons/White.ico")
+        )
+
+
         title.pack(padx=10, pady=10)
         loginEntry.pack(padx=10, pady=10)
         loginEditButton.pack(padx=10, pady=10)
         backButton.pack(padx=10, pady=10)
+        theme.pack(padx=10, pady=10)
 
 
     def editPass(self, id):
         self.editPasswordFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Password")
-        self.app.bgcolor = self.primaryC
         self.editPasswordFrame.pack(fill=ctk.BOTH, expand=True)
+        ctk.set_appearance_mode('dark')
 
         title = ctk.CTkLabel(
             master=self.editPasswordFrame, 
@@ -380,24 +470,46 @@ class View(ctk.CTk):
             master=self.editPasswordFrame,
             placeholder_text="New Password",
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.secC,
             border_width=2,
             height=40,
             width=200,
             show="*"
         )
 
+        showPass = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="",
+            command=lambda:[self.seePass(passwordEntry, showPass)],
+            font=("RobotoSlab", 12),
+            fg_color='#343638',
+            hover_color='#343638',
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.see
+        )
+
         passwordConfirmEntry = ctk.CTkEntry(
             master=self.editPasswordFrame,
             placeholder_text="New Password Confirm",
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.secC,
             border_width=2,
             height=40,
             width=200,
             show="*"
+        )
+
+        showPassConfirm = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="",
+            command=lambda:[self.seePass(passwordConfirmEntry, showPassConfirm)],
+            font=("RobotoSlab", 12),
+            fg_color='#343638',
+            hover_color='#343638',
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.see
         )
 
         passEditButton = ctk.CTkButton(
@@ -405,8 +517,6 @@ class View(ctk.CTk):
             text="Edit Password",
             command=lambda: [self.isNew(id, "password", passwordEntry.get(), "editPassword")],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
@@ -417,27 +527,40 @@ class View(ctk.CTk):
             text="Back",
             command=lambda: [self.editPasswordFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
         )
+
+        theme = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="",
+            command=lambda:[self.theme(self.editPasswordFrame, theme)],
+            font=("RobotoSlab", 12),
+            fg_color='#343638',
+            hover_color='#343638',
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=img.open("icons/White.ico")
+        )
+
 
         title.pack(padx=10, pady=10)
         passwordEntry.pack(padx=10, pady=10)
         passwordConfirmEntry.pack(padx=10, pady=10)
         passEditButton.pack(padx=10, pady=10)
         backButton.pack(padx=10, pady=10)
+        theme.pack(padx=10, pady=10)
 
 
     def erase(self, id):
     # Configura a página Erase
         self.eraseFrame = ctk.CTkFrame(master=self.app)
         self.app.title ("Erase")
-        self.app.bgcolor = self.primaryC
         self.eraseFrame.pack(fill=ctk.BOTH, expand=True)
         self.app.iconbitmap(default="icons/Skull.ico")
+        ctk.set_appearance_mode('dark')
 
         title = ctk.CTkLabel(
             master=self.eraseFrame, 
@@ -464,16 +587,29 @@ class View(ctk.CTk):
             text="Back",
             command=lambda: [self.eraseFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
-            border_color=self.primaryC,
             corner_radius=20,
             height=40,
             width=100
         )
 
+        theme = ctk.CTkButton(
+            master=self.eraseFrame,
+            text="",
+            command=lambda:[self.theme(self.eraseFrame, theme)],
+            font=("RobotoSlab", 12),
+            fg_color='#343638',
+            hover_color='#343638',
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=img.open("icons/White.ico")
+        )
+
+
         title.pack(padx=10, pady=10)
         eraseButton.pack(padx=10, pady=10)
         backButton.pack(padx=10, pady=10)
+        theme.pack(padx=10, pady=10)
 
 
 

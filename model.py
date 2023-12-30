@@ -37,10 +37,10 @@ class Model:
         hasLogin = self.has(login)
 
         if hasLogin == False: 
-            print(d.Margin,"Has Login and password:",hasLogin, d.Margin)
+            print(d.Margin,"Has Login:",hasLogin, d.Margin)
             return True
         else:
-            print(d.Margin,"Has Login and password:",hasLogin, d.Margin)
+            print(d.Margin,"Has Login:",hasLogin, d.Margin)
             return False
 
 
@@ -86,7 +86,7 @@ class Model:
 
     def verify(self, login, password):
         # Verifica se um login e senha são válidos e retorna o ID do usuário
-        if self.verifyLogin(login) == True:
+        if self.verifyLogin(login) == False:
             if self.validPass(login, password) == True:
                 ret = self.findID(login, password)
 
