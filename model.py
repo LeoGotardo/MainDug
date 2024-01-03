@@ -16,7 +16,11 @@ class Model:
 
 
         # Lista para armazenar mensagens de erro
-        self.error = []
+        self.status = {
+                    0:None,
+                    1:None,
+                    2:None
+                    }
 
         # Debug: exibe o conteúdo da coleção.
         print(f"{d.Margin}Connection String:{MongoClient(self.CONNECTION_STRING)}{d.Margin}")
@@ -62,8 +66,8 @@ class Model:
             logins.append(1)
 
         if type(logins[0]) == 'bson.objectid.ObjectId':
-            self.error[0] = "Login alrady exists"
-            return self.error
+            self.status[0] = "Login alrady exists"
+            return self.status
         else:
             return False
 
@@ -74,14 +78,14 @@ class Model:
         if self.passValid(password, passwordCondirm) == True:
             if self.has == False:
                 self.cad(login, password)
-                self.error[0] = "Valid Login"
-                return self.error
+                self.status[0] = "Valid Login"
+                return self.status
             else:
-                self.error[0] = "This user alredy exists."
-                return self.error
+                self.status[0] = "This user alredy exists."
+                return self.status
         else:
-            self.error[0] = "Passwords do not metch"
-            return self.error
+            self.status[0] = "Passwords do not metch"
+            return self.status
 
 
     def verify(self, login, password):
@@ -116,12 +120,13 @@ class Model:
 
     def passValid(self, password, passwordConfirm):
         # Verifica se uma senha é válida
-        if password == passwordConfirm and password == "" or passwordConfirm == "":
-            self.error[0] = "Invalid Password"
-            return False
+        if password == passwordConfirm:
+            self.status[0] = "Passwords doesn't match"
+            if password == "" or passwordConfirm == "":
+                self.status[0] = "Labels cant be empty"
+                return False
         else:
-            self.error[0] = "Invalid Password"
-            return False
+            return True
 
 
     def validPass(self, login, password):
@@ -142,7 +147,7 @@ class Model:
             for result in login:
                 logins.append(result["Login"])
             if type(logins[0]) == 'bson.objectid.ObjectId':
-                self.error[1] = f"Login is alredy {new}"
+                self.status[1] = f"Login is alredy {new}"
                 print(f"{d.Margin}login:{login}\nlogins: {logins}\nlogin type = {type(logins[0])}{d.Margin}")
                 return "notNew"
             else:
@@ -157,7 +162,7 @@ class Model:
                 passwords.append(result["Password"])
             print(f"{d.Margin}Passwords: {passwords}{d.Margin}")
             if type(passwords[0]) == 'bson.objectid.ObjectId':
-                self.error[1] = f"Password is alredy {new}"
+                self.status[1] = f"Password is alredy {new}"
                 print(f"{d.Margin}Password:{password}\nPasswords: {passwords} {d.Margin}")
                 return "notNew"
             else:
@@ -179,8 +184,8 @@ class Model:
             done = f"Password updated to {newPar}"
             return done
         else:
-            self.error[1] = "Paramter_Error"
-            return self.error
+            self.status[1] = "Paramter_Error"
+            return self.status
 
 
 
