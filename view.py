@@ -60,7 +60,7 @@ class View(ctk.CTk):
 
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
-        if login != '' or password != '':
+        if login != '' and password != '':
             itens = self.c.verify(login, password)
             print(f"{d.Margin}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
             if itens[1] == True:

@@ -63,7 +63,9 @@ class Model:
             logins.append(result["Login"])
             
         if len(logins) == 0:
-            logins.append(1)
+            logins.append(0)
+
+        print(f"{d.Margin}type(logins[0]): {type(logins[0])}{d.Margin}")
 
         if type(logins[0]) == 'bson.objectid.ObjectId':
             self.status[0] = "Login alrady exists"
@@ -76,7 +78,7 @@ class Model:
     def credencialADD(self, login, password, passwordCondirm):
         # Adiciona credenciais se válidas, caso contrário, retorna uma mensagem de error
         if self.passValid(password, passwordCondirm) == True:
-            if self.has == False:
+            if self.has(login) == False:
                 self.cad(login, password)
                 self.status[0] = "Valid Login"
                 return self.status
@@ -120,10 +122,12 @@ class Model:
 
     def passValid(self, password, passwordConfirm):
         # Verifica se uma senha é válida
-        if password == passwordConfirm:
+        if password != passwordConfirm:
             self.status[0] = "Passwords doesn't match"
             if password == "" or passwordConfirm == "":
                 self.status[0] = "Labels cant be empty"
+                return False
+            else:
                 return False
         else:
             return True
