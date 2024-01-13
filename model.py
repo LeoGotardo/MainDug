@@ -65,11 +65,11 @@ class Model:
         if len(logins) == 0:
             logins.append(0)
 
-        print(f"{d.Margin}type(logins[0]): {type(logins[0])}{d.Margin}")
+        print(f"{d.Margin}type(logins[0]): {type(logins[0])}\nlogins[0]: {logins[0]}{d.Margin}")
 
         if type(logins[0]) == 'bson.objectid.ObjectId':
             self.status[0] = "Login alrady exists"
-            return self.status
+            return True
         else:
             return False
 
@@ -92,22 +92,15 @@ class Model:
 
     def verify(self, login, password):
         # Verifica se um login e senha são válidos e retorna o ID do usuário
-        if self.verifyLogin(login) == False:
-            if self.validPass(login, password) == True:
-                ret = self.findID(login, password)
+        if self.validPass(login, password) == True:
+            ret = self.findID(login, password)
 
-                ret.append(None)
+            ret.append(None)
                 
-                if ret[1] == True:
-                    return ret
-            else:
-                ret = [False, None, "Invalid Login"]
-                
+            if ret[1] == True:
                 return ret
-        else:  
+        else:
             ret = [False, None, "Invalid Login"]
-
-            print(d.Margin, ret, d.Margin)
             return ret
 
 
@@ -136,11 +129,16 @@ class Model:
     def validPass(self, login, password):
         # Verifica se um login e senha são válidos
         login = self.Logins.find({"$and": [{"Login": login}, {"Password": password}]})
-        
-        if login != []:
+
+        print(f"{d.Margin}login: {d.Magenta}{login}\n{d.Default}type(login):{d.Magenta} {type(login)}{d.Margin}")
+        if login == 'bson.objectid.ObjectId':
+            self.status[0] = 'Valid Login'
             return True
-        else:
+        elif login == 'pymongo.cursor.Cursor':
+            self.status[0] = 'Invalid Login'
             return False 
+        else:
+            self.status[0] = 'Unknown error'
         
 
     def isNew(self, id, paramter, new):
