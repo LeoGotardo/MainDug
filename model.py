@@ -36,7 +36,7 @@ class Model:
         return id  # Retorna o ID do usuário (não está implementado corretamente)
 
 
-    def verifyLogin(self, login):
+    def existLogin(self, login):
         # Verifica se um login específico existe na coleção 'Logins'
         hasLogin = self.has(login)
 
@@ -90,10 +90,11 @@ class Model:
             return self.status
 
 
-    def verify(self, login, password):
+    def verifyCad(self, login, password):
         # Verifica se um login e senha são válidos e retorna o ID do usuário
-        if self.validPass(login, password) == True:
-            ret = self.findID(login, password)
+        if self.existLogin(login) == False:
+            if self.validPass(login, password) == True:
+                ret = self.findID(login, password)
 
             ret.append(None)
                 
