@@ -10,10 +10,10 @@ class View(ctk.CTk):
         self.app = ctk.CTk()
 
         self.app.geometry("500x500")
-        self.see = ctk.CTkImage(dark_image=img.open("icons/see.ico"))
-        self.unsee = ctk.CTkImage(dark_image=img.open("icons/unsee.ico"))
-        self.white = ctk.CTkImage(dark_image=img.open("icons/White.ico"))
-        self.dark = ctk.CTkImage(dark_image=img.open("icons/Dark.ico"))
+        self.see = ctk.CTkImage(dark_image=img.open("./icons/see.ico"))
+        self.unsee = ctk.CTkImage(dark_image=img.open("./icons/unsee.ico"))
+        self.white = ctk.CTkImage(dark_image=img.open("./icons/White.ico"))
+        self.dark = ctk.CTkImage(dark_image=img.open("./icons/Dark.ico"))
         self.login()
 
         self.app.mainloop()
@@ -21,7 +21,7 @@ class View(ctk.CTk):
     def valid_login(self, login, password):
         user_id = self.controller.find_user_id(login, password)
         if user_id:
-            self.login_frame.destroy()
+            self.loginFrame.destroy()
             self.logged(user_id)
         else:
             self.alert("ERROR", "Invalid login or password")
@@ -30,7 +30,7 @@ class View(ctk.CTk):
         user_added = self.controller.add_user(login, password, password_confirm)
         if user_added:
             self.alert("Success", "User successfully added")
-            self.signup_frame.destroy()
+            self.signupFrame.destroy()
             self.login()
         else:
             self.alert("ERROR", "Error adding user")
@@ -40,7 +40,7 @@ class View(ctk.CTk):
         if response == "yes":
             delete_successful = self.controller.delete_user(user_id)
             if delete_successful:
-                self.erase_frame.destroy()
+                self.eraseFrame.destroy()
                 self.login()
             else:
                 msg.showerror("Error", "An error occurred while deleting the account.")
@@ -74,7 +74,7 @@ class View(ctk.CTk):
         self.loginFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Login")
         self.loginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
-        self.app.iconbitmap(default="icons/Alien.ico")
+        self.app.iconbitmap(default="./icons/Alien.ico")
         ctk.set_appearance_mode('dark')
 
         title = ctk.CTkLabel(
@@ -163,7 +163,7 @@ class View(ctk.CTk):
         self.signupFrame = ctk.CTkFrame(master=self.app,)
         self.app.title("Signup")
         self.signupFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
-        self.app.iconbitmap(default="icons/Heart.ico")
+        self.app.iconbitmap(default="./icons/Heart.ico")
         ctk.set_appearance_mode('dark')
 
         title = ctk.CTkLabel(
@@ -278,7 +278,7 @@ class View(ctk.CTk):
         self.loggedFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Logged")
         self.loggedFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
-        self.app.iconbitmap(default="icons/Star.ico")
+        self.app.iconbitmap(default="./icons/Star.ico")
         ctk.set_appearance_mode('dark')
 
         title = ctk.CTkLabel(
@@ -516,7 +516,7 @@ class View(ctk.CTk):
         self.eraseFrame = ctk.CTkFrame(master=self.app)
         self.app.title ("Erase")
         self.eraseFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
-        self.app.iconbitmap(default="icons/Skull.ico")
+        self.app.iconbitmap(default="./icons/Skull.ico")
         ctk.set_appearance_mode('dark')
 
         title = ctk.CTkLabel(
