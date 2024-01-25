@@ -1,4 +1,4 @@
-from model import Model
+from model2 import Model
 
 class Controller:
     def __init__(self):
@@ -31,22 +31,3 @@ class Controller:
 if __name__ == "__main__":
     # Create a Controller instance to test the class
     controller = Controller()
-
-    # Example usage of the controller
-    user_id = controller.add_user("username", "password123", "password123")
-    print(f"Added user ID: {user_id}")
-
-    # Verify if login is valid
-    is_valid = controller.is_login_valid("username")
-    print(f"Is login valid: {is_valid}")
-    # Update user information
-    update_status = controller.update_user(user_id, "password", "newpassword123")
-    print(f"Password updated: {update_status}")
-
-    # Find user ID
-    found_id = controller.find_user_id("username", "newpassword123")
-    print(f"Found user ID: {found_id}")
-
-    # Delete user
-    delete_status = controller.delete_user(user_id)
-    print(f"User deleted: {delete_status}")

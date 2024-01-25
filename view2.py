@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox as msg
-from controller import Controller
+from controller2 import Controller
 from PIL import Image as img
 
 class View(ctk.CTk):
