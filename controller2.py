@@ -12,10 +12,13 @@ class Controller:
         else:
             return False
 
-    def is_login_valid(self, login):
-        # Calls the is_login_valid method of Model and returns the result
-        return self.model.is_login_valid(login)
+    def is_password_valid(self, password, password_confirm):
+        return self.model.is_password_valid(password, password_confirm)
 
+    def is_login_valid(self, login, Password):
+        # Calls the is_login_valid method of Model and returns the result
+        return self.model.is_login_valid(login, Password)
+    
     def update_user(self, user_id, parameter, new_value):
         # Calls the update_user method of Model and returns the result
         return self.model.update_user(user_id, parameter, new_value)

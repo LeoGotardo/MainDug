@@ -36,11 +36,11 @@ class Model:
             logging.error(f"Failed to add user: {e}")
             return None
 
-    def is_login_valid(self, login):
+    def is_login_valid(self, login, Password):
         """
         Checks if the given login exists in the 'Logins' collection.
         """
-        return self.logins.find_one({"Login": login}) is not None
+        return self.logins.find_one({"Login": login},{"password":Password}) is not None
 
     def is_password_valid(self, password, password_confirm):
         """
