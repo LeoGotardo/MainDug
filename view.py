@@ -15,7 +15,9 @@ class View(ctk.CTk):
         self.unsee = ctk.CTkImage(dark_image=img.open("icons/unsee.ico"))
         self.white = ctk.CTkImage(dark_image=img.open("icons/White.ico"))
         self.dark = ctk.CTkImage(dark_image=img.open("icons/Dark.ico"))
-        self.login()
+        self.logged(id("ObjectId('65ad80836b898ac9c8e3a032')"))
+
+        self.mode = 'dark'
 
         self.app.mainloop()
 
@@ -100,11 +102,13 @@ class View(ctk.CTk):
 
 
     def theme(self, frame, button):
-        if ctk.set_appearance_mode == 'dark':
-            frame.ctk.set_appearance_mode('ligth')
+        if self.mode == 'dark':
+            self.mode = 'ligth'
+            ctk.set_appearance_mode('light')
             button.configure(image=self.dark)
-        elif ctk.set_appearance_mode == 'ligth':
-            frame.ctk.set_appearance_mode('dark')
+        if self.mode == 'ligth':
+            self.mode = 'dark'
+            ctk.set_appearance_mode('dark')
             button.configure(image=self.white)
 
 
@@ -119,7 +123,7 @@ class View(ctk.CTk):
         self.app.title("Login")
         self.loginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
         self.app.iconbitmap(default="icons/Alien.ico")
-        ctk.set_appearance_mode('dark')
+
 
         title = ctk.CTkLabel(
             master=self.loginFrame,
@@ -208,7 +212,7 @@ class View(ctk.CTk):
         self.app.title("Signup")
         self.signupFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
         self.app.iconbitmap(default="icons/Heart.ico")
-        ctk.set_appearance_mode('dark')
+
 
         title = ctk.CTkLabel(
             master=self.signupFrame, 
@@ -323,7 +327,7 @@ class View(ctk.CTk):
         self.app.title("Logged")
         self.loggedFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
         self.app.iconbitmap(default="icons/Star.ico")
-        ctk.set_appearance_mode('dark')
+
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
@@ -397,7 +401,7 @@ class View(ctk.CTk):
         self.editLoginFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Login")
         self.editLoginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
-        ctk.set_appearance_mode('dark')
+
 
         title = ctk.CTkLabel(
             master=self.editLoginFrame, 
@@ -459,7 +463,7 @@ class View(ctk.CTk):
         self.editPasswordFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Password")
         self.editPasswordFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
-        ctk.set_appearance_mode('dark')
+
 
         title = ctk.CTkLabel(
             master=self.editPasswordFrame, 
@@ -561,7 +565,7 @@ class View(ctk.CTk):
         self.app.title ("Erase")
         self.eraseFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
         self.app.iconbitmap(default="icons/Skull.ico")
-        ctk.set_appearance_mode('dark')
+
 
         title = ctk.CTkLabel(
             master=self.eraseFrame, 
