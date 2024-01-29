@@ -8,7 +8,6 @@ import Debug as d
 class View(ctk.CTk):
     def __init__(self):
         self.c = Controller()
-        self.tablExist = self.c.start()
         self.app = ctk.CTk()
 
         self.app.geometry("500x500")
@@ -61,7 +60,7 @@ class View(ctk.CTk):
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
         if login != '' or password != '':
-            itens = self.c.verify(login, password)
+            itens = self.c.is_login_valid(login, password)
             print(f"{d.Margin}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
             if itens[1] == True:
                 self.loginFrame.destroy()
@@ -79,7 +78,7 @@ class View(ctk.CTk):
     def addCad(self, login, password, passwordConfirm):
         print(f"{d.Margin}Login:{login} \nPassword:{password}\nPasswordConfirm:{passwordConfirm}{d.Margin}")
         # Adiciona um novo usuário e exibe uma mensagem apropriada
-        error = self.c.credencialADD(login, password, passwordConfirm)
+        error = self.c.add_user(login, password, passwordConfirm)
         print(f"{d.Margin}error = {error}{d.Margin}")
         if error[0] == "Valid Login":
             self.alert("Susses","Sussesfull Login")
