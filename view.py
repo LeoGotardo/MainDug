@@ -27,7 +27,7 @@ class View(ctk.CTk):
         if paramter == "Login":
             new = self.c.find_user_id(newPar, "$exists")
             if new != None:
-                sull = self.c.edit(id, paramter, newPar)
+                sull = self.c.update_user(id, paramter, newPar)
                 self.alert("Susses", sull)
 
                 if frame == "editLoguin":
@@ -426,7 +426,7 @@ class View(ctk.CTk):
         loginEditButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Edit Login",
-            command=lambda:[self.isNew(id, "login", loginEntry.get(), "editLogin")],
+            command=lambda:[self.isNew(id, "Login", loginEntry.get(), "editLogin")],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -519,7 +519,7 @@ class View(ctk.CTk):
         passEditButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Edit Password",
-            command=lambda: [self.isNew(id, "password", passwordEntry.get(), "editPassword")],
+            command=lambda: [self.isNew(id, "Password", passwordEntry.get(), "editPassword")],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -575,7 +575,6 @@ class View(ctk.CTk):
             text="ERASE ACCOUNT",
             command=lambda: [self.delete(id)],
             font=("RobotoSlab", 12),
-            text_color=self.secC,
             border_color="#000000",
             hover_color="#000000",
             fg_color="red",

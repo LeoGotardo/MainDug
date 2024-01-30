@@ -71,8 +71,12 @@ class Model:
         """
         Finds the ID of a user based on login and password.
         """
-        hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        user = self.logins.find_one({"Login": login, "Password": hashed_password})
+
+        if password != "$exists":
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+            user = self.logins.find_one({"Login": login, "Password": hashed_password})
+        else:
+            user = self.logins.find_one({"Login": login, "Password": password})
         return user["_id"] if user else None
 
     def delete_user(self, user_id):
