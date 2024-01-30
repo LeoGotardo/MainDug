@@ -65,7 +65,7 @@ class View(ctk.CTk):
         if response == "yes":
             try:
                 # Perform account deletion logic here
-                self.c.erase(id)
+                self.c.delete_user(id)
                 print(f"{d.Margin}Account {id} deleted successfully.{d.Margin}")
                 self.eraseFrame.destroy()
                 self.login()
