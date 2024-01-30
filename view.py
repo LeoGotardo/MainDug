@@ -101,15 +101,15 @@ class View(ctk.CTk):
             button.configure(image=self.see)
 
 
-    def theme(self, frame, button):
+    def theme(self, button):
         if self.mode == 'dark':
-            self.mode = 'ligth'
             ctk.set_appearance_mode('light')
             button.configure(image=self.dark)
-        if self.mode == 'ligth':
-            self.mode = 'dark'
+            self.mode = 'light'
+        else:
             ctk.set_appearance_mode('dark')
             button.configure(image=self.white)
+            self.mode = 'dark'
 
 
     def alert(self, title, text):
@@ -186,7 +186,7 @@ class View(ctk.CTk):
         changeTheme = ctk.CTkButton(
             master=self.loginFrame,
             text="",
-            command=lambda:self.theme(self.loginFrame, changeTheme),
+            command=lambda:self.theme(changeTheme),
             font=("RobotoSlab", 12),
             fg_color='#343638',
             hover_color='#343638',
@@ -378,7 +378,7 @@ class View(ctk.CTk):
         changeTheme = ctk.CTkButton(
             master=self.loggedFrame,
             text="",
-            command=lambda:[self.theme(self.loggedFrame, changeTheme)],
+            command=lambda:[self.theme(changeTheme)],
             font=("RobotoSlab", 12),
             fg_color='#343638',
             hover_color='#343638',
@@ -441,7 +441,7 @@ class View(ctk.CTk):
         changeTheme = ctk.CTkButton(
             master=self.editLoginFrame,
             text="",
-            command=lambda:[self.theme(self.editLoginFrame, changeTheme)],
+            command=lambda:[self.theme(changeTheme)],
             font=("RobotoSlab", 12),
             fg_color='#343638',
             hover_color='#343638',
@@ -540,7 +540,7 @@ class View(ctk.CTk):
         theme = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="",
-            command=lambda:[self.theme(self.editPasswordFrame, theme)],
+            command=lambda:[self.theme(theme)],
             font=("RobotoSlab", 12),
             fg_color='#343638',
             hover_color='#343638',
@@ -600,7 +600,7 @@ class View(ctk.CTk):
         changeTheme = ctk.CTkButton(
             master=self.eraseFrame,
             text="",
-            command=lambda:[self.theme(self.eraseFrame, changeTheme)],
+            command=lambda:[self.theme(changeTheme)],
             font=("RobotoSlab", 12),
             fg_color='#343638',
             hover_color='#343638',
