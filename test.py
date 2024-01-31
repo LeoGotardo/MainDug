@@ -108,7 +108,7 @@ def toggle_win():
 
 default_home()
 
-img1 = ImageTk.PhotoImage(Image.open("open.png"))
+img1 = ImageTk.PhotoImage(Image.open("icons/open.svg"))
 
 global b2
 b2=Button(w,image=img1,

@@ -10,13 +10,13 @@ class View(ctk.CTk):
         self.c = Controller()
         self.app = ctk.CTk()
 
-        self.app.geometry("500x500")
+        self.app.geometry("500x600")
         self.see = ctk.CTkImage(dark_image=img.open("icons/see.ico"))
         self.unsee = ctk.CTkImage(dark_image=img.open("icons/unsee.ico"))
         self.white = ctk.CTkImage(dark_image=img.open("icons/White.ico"))
         self.dark = ctk.CTkImage(dark_image=img.open("icons/Dark.ico"))
         ctk.set_default_color_theme('dark-blue')
-        self.logged(id("ObjectId('65ad80836b898ac9c8e3a032')"))
+        self.login()
 
         self.mode = 'dark'
 

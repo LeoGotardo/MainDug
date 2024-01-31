@@ -2,12 +2,11 @@ import os
 import hashlib
 from pymongo import MongoClient
 import logging
-from dotenv import load_dotenv
 
-# Load environment variables for database credentials
-load_dotenv()
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
+
+
+DB_USER = 'LeoGotardo'
+DB_PASSWORD = 'M2ytG5OxQXunhNnY'
 
 class Model:
     def __init__(self):
@@ -16,6 +15,7 @@ class Model:
 
         # MongoDB connection setup
         connection_string = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@cluster0.gcolnp2.mongodb.net/"
+        print(connection_string)
         try:
             self.client = MongoClient(connection_string)
             self.db = self.client["Belle"]
