@@ -1,7 +1,9 @@
-import customtkinter as ctk
 from tkinter import messagebox as msg
 from controller import Controller
 from PIL import Image as img
+from CTkTable import *
+import customtkinter as ctk
+import tkinter as tk
 import Debug as d
 
 
@@ -15,8 +17,10 @@ class View(ctk.CTk):
         self.unsee = ctk.CTkImage(dark_image=img.open("icons/unsee.ico"))
         self.white = ctk.CTkImage(dark_image=img.open("icons/White.ico"))
         self.dark = ctk.CTkImage(dark_image=img.open("icons/Dark.ico"))
+        self.exit = ctk.CTkImage(dark_image=img.open("icons/Exit.ico"))
+        self.Config = ctk.CTkImage(dark_image=img.open("icons/Config.ico"))
         ctk.set_default_color_theme('dark-blue')
-        self.login()
+        self.logged(id="1")
 
         self.mode = 'dark'
 
@@ -310,7 +314,7 @@ class View(ctk.CTk):
         theme = ctk.CTkButton(
             master=self.signupFrame,
             text="",
-            command=lambda:[self.theme(self.signupFrame, theme)],
+            command=lambda:[self.theme(theme)],
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
@@ -331,21 +335,83 @@ class View(ctk.CTk):
 
     def logged(self, id):
         self.loggedFrame = ctk.CTkFrame(master=self.app)
-        self.app.title("Logged")
+        self.app.title("MainDug")
+        self.app.geometry("900x600")
         self.loggedFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
         self.app.iconbitmap(default="icons/Star.ico")
 
+        value = [['Site','Login','Password'],
+                ['Discord','Leleo1208','Picanha100%']]
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
-            text="Logged",
+            text="Menu",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+        )
+
+        table = CTkTable(
+            master=self.loggedFrame,
+            row=3,
+            column=3,
+            values=value,
+        )
+
+        exitButton = ctk.CTkButton(
+            master=self.loggedFrame,
+            command=lambda: [self.loggedFrame.destroy(), self.login()],
+            text="",
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.exit
+        )
+
+        configButton = ctk.CTkButton(
+            master=self.loggedFrame,
+            command=lambda: [self.loggedFrame.destroy(), self.config(id)],
+            text="",
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image= self.Config
+        )
+
+        theme = ctk.CTkButton(
+            master=self.loggedFrame,
+            text="",
+            command=lambda:[self.theme(theme)],
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.white
+        )
+
+        title.pack(padx=50, pady=50)
+        table.pack(padx=50, pady=50)
+        exitButton.pack(padx=50, pady=50)
+        configButton.pack(padx=50, pady=50)
+        theme.pack(padx=50, pady=50)
+
+
+    def config(self, id):
+        self.configFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Config")
+        self.configFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
+        self.app.iconbitmap(default="icons/Star.ico")
+
+        title = ctk.CTkLabel(
+            master=self.configFrame, 
+            text="Config",
             font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
         )
 
         loginEditButton = ctk.CTkButton(
-            master=self.loggedFrame,
+            master=self.configFrame,
             text="Edit Login",
-            command=lambda: [self.loggedFrame.destroy(), self.editLogin(id)],
+            command=lambda: [self.configFrame.destroy(), self.editLogin(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -353,9 +419,9 @@ class View(ctk.CTk):
         )
 
         passEditButton = ctk.CTkButton(
-            master=self.loggedFrame,
+            master=self.configFrame,
             text="Edit Password",
-            command=lambda: [self.loggedFrame.destroy(), self.editPass(id)],
+            command=lambda: [self.configFrame.destroy(), self.editPass(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -363,9 +429,9 @@ class View(ctk.CTk):
         )
 
         eraseButton = ctk.CTkButton(
-            master=self.loggedFrame,
+            master=self.configFrame,
             text="Erase Account",
-            command=lambda: [self.loggedFrame.destroy(), self.erase(id)],
+            command=lambda: [self.configFrame.destroy(), self.erase(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -373,9 +439,9 @@ class View(ctk.CTk):
         )
         
         exitButton = ctk.CTkButton(
-            master=self.loggedFrame,
+            master=self.configFrame,
             text="Exit",
-            command=lambda:[self.loggedFrame.destroy(), self.login()],
+            command=lambda:[self.configFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -383,7 +449,7 @@ class View(ctk.CTk):
         )
 
         changeTheme = ctk.CTkButton(
-            master=self.loggedFrame,
+            master=self.configFrame,
             text="",
             command=lambda:[self.theme(changeTheme)],
             font=("RobotoSlab", 12),
@@ -608,6 +674,7 @@ class View(ctk.CTk):
         eraseButton.pack(padx=50, pady=10)
         backButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
+
 
 
 if __name__ == "__main__":

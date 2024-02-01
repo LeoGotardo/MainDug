@@ -4,14 +4,13 @@ from pymongo import MongoClient
 import logging
 
 
-
-DB_USER = 'LeoGotardo'
-DB_PASSWORD = 'M2ytG5OxQXunhNnY'
-
 class Model:
     def __init__(self):
         # Clear screen in a cross-platform way
         os.system('cls' if os.name == 'nt' else 'clear')
+
+        DB_USER = 'LeoGotardo'
+        DB_PASSWORD = 'M2ytG5OxQXunhNnY'
 
         # MongoDB connection setup
         connection_string = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@cluster0.gcolnp2.mongodb.net/"
