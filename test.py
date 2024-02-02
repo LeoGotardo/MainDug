@@ -1,23 +1,15 @@
-import customtkinter as ctk
-from tkinter import messagebox as msg
+import customtkinter
+from CTkTable import *
 
-def alert(text):
-        # Exibe um alerta na página
-        msg.showwarning(title="ERROR",
-                     message=text
-                    )
+root = customtkinter.CTk()
 
-app = ctk.CTk()
-app.geometry('500x500')
+value = [[1,2,3,4,5],
+         [1,2,3,4,5],
+         [1,2,3,4,5],
+         [1,2,3,4,5],
+         [1,2,3,4,5]]
 
-label = ctk.CTkLabel(app, text="CTkLabel", fg_color="transparent")
-label.pack()
-entry = ctk.CTkEntry(app, placeholder_text="CTkEntry")
-entry.pack()
-text = ctk.CTkTextbox(app)
-text.pack()
-button = ctk.CTkButton(app, command=lambda:[alert("nice")])
-button.pack()
+table = CTkTable(master=root, row=5, column=5, values=value)
+table.pack(expand=True, fill="both", padx=20, pady=20)
 
-
-app.mainloop()
+root.mainloop()

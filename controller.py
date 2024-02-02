@@ -1,47 +1,36 @@
 from model import Model
 
 class Controller:
-    def __init__(self) -> None:
-        # Inicializa um objeto Model na instância do Controller
-        self.m = Model()
+    def __init__(self):
+        # Initialize a Model object in the Controller instance
+        self.model = Model()
 
-    def start(self):
-        # Inicia a instância do Model (não faz nada substancial no código fornecido)
-        self.m
-        return True
+    def add_user(self, login, password, password_confirm):
+        # Calls the add_user method of Model and returns the result
+        if self.model.is_password_valid(password, password_confirm):
+            return self.model.add_user(login, password)
+        else:
+            return False
 
-    def credencialADD(self, login, password, passwordConfirm):
-        # Chama a função credencialADD do Model e retorna o resultado
-        return self.m.credencialADD(login, password, passwordConfirm)
+    def is_password_valid(self, password, password_confirm):
+        return self.model.is_password_valid(password, password_confirm)
 
-    def cad(self, login, password):
-        # Chama a função cad do Model e retorna o resultado
-        return self.m.cad(login, password)
-
-    def veryLogin(self, login):
-        # Chama a função verifyLogin do Model e retorna o resultado
-        return self.m.verifyLogin(login)
-
-    def verify(self, login, password):
-        # Chama a função verify do Model e retorna o resultado
-        return self.m.verify(login, password)
-
-    def erase(self, id):
-        # Chama a função erase do Model e retorna o resultado
-        return self.m.erase(id)
-
-    def edit(self, id, parameter, new):
-        # Chama a função edit do Model e rotorna o resultado
-        return self.m.edit(id, parameter, new)
-
-    def valid(self, login, password):
-        # Chama a função valid do Model e retorna o resultado
-        return self.m.valid(login, password)
+    def is_login_valid(self, login, Password):
+        # Calls the is_login_valid method of Model and returns the result
+        return self.model.is_login_valid(login, Password)
     
-    def isNew(self, id, paramter, new):
-        # Chama a função isNew do Model e retorna o resultado
-        return self.m.isNew(id, paramter, new)
+    def update_user(self, user_id, parameter, new_value):
+        # Calls the update_user method of Model and returns the result
+        return self.model.update_user(user_id, parameter, new_value)
+
+    def delete_user(self, user_id):
+        # Calls the delete_user method of Model and returns the result
+        return self.model.delete_user(user_id)
+
+    def find_user_id(self, login, password):
+        # Calls the find_user_id method of Model and returns the user ID
+        return self.model.find_user_id(login, password)
 
 if __name__ == "__main__":
-    # Cria uma instância do Controller para testar a classe
+    # Create a Controller instance to test the class
     controller = Controller()
