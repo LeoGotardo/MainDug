@@ -45,6 +45,7 @@ class View(ctk.CTk):
                     self.logged(id)
             else:
                 self.alert("ERROR",f'This login alredy exists.')
+                
 
         elif paramter == "Password":
             sull = self.c.edit(id, paramter, newPar)
