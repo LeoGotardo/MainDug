@@ -389,11 +389,11 @@ class View(ctk.CTk):
             image=self.white
         )
 
-        title.pack(padx=50, pady=50)
-        table.pack(padx=50, pady=50)
-        exitButton.pack(padx=50, pady=50)
-        configButton.pack(padx=50, pady=50)
-        theme.pack(padx=50, pady=50)
+        title.pack(padx=10, pady=10)
+        table.pack(padx=10, pady=10)
+        exitButton.pack(padx=10, pady=10)
+        configButton.pack(padx=10, pady=10)
+        theme.pack(padx=10, pady=10)
 
 
     def config(self, id):
