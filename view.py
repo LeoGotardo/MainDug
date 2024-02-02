@@ -20,7 +20,7 @@ class View(ctk.CTk):
         self.exit = ctk.CTkImage(dark_image=img.open("icons/Exit.ico"))
         self.Config = ctk.CTkImage(dark_image=img.open("icons/Config.ico"))
         ctk.set_default_color_theme('dark-blue')
-        self.logged(id="1")
+        self.logged("1")
 
         self.mode = 'dark'
 
@@ -341,7 +341,7 @@ class View(ctk.CTk):
         self.app.iconbitmap(default="icons/Star.ico")
 
         value = [['Site','Login','Password'],
-                ['Discord','Leleo1208','Picanha100%']]
+                ['Discord','abcde','123123123']]
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
@@ -389,11 +389,11 @@ class View(ctk.CTk):
             image=self.white
         )
 
-        title.pack(padx=50, pady=50)
-        table.pack(padx=50, pady=50)
-        exitButton.pack(padx=50, pady=50)
-        configButton.pack(padx=50, pady=50)
-        theme.pack(padx=50, pady=50)
+        title.pack(padx=10, pady=10)
+        table.pack(padx=10, pady=10)
+        exitButton.pack(padx=10, pady=10)
+        configButton.pack(padx=10, pady=10)
+        theme.pack(padx=10, pady=10)
 
 
     def config(self, id):
