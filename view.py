@@ -20,7 +20,7 @@ class View(ctk.CTk):
         self.exit = ctk.CTkImage(dark_image=img.open("icons/Exit.ico"))
         self.Config = ctk.CTkImage(dark_image=img.open("icons/Config.ico"))
         ctk.set_default_color_theme('dark-blue')
-        self.logged(id="1")
+        self.login()
 
         self.mode = 'dark'
 
@@ -45,6 +45,7 @@ class View(ctk.CTk):
                     self.logged(id)
             else:
                 self.alert("ERROR",f'This login alredy exists.')
+
 
         elif paramter == "Password":
             sull = self.c.edit(id, paramter, newPar)
@@ -103,12 +104,12 @@ class View(ctk.CTk):
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.add_user(login, password, passwordConfirm)
         print(f"{d.Margin}error = {error}{d.Margin}")
-        if error[0] == "Valid Login":
+        if error != "False":
             self.alert("Susses","Sussesfull Login")
             self.signupFrame.destroy()
             self.login()
         else:
-            self.alert("ERROR",error[0])
+            self.alert("ERROR",error)
             self.signupFrame.destroy()
             self.signup()
 
@@ -341,7 +342,7 @@ class View(ctk.CTk):
         self.app.iconbitmap(default="icons/Star.ico")
 
         value = [['Site','Login','Password'],
-                ['Discord','Leleo1208','Picanha100%']]
+                ['Discord','abcde','123123123']]
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
