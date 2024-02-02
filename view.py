@@ -20,7 +20,7 @@ class View(ctk.CTk):
         self.exit = ctk.CTkImage(dark_image=img.open("icons/Exit.ico"))
         self.Config = ctk.CTkImage(dark_image=img.open("icons/Config.ico"))
         ctk.set_default_color_theme('dark-blue')
-        self.logged("1")
+        self.logged('1')
 
         self.mode = 'dark'
 

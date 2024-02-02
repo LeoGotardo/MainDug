@@ -1,15 +1,21 @@
-import customtkinter
-from CTkTable import *
+import customtkinter as ctk
 
-root = customtkinter.CTk()
 
-value = [[1,2,3,4,5],
-         [1,2,3,4,5],
-         [1,2,3,4,5],
-         [1,2,3,4,5],
-         [1,2,3,4,5]]
+def imput():
+    dialog = ctk.CTkInputDialog(text='What is your name?', title='Hello word!!')
 
-table = CTkTable(master=root, row=5, column=5, values=value)
-table.pack(expand=True, fill="both", padx=20, pady=20)
+def main():
+    app = ctk.CTk()
+    app.title('dialog')
+    app.geometry('400x400')
+    ctk.set_appearance_mode('dark')
+    ctk.set_default_color_theme('green')
+    frame = ctk.CTkFrame(master=app)
+    frame.pack()
+    button = ctk.CTkButton(frame,text='Press me', command=lambda:[imput()])
 
-root.mainloop()
+    button.pack()
+
+    app.mainloop()
+
+main()

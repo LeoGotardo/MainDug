@@ -10,10 +10,10 @@ class Model:
         os.system('cls' if os.name == 'nt' else 'clear')
 
         DB_USER = 'LeoGotardo'
-        DB_PASSWORD = 'M2ytG5OxQXunhNnY'
+        DB_PASSWORD = 'dawdasdawdasadwads'
 
         # MongoDB connection setup
-        connection_string = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@cluster0.gcolnp2.mongodb.net/"
+        connection_string = f"mongodb+srv://leleo1208:M2ytG5OxQXunhNnY@cluster0.gcolnp2.mongodb.net/"
         print(connection_string)
         try:
             self.client = MongoClient(connection_string)
