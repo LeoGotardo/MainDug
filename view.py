@@ -46,6 +46,7 @@ class View(ctk.CTk):
             else:
                 self.alert("ERROR",f'This login alredy exists.')
 
+
         elif paramter == "Password":
             sull = self.c.edit(id, paramter, newPar)
             self.alert("Susses", sull)
@@ -103,12 +104,12 @@ class View(ctk.CTk):
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.add_user(login, password, passwordConfirm)
         print(f"{d.Margin}error = {error}{d.Margin}")
-        if error[0] == "Valid Login":
+        if error != "False":
             self.alert("Susses","Sussesfull Login")
             self.signupFrame.destroy()
             self.login()
         else:
-            self.alert("ERROR",error[0])
+            self.alert("ERROR",error)
             self.signupFrame.destroy()
             self.signup()
 
