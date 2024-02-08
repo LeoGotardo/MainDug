@@ -338,7 +338,8 @@ class View(ctk.CTk):
         self.loggedFrame = ctk.CTkFrame(master=self.app)
         self.app.title("MainDug")
         self.app.geometry("900x600")
-        self.loggedFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
+        """        self.loggedFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)"""
+        self.loggedFrame.pack(in_=self.app, anchor="center", fill='both', expand=True)
         self.app.iconbitmap(default="icons/Star.ico")
 
         value = [['Site','Login','Password'],
@@ -390,11 +391,11 @@ class View(ctk.CTk):
             image=self.white
         )
 
-        title.pack(padx=10, pady=10)
-        table.pack(padx=10, pady=10)
-        exitButton.pack(padx=10, pady=10)
-        configButton.pack(padx=10, pady=10)
-        theme.pack(padx=10, pady=10)
+        title.place(relx=0.5, rely=0.1, anchor="center")
+        table.place(relx=0.5, rely=0.3, anchor="center")
+        exitButton.place(relx=0.4, rely=0.9, anchor="center")
+        configButton.place(relx=0.5, rely=0.9,anchor="center")
+        theme.place(relx=0.6, rely=0.9, anchor="center")
 
 
     def config(self, id):
