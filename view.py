@@ -1,10 +1,9 @@
 from tkinter import messagebox as msg
 from controller import Controller
 from PIL import Image as img
-from CTkTable import *
 import customtkinter as ctk
-import tkinter as tk
 import Debug as d
+from CTkTable import *
 
 
 class View(ctk.CTk):
@@ -19,7 +18,15 @@ class View(ctk.CTk):
         self.dark = ctk.CTkImage(dark_image=img.open("icons/Dark.ico"))
         self.exit = ctk.CTkImage(dark_image=img.open("icons/Exit.ico"))
         self.Config = ctk.CTkImage(dark_image=img.open("icons/Config.ico"))
+        self.Add = ctk.CTkImage(dark_image=img.open("icons/add.ico"))
         ctk.set_default_color_theme('dark-blue')
+        
+        self.values = [
+                    ['Site','Login','Password'],
+                    ['Discord','abcde','123123123'],
+                    ['NewValue','NewLogin','NewPassword']
+                    ]
+
         self.logged('1')
 
         self.mode = 'dark'
@@ -61,6 +68,12 @@ class View(ctk.CTk):
                 self.eraseFrame.destroy()
                 self.logged(id)
 
+
+    def add(self):
+        self.values.append(['newValue','newLogin','newPassword'])
+        print(self.values)
+        self.loggedFrame.destroy()
+        self.logged("1")
 
 
     def delete(self, id):
@@ -338,12 +351,8 @@ class View(ctk.CTk):
         self.loggedFrame = ctk.CTkFrame(master=self.app)
         self.app.title("MainDug")
         self.app.geometry("900x600")
-        """        self.loggedFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)"""
         self.loggedFrame.pack(in_=self.app, anchor="center", fill='both', expand=True)
         self.app.iconbitmap(default="icons/Star.ico")
-
-        value = [['Site','Login','Password'],
-                ['Discord','abcde','123123123']]
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
@@ -353,9 +362,9 @@ class View(ctk.CTk):
 
         table = CTkTable(
             master=self.loggedFrame,
-            row=3,
+            row=len(self.values),
             column=3,
-            values=value,
+            values=self.values,
         )
 
         exitButton = ctk.CTkButton(
@@ -391,8 +400,20 @@ class View(ctk.CTk):
             image=self.white
         )
 
+        add = ctk.CTkButton(
+            master=self.loggedFrame,
+            text="",
+            command=lambda:[self.add()],
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.Add
+        )
+
         title.place(relx=0.5, rely=0.1, anchor="center")
         table.place(relx=0.5, rely=0.3, anchor="center")
+        add.place(relx=0.3,rely=0.9, anchor="center")
         exitButton.place(relx=0.4, rely=0.9, anchor="center")
         configButton.place(relx=0.5, rely=0.9,anchor="center")
         theme.place(relx=0.6, rely=0.9, anchor="center")
