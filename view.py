@@ -19,12 +19,10 @@ class View(ctk.CTk):
         self.exit = ctk.CTkImage(dark_image=img.open("icons/Exit.ico"))
         self.Config = ctk.CTkImage(dark_image=img.open("icons/Config.ico"))
         self.Add = ctk.CTkImage(dark_image=img.open("icons/add.ico"))
-        ctk.set_default_color_theme('dark-blue')
+        ctk.set_default_color_theme('green')
         
         self.values = [
-                    ['Site','Login','Password'],
-                    ['Discord','abcde','123123123'],
-                    ['NewValue','NewLogin','NewPassword']
+                    ['ID','Site','Login','Password']
                     ]
 
         self.logged('1')
@@ -70,7 +68,8 @@ class View(ctk.CTk):
 
 
     def add(self):
-        self.values.append(['newValue','newLogin','newPassword'])
+        id = len(self.values)
+        self.values.append([id,'newSite','newLogin','newPassword'])
         print(self.values)
         self.loggedFrame.destroy()
         self.logged("1")
@@ -359,12 +358,16 @@ class View(ctk.CTk):
             text="Menu",
             font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
         )
+        tableFixFrame = ctk.CTkScrollableFrame(master=self.loggedFrame,width=800,height=400)
+        tableFrame = ctk.CTkFrame(master=tableFixFrame, height=2000)
 
         table = CTkTable(
-            master=self.loggedFrame,
+            master=tableFrame,
             row=len(self.values),
-            column=3,
+            column=4,
             values=self.values,
+            width=200,
+            colors=['#174a19','#292b29']
         )
 
         exitButton = ctk.CTkButton(
@@ -412,11 +415,13 @@ class View(ctk.CTk):
         )
 
         title.place(relx=0.5, rely=0.1, anchor="center")
-        table.place(relx=0.5, rely=0.3, anchor="center")
-        add.place(relx=0.3,rely=0.9, anchor="center")
-        exitButton.place(relx=0.4, rely=0.9, anchor="center")
-        configButton.place(relx=0.5, rely=0.9,anchor="center")
-        theme.place(relx=0.6, rely=0.9, anchor="center")
+        tableFixFrame.place(relx=0.5, rely=0.5, anchor="center")
+        tableFrame.pack(fill='both', expand=True)
+        table.place(in_=tableFrame)
+        add.place(relx=0.35,rely=0.9, anchor="center")
+        exitButton.place(relx=0.45, rely=0.9, anchor="center")
+        configButton.place(relx=0.55, rely=0.9,anchor="center")
+        theme.place(relx=0.65, rely=0.9, anchor="center")
 
 
     def config(self, id):
