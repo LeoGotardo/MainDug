@@ -414,6 +414,28 @@ class View(ctk.CTk):
             image=self.Add
         )
 
+        exclude = ctk.CTkButton(
+            master=self.loggedFrame,
+            text="",
+            command=lambda:[self.add()],
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.exclude()
+        )
+
+        edit = ctk.CTkButton(
+            master=self.loggedFrame,
+            text="",
+            command=lambda:[self.add()],
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.edit()
+        )
+
         title.place(relx=0.5, rely=0.1, anchor="center")
         tableFixFrame.place(relx=0.5, rely=0.5, anchor="center")
         tableFrame.pack(fill='both', expand=True)
