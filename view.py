@@ -19,6 +19,8 @@ class View(ctk.CTk):
         self.exit = ctk.CTkImage(dark_image=img.open("icons/Exit.ico"))
         self.Config = ctk.CTkImage(dark_image=img.open("icons/Config.ico"))
         self.Add = ctk.CTkImage(dark_image=img.open("icons/add.ico"))
+        self.Delete = ctk.CTkImage(dark_image=img.open("icons/delete.ico"))
+        self.edit = ctk.CTkImage(dark_image=img.open("icons/edit.ico"))
         ctk.set_default_color_theme('green')
         
         self.values = [
@@ -414,36 +416,38 @@ class View(ctk.CTk):
             image=self.Add
         )
 
-        exclude = ctk.CTkButton(
+        delete = ctk.CTkButton(
             master=self.loggedFrame,
             text="",
-            command=lambda:[self.add()],
+            command=lambda:[self.deleteItem()],
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
             width=10,
-            image=self.exclude()
+            image=self.Delete
         )
 
         edit = ctk.CTkButton(
             master=self.loggedFrame,
             text="",
-            command=lambda:[self.add()],
+            command=lambda:[self.edit()],
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
             width=10,
-            image=self.edit()
+            image=self.edit
         )
 
         title.place(relx=0.5, rely=0.1, anchor="center")
         tableFixFrame.place(relx=0.5, rely=0.5, anchor="center")
         tableFrame.pack(fill='both', expand=True)
         table.place(in_=tableFrame)
+        edit.place(relx=0.25,rely=0.9, anchor="center")
         add.place(relx=0.35,rely=0.9, anchor="center")
         exitButton.place(relx=0.45, rely=0.9, anchor="center")
         configButton.place(relx=0.55, rely=0.9,anchor="center")
         theme.place(relx=0.65, rely=0.9, anchor="center")
+        delete.place(relx=0.75,rely=0.9, anchor="center")
 
 
     def config(self, id):

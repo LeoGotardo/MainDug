@@ -14,7 +14,7 @@ class Model:
 
         # MongoDB connection setup
         connection_string = f"mongodb+srv://leleo1208:M2ytG5OxQXunhNnY@cluster0.gcolnp2.mongodb.net/"
-        print(connection_string)
+        
         try:
             self.client = MongoClient(connection_string)
             self.db = self.client["Belle"]
