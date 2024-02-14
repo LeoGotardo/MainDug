@@ -30,6 +30,9 @@ class Controller:
     def find_user_id(self, login, password):
         # Calls the find_user_id method of Model and returns the user ID
         return self.model.find_user_id(login, password)
+    
+    def findPasswords(self,id):
+        return self.model.findPasswords()
 
 if __name__ == "__main__":
     # Create a Controller instance to test the class

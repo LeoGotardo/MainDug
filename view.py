@@ -22,10 +22,7 @@ class View(ctk.CTk):
         self.Delete = ctk.CTkImage(dark_image=img.open("icons/delete.ico"))
         self.edit = ctk.CTkImage(dark_image=img.open("icons/edit.ico"))
         ctk.set_default_color_theme('green')
-        
-        self.values = [
-                    ['ID','Site','Login','Password']
-                    ]
+
 
         self.login()
 
@@ -34,45 +31,29 @@ class View(ctk.CTk):
         self.app.mainloop()
 
     
-    def isNew(self, id, paramter, newPar, frame):
+    def editCred(self, id, paramter, newPar):
         if paramter == "Login":
             new = self.c.find_user_id(newPar, "$exists")
-            if new != None:
+            if new == None:
                 sull = self.c.update_user(id, paramter, newPar)
-                self.alert("Susses", sull)
+                self.alert("Info", sull)
 
-                if frame == "editLoguin":
-                    self.editLoginFrame.destroy()
-                    self.logged(id)
-                elif frame == "editPassword":
-                    self.editPasswordFrame.destroy()
-                    self.logged(id)
-                elif frame == "eraseFrame":
-                    self.eraseFrame.destroy()
-                    self.logged(id)
-            else:
-                self.alert("ERROR",f'This login alredy exists.')
-
-
-        elif paramter == "Password":
-            sull = self.c.edit(id, paramter, newPar)
-            self.alert("Susses", sull)
-
-            if frame == "editLoguin":
                 self.editLoginFrame.destroy()
                 self.logged(id)
-            elif frame == "editPassword":
-                self.editPasswordFrame.destroy()
-                self.logged(id)
-            elif frame == "eraseFrame":
-                self.eraseFrame.destroy()
-                self.logged(id)
+            else:
+                self.alert("ERROR",f'This login alredy exists.')
+        elif paramter == "Password":
+            sull = self.c.update_user(id, paramter, newPar)
+            self.alert("Info", sull)
+
+            self.editPasswordFrame.destroy()
+            self.logged(id)
 
 
     def add(self):
-        id = len(self.values)
-        self.values.append([id,'newSite','newLogin','newPassword'])
-        print(self.values)
+        id = len(self.passwords)
+        self.passwords.append([id,'newSite','newLogin','newPassword'])
+        print(self.passwords)
         self.loggedFrame.destroy()
         self.logged("1")
 
@@ -86,6 +67,7 @@ class View(ctk.CTk):
                 # Perform account deletion logic here
                 self.c.delete_user(id)
                 print(f"{d.Margin}Account {id} deleted successfully.{d.Margin}")
+                msg.showinfo('Done',f'Account {id} sucessfull deleted.')
                 self.eraseFrame.destroy()
                 self.login()
             except Exception as e:
@@ -355,6 +337,8 @@ class View(ctk.CTk):
         self.loggedFrame.pack(in_=self.app, anchor="center", fill='both', expand=True)
         self.app.iconbitmap(default="icons/Star.ico")
 
+        self.passwords = self.c.findPasswords(id)
+
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
             text="Menu",
@@ -365,9 +349,9 @@ class View(ctk.CTk):
 
         table = CTkTable(
             master=tableFrame,
-            row=len(self.values),
+            row=len(self.passwords),
             column=4,
-            values=self.values,
+            passwords=self.passwords,
             width=200,
             colors=['#174a19','#292b29']
         )
@@ -438,16 +422,18 @@ class View(ctk.CTk):
             image=self.edit
         )
 
+        configButton.place(relx=0.05, rely=0.05,anchor="center")
         title.place(relx=0.5, rely=0.1, anchor="center")
+
         tableFixFrame.place(relx=0.5, rely=0.5, anchor="center")
         tableFrame.pack(fill='both', expand=True)
         table.place(in_=tableFrame)
-        edit.place(relx=0.25,rely=0.9, anchor="center")
-        add.place(relx=0.35,rely=0.9, anchor="center")
-        exitButton.place(relx=0.45, rely=0.9, anchor="center")
-        configButton.place(relx=0.55, rely=0.9,anchor="center")
-        theme.place(relx=0.65, rely=0.9, anchor="center")
-        delete.place(relx=0.75,rely=0.9, anchor="center")
+
+        edit.place(relx=0.3,rely=0.9, anchor="center")
+        add.place(relx=0.4,rely=0.9, anchor="center")
+        exitButton.place(relx=0.5, rely=0.9, anchor="center")
+        theme.place(relx=0.6, rely=0.9, anchor="center")
+        delete.place(relx=0.7,rely=0.9, anchor="center")
 
 
     def config(self, id):
@@ -458,7 +444,7 @@ class View(ctk.CTk):
 
         title = ctk.CTkLabel(
             master=self.configFrame, 
-            text="Config",
+            text="Account Config:",
             font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
         )
 
@@ -492,9 +478,9 @@ class View(ctk.CTk):
             width=100
         )
         
-        exitButton = ctk.CTkButton(
+        backButton = ctk.CTkButton(
             master=self.configFrame,
-            text="Exit",
+            text="Back",
             command=lambda:[self.configFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
@@ -518,7 +504,7 @@ class View(ctk.CTk):
         loginEditButton.pack(padx=50, pady=10)
         passEditButton.pack(padx=50, pady=10)
         eraseButton.pack(padx=50, pady=10)
-        exitButton.pack(padx=50, pady=10)
+        backButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
 
@@ -546,7 +532,7 @@ class View(ctk.CTk):
         loginEditButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Edit Login",
-            command=lambda:[self.isNew(id, "Login", loginEntry.get(), "editLogin")],
+            command=lambda:[self.editCred(id, "Login", loginEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -639,7 +625,7 @@ class View(ctk.CTk):
         passEditButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Edit Password",
-            command=lambda: [self.isNew(id, "Password", passwordEntry.get(), "editPassword")],
+            command=lambda: [self.editCred(id, "Password", passwordEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,

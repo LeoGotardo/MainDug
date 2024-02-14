@@ -27,7 +27,7 @@ class Model:
         Adds a new user to the 'Logins' collection.
         """
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        user = {"Login": login, "Password": hashed_password}
+        user = {"Login": login, "Password": hashed_password, "Passwords":[]}
         try:
             result = self.logins.insert_one(user)
             return result.inserted_id
@@ -72,18 +72,15 @@ class Model:
         """
         Updates user information in the 'Logins' collection.
         """
-        valid_parameters = {"login": "Login", "password": "Password"}
-        if parameter not in valid_parameters:
-            return False
+        if parameter == 'Password':
+            new_value = hashlib.sha256(new_value.encode()).hexdigest()
 
-        update_field = valid_parameters[parameter]
-        new_value_hashed = hashlib.sha256(new_value.encode()).hexdigest() if parameter == "password" else new_value
         try:
-            result = self.logins.update_one({'_id': user_id}, {'$set': {update_field: new_value_hashed}})
-            return result.modified_count > 0
+            self.logins.update_one({'_id': user_id}, {'$set': {parameter: new_value}})
+            return f'{parameter} sucessfull updated'
         except Exception as e:
             logging.error(f"Failed to update user: {e}")
-            return False
+            return e
 
     def find_user_id(self, login, password):
         """
