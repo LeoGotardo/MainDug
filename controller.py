@@ -7,13 +7,13 @@ class Controller:
 
     def add_user(self, login, password, password_confirm):
         # Calls the add_user method of Model and returns the result
-        if self.model.is_password_valid(password, password_confirm):
-            return self.model.add_user(login, password)
+        if self.model.is_credential_valid(login, password, password_confirm) == True:
+            if type(self.model.add_user(login, password)) != str :
+                return True
+            else:
+                return self.model.add_user(login, password)
         else:
-            return False
-
-    def is_password_valid(self, password, password_confirm):
-        return self.model.is_password_valid(password, password_confirm)
+            return self.model.is_credential_valid(login, password, password_confirm)
 
     def is_login_valid(self, login, Password):
         # Calls the is_login_valid method of Model and returns the result

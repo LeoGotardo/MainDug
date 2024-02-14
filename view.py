@@ -27,7 +27,7 @@ class View(ctk.CTk):
                     ['ID','Site','Login','Password']
                     ]
 
-        self.logged('1')
+        self.login()
 
         self.mode = 'dark'
 
@@ -100,11 +100,11 @@ class View(ctk.CTk):
         if login != '' or password != '':
             itens = self.c.is_login_valid(login, password)
             print(f"{d.Margin}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
-            if itens[1] == True:
+            if itens[0] == True:
                 self.loginFrame.destroy()
-                self.logged(itens[0])
-            else:
-                self.alert("ERROR",itens[2])
+                self.logged(itens[1])
+            elif itens[0] == False:
+                self.alert("ERROR",itens[1])
                 self.loginFrame.destroy()
                 self.login()
         else:
@@ -118,8 +118,8 @@ class View(ctk.CTk):
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.add_user(login, password, passwordConfirm)
         print(f"{d.Margin}error = {error}{d.Margin}")
-        if error != "False":
-            self.alert("Susses","Sussesfull Login")
+        if error == True:
+            self.alert("Susses","Sussesfull Signup")
             self.signupFrame.destroy()
             self.login()
         else:
@@ -232,7 +232,7 @@ class View(ctk.CTk):
         title.pack(padx=50, pady=10)
         loginEntry.pack(padx=50, pady=10)
         passwordEntry.pack(padx=50, pady=10)
-        showPass.pack(padx=50, pady=10)
+        showPass.place(relx=0.85, rely=0.39)
         loginButton.pack(padx=50, pady=10)
         signupButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
@@ -340,9 +340,9 @@ class View(ctk.CTk):
         title.pack(padx=50, pady=10)
         loginEntry.pack(padx=50, pady=10)
         passwordEntry.pack(padx=50, pady=10)
-        showpass.pack(padx=50, pady=10)
+        showpass.place(relx=0.85, rely=0.332)
         passwordConfirmEntry.pack(padx=50, pady=10)
-        showPassConfirm.pack(padx=50, pady=10)
+        showPassConfirm.place(relx=0.85, rely=0.48)
         signupButton.pack(padx=50, pady=10)
         loginButton.pack(padx=50, pady=10)
         theme.pack(padx=50, pady=10)
