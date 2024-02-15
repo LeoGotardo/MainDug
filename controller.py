@@ -32,7 +32,10 @@ class Controller:
         return self.model.find_user_id(login, password)
     
     def findPasswords(self,id):
-        return self.model.findPasswords()
+        return self.model.findPasswords(id)
+    
+    def delete_item(self, id, item_id):
+        return self.model.delete_item(id, item_id)
 
 if __name__ == "__main__":
     # Create a Controller instance to test the class

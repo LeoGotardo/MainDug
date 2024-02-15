@@ -9,11 +9,11 @@ class Model:
         # Clear screen in a cross-platform way
         os.system('cls' if os.name == 'nt' else 'clear')
 
-        DB_USER = 'LeoGotardo'
-        DB_PASSWORD = 'dawdasdawdasadwads'
+        DB_USER = 'leleo1208'
+        DB_PASSWORD = '1234'
 
         # MongoDB connection setup
-        connection_string = f"mongodb+srv://leleo1208:1234@cluster0.gcolnp2.mongodb.net/"
+        connection_string = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@cluster0.gcolnp2.mongodb.net/"
         
         try:
             self.client = MongoClient(connection_string)
@@ -104,6 +104,25 @@ class Model:
         except Exception as e:
             logging.error(f"Failed to delete user: {e}")
             return False
+    
+    def findPasswords(self, id):
+        passwords = []
+        user = self.logins.find_one({"_id":id})
+
+        passwords.append(user['Passwords'])
+
+        return passwords
+    
+    def delete_item(self, id, item_id):
+        try:
+            passwords = self.findPasswords(id)
+            del passwords[item_id-1]
+
+            self.logins.find_one({'_id':id},{"$set":{'Passwords':passwords}})
+
+            return 'Process Done'
+        except Exception as e:
+            return e
 
 if __name__ == "__main__":
     # Initialize logging

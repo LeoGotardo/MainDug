@@ -22,13 +22,17 @@ class View(ctk.CTk):
         self.Delete = ctk.CTkImage(dark_image=img.open("icons/delete.ico"))
         self.edit = ctk.CTkImage(dark_image=img.open("icons/edit.ico"))
         ctk.set_default_color_theme('green')
-
-
+        self.mode = 'dark'
         self.login()
 
-        self.mode = 'dark'
-
         self.app.mainloop()
+
+    def deleteItem(self, id):
+        dialog = ctk.CTkInputDialog(title="Delete Iten", text="What's the iten ID that you want to delete?")
+        item_id = dialog.get_input()
+        deleted = self.c.delete_item(id, item_id)
+
+        msg.showinfo(titel='Info', message=deleted)
 
     
     def editCred(self, id, paramter, newPar):
@@ -50,12 +54,12 @@ class View(ctk.CTk):
             self.logged(id)
 
 
-    def add(self):
+    def add(self, id):
         id = len(self.passwords)
         self.passwords.append([id,'newSite','newLogin','newPassword'])
         print(self.passwords)
         self.loggedFrame.destroy()
-        self.logged("1")
+        self.logged(id)
 
 
     def delete(self, id):
@@ -84,6 +88,10 @@ class View(ctk.CTk):
             print(f"{d.Margin}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
             if itens[0] == True:
                 self.loginFrame.destroy()
+                title = ['ID', 'Site', 'Login', 'Password']
+                self.passwords = self.c.findPasswords(itens[1])
+
+                self.passwords.insert(0, title)
                 self.logged(itens[1])
             elif itens[0] == False:
                 self.alert("ERROR",itens[1])
@@ -337,7 +345,8 @@ class View(ctk.CTk):
         self.loggedFrame.pack(in_=self.app, anchor="center", fill='both', expand=True)
         self.app.iconbitmap(default="icons/Star.ico")
 
-        self.passwords = self.c.findPasswords(id)
+
+        print(self.passwords)
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
@@ -351,7 +360,7 @@ class View(ctk.CTk):
             master=tableFrame,
             row=len(self.passwords),
             column=4,
-            passwords=self.passwords,
+            values=self.passwords,
             width=200,
             colors=['#174a19','#292b29']
         )
@@ -392,7 +401,7 @@ class View(ctk.CTk):
         add = ctk.CTkButton(
             master=self.loggedFrame,
             text="",
-            command=lambda:[self.add()],
+            command=lambda:[self.add(id)],
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
@@ -403,7 +412,7 @@ class View(ctk.CTk):
         delete = ctk.CTkButton(
             master=self.loggedFrame,
             text="",
-            command=lambda:[self.deleteItem()],
+            command=lambda:[self.deleteItem(id)],
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
