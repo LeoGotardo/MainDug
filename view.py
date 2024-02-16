@@ -1,9 +1,9 @@
 from tkinter import messagebox as msg
 from controller import Controller
 from PIL import Image as img
+from CTkTable import *
 import customtkinter as ctk
 import Debug as d
-from CTkTable import *
 
 
 class View(ctk.CTk):
@@ -30,9 +30,12 @@ class View(ctk.CTk):
     def deleteItem(self, id):
         dialog = ctk.CTkInputDialog(title="Delete Iten", text="What's the iten ID that you want to delete?")
         item_id = dialog.get_input()
-        deleted = self.c.delete_item(id, item_id)
+        if type(item_id) == int:
+            deleted = self.c.delete_item(id, item_id)
 
-        msg.showinfo(titel='Info', message=deleted)
+            msg.showinfo(title='Info', message=deleted)
+        else:
+            msg.showinfo(title='Info', message='Action Canceled')
 
     
     def editCred(self, id, paramter, newPar):
@@ -55,11 +58,14 @@ class View(ctk.CTk):
 
 
     def add(self, id):
-        id = len(self.passwords)
-        self.passwords.append([id,'newSite','newLogin','newPassword'])
-        print(self.passwords)
-        self.loggedFrame.destroy()
-        self.logged(id)
+        newPass = msg.askquestion(title='New Login', message='Do you wanna create a new passwrd?')
+
+        if newPass == 'yes':
+            pass
+            """addNewPass(id)"""
+        elif newPass == 'no':
+            self.loggedFrame.destroy()
+            self.addLog(id)
 
 
     def delete(self, id):
@@ -598,6 +604,7 @@ class View(ctk.CTk):
             width=200,
             show="*"
         )
+        
 
         showPass = ctk.CTkButton(
             master=self.editPasswordFrame,
@@ -724,6 +731,89 @@ class View(ctk.CTk):
         backButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
+
+    def addLog(self, id):
+        self.addLogFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("New Login")
+        self.addLogFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
+        self.app.iconbitmap(default="icons/Alien.ico")
+
+
+        title = ctk.CTkLabel(
+            master=self.addLogFrame,
+            text="Add a new login",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+        )
+
+        loginEntry = ctk.CTkEntry(
+            master=self.addLogFrame,
+            placeholder_text="Login",
+            font=("RobotoSlab", 12),
+            border_width=2,
+            height=40,
+            width=200
+        )
+
+        passwordEntry = ctk.CTkEntry(
+            master=self.addLogFrame,
+            placeholder_text="Password",
+            font=("RobotoSlab", 12),
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
+
+        showPass = ctk.CTkButton(
+            master=self.addLogFrame,
+            text="",
+            command=lambda:[self.seePass(passwordEntry, showPass)],
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.see
+        )
+
+        loginButton = ctk.CTkButton(
+            master=self.addLogFrame,
+            text="Done",
+            command=lambda: [self.c.addNewLog(id, loginEntry.get(), passwordEntry.get())],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        cancelButton = ctk.CTkButton(
+            master=self.addLogFrame,
+            text="Cancel",
+            command=lambda: [self.addLogFrame.destroy(), self.logged(id)],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        changeTheme = ctk.CTkButton(
+            master=self.addLogFrame,
+            text="",
+            command=lambda:self.theme(changeTheme),
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.white
+        )
+
+
+        title.pack(padx=50, pady=10)
+        loginEntry.pack(padx=50, pady=10)
+        passwordEntry.pack(padx=50, pady=10)
+        showPass.place(relx=0.85, rely=0.39)
+        loginButton.pack(padx=50, pady=10)
+        cancelButton.pack(padx=50, pady=10)
+        changeTheme.pack(padx=50, pady=10)
 
 
 if __name__ == "__main__":
