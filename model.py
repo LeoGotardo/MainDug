@@ -1,6 +1,7 @@
 import os
 import hashlib
 import logging
+import Debug as d
 from pymongo import MongoClient
 
 
@@ -118,7 +119,7 @@ class Model:
             passwords = self.findPasswords(id)
             del passwords[item_id-1]
 
-            self.logins.find_one({'_id':id},{"$set":{'Passwords':passwords}})
+            self.logins.update_one({'_id': id}, {"$set": {'Passwords': passwords}})
 
             return 'Process Done'
         except Exception as e:
@@ -130,9 +131,9 @@ class Model:
             item_id = len(passwords)
             item = [item_id, site, login, password]
             passwords.append(item)
-
-            print(passwords)
-            self.logins.find_one({'_id':id},{"$set":{'Passwords':passwords}})
+            
+            print(d.Margin,passwords,d.Margin)
+            self.logins.update_one({'_id': id}, {"$set": {'Passwords': passwords}})
 
             return 'Process Done'
         except Exception as e:
