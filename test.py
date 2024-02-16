@@ -1,21 +1,16 @@
 import customtkinter as ctk
 
+def on_enter_key(event):
+    print("Enter key pressed!")
 
-def imput():
-    dialog = ctk.CTkInputDialog(text='What is your name?', title='Hello word!!')
+# Create the main window
+root = ctk.CTk()
 
-def main():
-    app = ctk.CTk()
-    app.title('dialog')
-    app.geometry('400x400')
-    ctk.set_appearance_mode('dark')
-    ctk.set_default_color_theme('green')
-    frame = ctk.CTkFrame(master=app)
-    frame.pack()
-    button = ctk.CTkButton(frame,text='Press me', command=lambda:[imput()])
+# Set the window size
+root.geometry("400x300")
 
-    button.pack()
+# Bind the "Enter" key to the on_enter_key function
+root.bind("<Return>", on_enter_key)
 
-    app.mainloop()
-
-main()
+# Run the application
+root.mainloop()

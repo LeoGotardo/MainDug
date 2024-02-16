@@ -1,7 +1,7 @@
 import os
 import hashlib
-from pymongo import MongoClient
 import logging
+from pymongo import MongoClient
 
 
 class Model:
@@ -118,6 +118,20 @@ class Model:
             passwords = self.findPasswords(id)
             del passwords[item_id-1]
 
+            self.logins.find_one({'_id':id},{"$set":{'Passwords':passwords}})
+
+            return 'Process Done'
+        except Exception as e:
+            return e
+        
+    def addNewLog(self, id, site, login, password):
+        try:
+            passwords = self.findPasswords(id)
+            item_id = len(passwords)
+            item = [item_id, site, login, password]
+            passwords.append(item)
+
+            print(passwords)
             self.logins.find_one({'_id':id},{"$set":{'Passwords':passwords}})
 
             return 'Process Done'

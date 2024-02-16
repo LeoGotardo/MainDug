@@ -155,6 +155,7 @@ class View(ctk.CTk):
         self.app.title("Login")
         self.loginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
         self.app.iconbitmap(default="icons/Alien.ico")
+        
 
 
         title = ctk.CTkLabel(
@@ -232,6 +233,8 @@ class View(ctk.CTk):
         loginButton.pack(padx=50, pady=10)
         signupButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
+
+        self.app.bind("<Return>", lambda _: self.validLogin(loginEntry.get(), passwordEntry.get()))
 
 
     def signup(self):
@@ -342,6 +345,8 @@ class View(ctk.CTk):
         signupButton.pack(padx=50, pady=10)
         loginButton.pack(padx=50, pady=10)
         theme.pack(padx=50, pady=10)
+
+        self.app.bind("<Return>", lambda _: self.addCad(loginEntry.get(), passwordEntry.get(), passwordConfirmEntry.get()))
 
 
     def logged(self, id):
@@ -582,6 +587,7 @@ class View(ctk.CTk):
         backButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
+        self.app.bind("<Return>", lambda _: self.editCred(id, "Login", loginEntry.get()))
 
     def editPass(self, id):
         self.editPasswordFrame = ctk.CTkFrame(master=self.app)
@@ -731,6 +737,7 @@ class View(ctk.CTk):
         backButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
+        self.app.bind("<Return>", lambda _: self.delete(id))
 
     def addLog(self, id):
         self.addLogFrame = ctk.CTkFrame(master=self.app)
@@ -743,6 +750,15 @@ class View(ctk.CTk):
             master=self.addLogFrame,
             text="Add a new login",
             font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+        )
+
+        siteEntry = ctk.CTkEntry(
+            master=self.addLogFrame,
+            placeholder_text="Site",
+            font=("RobotoSlab", 12),
+            border_width=2,
+            height=40,
+            width=200
         )
 
         loginEntry = ctk.CTkEntry(
@@ -775,10 +791,10 @@ class View(ctk.CTk):
             image=self.see
         )
 
-        loginButton = ctk.CTkButton(
+        doneButton = ctk.CTkButton(
             master=self.addLogFrame,
             text="Done",
-            command=lambda: [self.c.addNewLog(id, loginEntry.get(), passwordEntry.get())],
+            command=lambda: [print(self.c.addNewLog(id, siteEntry.get(), loginEntry.get(), passwordEntry.get()))],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -808,13 +824,15 @@ class View(ctk.CTk):
 
 
         title.pack(padx=50, pady=10)
+        siteEntry.pack(padx=50, pady=10)
         loginEntry.pack(padx=50, pady=10)
         passwordEntry.pack(padx=50, pady=10)
-        showPass.place(relx=0.85, rely=0.39)
-        loginButton.pack(padx=50, pady=10)
+        showPass.place(relx=0.78, rely=0.48)
+        doneButton.pack(padx=50, pady=10)
         cancelButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
+        self.app.bind("<Return>", lambda _: self.c.addNewLog(id, siteEntry.get(), loginEntry.get(), passwordEntry.get()))
 
 if __name__ == "__main__":
     view = View()

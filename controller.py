@@ -36,6 +36,9 @@ class Controller:
     
     def delete_item(self, id, item_id):
         return self.model.delete_item(id, item_id)
+    
+    def addNewLog(self, id, site, login, password):
+        return self.model.addNewLog(id, site, login, password)
 
 if __name__ == "__main__":
     # Create a Controller instance to test the class
