@@ -41,7 +41,7 @@ class View(ctk.CTk):
     def editCred(self, id, paramter, newPar):
         if paramter == "Login":
             new = self.c.find_user_id(newPar, "$exists")
-            if new == None:
+            if new == []:
                 sull = self.c.update_user(id, paramter, newPar)
                 self.alert("Info", sull)
 
