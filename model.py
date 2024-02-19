@@ -116,7 +116,7 @@ class Model:
     def delete_item(self, id, item_id):
         try:
             passwords = self.findPasswords(id)
-            del passwords[item_id-1]
+            del passwords[item_id]
 
             self.logins.update_one({'_id': id}, {"$set": {'Passwords': passwords}})
 

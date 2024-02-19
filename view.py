@@ -30,12 +30,15 @@ class View(ctk.CTk):
     def deleteItem(self, id):
         dialog = ctk.CTkInputDialog(title="Delete Iten", text="What's the iten ID that you want to delete?")
         item_id = dialog.get_input()
-        if type(item_id) == int:
+        try:
+            item_id = int(item_id)
             deleted = self.c.delete_item(id, item_id)
-
             msg.showinfo(title='Info', message=deleted)
-        else:
-            msg.showinfo(title='Info', message='Action Canceled')
+            self.loggedFrame.destroy()
+            self.logged(id)
+        except:
+            msg.showerror(title="Error", message="ID must be a number.")
+            dialog
 
     
     def editCred(self, id, paramter, newPar):
