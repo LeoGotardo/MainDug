@@ -28,7 +28,8 @@ class Model:
         Adds a new user to the 'Logins' collection.
         """
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        user = {"Login": login, "Password": hashed_password, "Passwords":[]}
+        title = ['ID', 'Site', 'Login', 'Password']
+        user = {"Login": login, "Password": hashed_password, "Passwords":title}
         try:
             result = self.logins.insert_one(user)
             return result.inserted_id
@@ -130,7 +131,11 @@ class Model:
             passwords = self.findPasswords(id)
             item_id = len(passwords)
             item = [item_id, site, login, password]
-            passwords.append(item)
+
+            if passwords == []:
+                passwords = [item]
+            else:
+                passwords.append(item)
             
             print(d.Margin,passwords,d.Margin)
             self.logins.update_one({'_id': id}, {"$set": {'Passwords': passwords}})

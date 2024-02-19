@@ -58,7 +58,7 @@ class View(ctk.CTk):
 
 
     def add(self, id):
-        newPass = msg.askquestion(title='New Login', message='Do you wanna create a new passwrd?')
+        newPass = msg.askquestion(title='New Login', message='Do you want to generate a new passwrd?')
 
         if newPass == 'yes':
             pass
@@ -66,6 +66,13 @@ class View(ctk.CTk):
         elif newPass == 'no':
             self.loggedFrame.destroy()
             self.addLog(id)
+
+    def addLogDB(self, id, site, login, password):
+        ret = self.c.addNewLog(id, site, login, password)
+        msg.showinfo(title="Info", message=ret)
+
+        self.addLogFrame.destroy()
+        self.addLog(id)
 
 
     def delete(self, id):
@@ -94,10 +101,7 @@ class View(ctk.CTk):
             print(f"{d.Margin}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
             if itens[0] == True:
                 self.loginFrame.destroy()
-                title = ['ID', 'Site', 'Login', 'Password']
-                self.passwords = self.c.findPasswords(itens[1])
 
-                self.passwords.insert(0, title)
                 self.logged(itens[1])
             elif itens[0] == False:
                 self.alert("ERROR",itens[1])
@@ -356,8 +360,9 @@ class View(ctk.CTk):
         self.loggedFrame.pack(in_=self.app, anchor="center", fill='both', expand=True)
         self.app.iconbitmap(default="icons/Star.ico")
 
+        self.passwords = self.c.findPasswords(id)
 
-        print(self.passwords)
+        print(f"{d.Margin}passwords:{self.passwords}{d.Margin}")
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
@@ -694,13 +699,13 @@ class View(ctk.CTk):
 
         title = ctk.CTkLabel(
             master=self.eraseFrame, 
-            text="Erase Account",
+            text="Delete Account",
             font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
         )
 
         eraseButton = ctk.CTkButton(
             master=self.eraseFrame,
-            text="ERASE ACCOUNT",
+            text="DELETE ACCOUNT",
             command=lambda: [self.delete(id)],
             font=("RobotoSlab", 12),
             border_color="#000000",
@@ -794,7 +799,7 @@ class View(ctk.CTk):
         doneButton = ctk.CTkButton(
             master=self.addLogFrame,
             text="Done",
-            command=lambda: [print(self.c.addNewLog(id, siteEntry.get(), loginEntry.get(), passwordEntry.get()))],
+            command=lambda: [self.addLogDB(id, siteEntry.get(), loginEntry.get(), passwordEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -832,7 +837,7 @@ class View(ctk.CTk):
         cancelButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _: self.c.addNewLog(id, siteEntry.get(), loginEntry.get(), passwordEntry.get()))
+        self.app.bind("<Return>", lambda _: self.addLogDB(id, siteEntry.get(), loginEntry.get(), passwordEntry.get()))
 
 if __name__ == "__main__":
     view = View()
