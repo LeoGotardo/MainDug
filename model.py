@@ -29,7 +29,7 @@ class Model:
         """
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
         title = ['ID', 'Site', 'Login', 'Password']
-        user = {"Login": login, "Password": hashed_password, "Passwords":title}
+        user = {"Login": login, "Password": hashed_password, "Passwords":[title]}
         try:
             result = self.logins.insert_one(user)
             return result.inserted_id
@@ -58,7 +58,6 @@ class Model:
 
 
     def is_credential_valid(self,login, password, password_confirm):
-        
         """
         Checks if the password matches the confirmation password.
         """
@@ -108,10 +107,9 @@ class Model:
             return False
     
     def findPasswords(self, id):
-        passwords = []
         user = self.logins.find_one({"_id":id})
 
-        passwords.append(user['Passwords'])
+        passwords = user['Passwords']
 
         return passwords
     
