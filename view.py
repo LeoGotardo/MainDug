@@ -1,3 +1,4 @@
+from passgenerator import Generator
 from tkinter import messagebox as msg
 from controller import Controller
 from PIL import Image as img
@@ -10,6 +11,7 @@ class View(ctk.CTk):
     def __init__(self):
         self.c = Controller()
         self.app = ctk.CTk()
+        self.g = Generator()
 
         self.app.geometry("500x600")
         self.see = ctk.CTkImage(dark_image=img.open("icons/see.ico"))
@@ -26,6 +28,19 @@ class View(ctk.CTk):
         self.login()
 
         self.app.mainloop()
+
+
+    def fullGeneratePass(self, len, upper, lower, symbol, number):
+        try:
+            len = int(len)
+        except:
+            print('Password Length must be a integer number.')
+
+        resp = [number,lower,symbol,upper,len]
+        print(resp)
+        password = self.g.generator(resp)
+
+        print(password)
 
     def deleteItem(self, id):
         dialog = ctk.CTkInputDialog(title="Delete Iten", text="What's the iten ID that you want to delete?")
@@ -64,8 +79,8 @@ class View(ctk.CTk):
         newPass = msg.askquestion(title='New Login', message='Do you want to generate a new passwrd?')
 
         if newPass == 'yes':
-            pass
-            """addNewPass(id)"""
+            self.loggedFrame.destroy()
+            self.generatePass(id)
         elif newPass == 'no':
             self.loggedFrame.destroy()
             self.addLog(id)
@@ -597,6 +612,7 @@ class View(ctk.CTk):
 
         self.app.bind("<Return>", lambda _: self.editCred(id, "Login", loginEntry.get()))
 
+
     def editPass(self, id):
         self.editPasswordFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Password")
@@ -746,6 +762,73 @@ class View(ctk.CTk):
         changeTheme.pack(padx=50, pady=10)
 
         self.app.bind("<Return>", lambda _: self.delete(id))
+
+    def generatePass(self, id):
+        self.generatePassFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("New Login")
+        self.generatePassFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
+        self.app.iconbitmap(default="icons/Alien.ico")
+
+
+        title = ctk.CTkLabel(
+            master=self.generatePassFrame,
+            text="Add a new login",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+        )
+
+        passLen = ctk.CTkEntry(
+            self.generatePassFrame,
+            placeholder_text="Password Length",
+            font=("RobotoSlab", 12),
+            border_width=2,
+            height=40,
+            width=200
+                               )
+
+        numberValue = ctk.StringVar(value="on")
+        number = ctk.CTkCheckBox(self.generatePassFrame, text="Lower Case Letters",
+                                     variable=numberValue, onvalue="on", offvalue="off")
+
+        lowerLetterValue = ctk.StringVar(value="on")
+        lowerLetter = ctk.CTkCheckBox(self.generatePassFrame, text="Lower Case Letters",
+                                     variable=lowerLetterValue, onvalue="on", offvalue="off")
+
+        upperLetterValue = ctk.StringVar(value="on")
+        upperLetter = ctk.CTkCheckBox(self.generatePassFrame, text="Upper Case Letters",
+                                     variable=upperLetterValue, onvalue="on", offvalue="off")
+
+        symbolValue = ctk.StringVar(value="on")
+        symbol = ctk.CTkCheckBox(self.generatePassFrame, text="Symbols",
+                                     variable=symbolValue, onvalue="on", offvalue="off")
+        
+        confirmButton = ctk.CTkButton(
+            master=self.generatePassFrame,
+            text="Next",
+            command=lambda: [self.fullGeneratePass(passLen.get(), upperLetterValue.get(), lowerLetterValue.get(), symbol.get(), numberValue.get())],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        cancelButton = ctk.CTkButton(
+            master=self.generatePassFrame,
+            text="Cancel",
+            command=lambda: [self.generatePassFrame.destroy(), self.logged(id)],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        title.pack(padx=50, pady=30)
+        passLen.pack(padx=50, pady=10)
+        number.pack(padx=50, pady=10)
+        lowerLetter.pack(padx=50, pady=10)
+        upperLetter.pack(padx=50, pady=10)
+        confirmButton.pack(padx=50, pady=10)
+        cancelButton.pack(padx=50, pady=10)
+
 
     def addLog(self, id):
         self.addLogFrame = ctk.CTkFrame(master=self.app)

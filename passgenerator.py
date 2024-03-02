@@ -14,7 +14,7 @@ class Generator:
     
         self.cls = os.system("cls")
     
-    def gerator(self, resp):
+    def generator(self, resp):
         config_handler.set_global(length=50)
 
         print(d.Margin)
@@ -27,16 +27,16 @@ class Generator:
         maius = resp[3]
         syze = resp[4]
 
-        if num == True:
+        if num == 'on':
             for i in range(len(self.numb)):
                 fin.append(self.numb[i])
-        if letter == True:
+        if letter == 'on':
             for i in range(len(self.let)):
                 fin.append(self.let[i])
-        if symb == True:
+        if symb == 'on':
             for i in range(len(self.sim)):
                 fin.append(self.sim[i])
-        if maius == True:
+        if maius == 'on':
             for i in range(len(self.may)):
                 fin.append(self.may[i])
                 
