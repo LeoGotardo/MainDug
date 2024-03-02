@@ -37,10 +37,11 @@ class View(ctk.CTk):
             print('Password Length must be a integer number.')
 
         resp = [number,lower,symbol,upper,len]
-        print(resp)
+
+        ctk.CTkToplevel(self.app)
+        
         password = self.g.generator(resp)
 
-        print(password)
 
     def deleteItem(self, id):
         dialog = ctk.CTkInputDialog(title="Delete Iten", text="What's the iten ID that you want to delete?")
