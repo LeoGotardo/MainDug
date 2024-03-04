@@ -20,6 +20,7 @@ class Model:
             self.client = MongoClient(connection_string)
             self.db = self.client["Belle"]
             self.logins = self.db["Logins"]
+            self.passwords = self.db["Password"]
         except Exception as e:
             logging.error(f"Failed to connect to MongoDB: {e}")
 
@@ -28,8 +29,7 @@ class Model:
         Adds a new user to the 'Logins' collection.
         """
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        title = ['ID', 'Site', 'Login', 'Password']
-        user = {"Login": login, "Password": hashed_password, "Passwords":[title]}
+        user = {"Login": login, "Password": hashed_password}
         try:
             result = self.logins.insert_one(user)
             return result.inserted_id
@@ -107,18 +107,16 @@ class Model:
             return False
     
     def findPasswords(self, id):
-        user = self.logins.find_one({"_id":id})
+        user = self.passwords.find({"_id":id})
 
-        passwords = user['Passwords']
-
-        return passwords
+        return user
     
     def delete_item(self, id, item_id):
         try:
             passwords = self.findPasswords(id)
             del passwords[item_id]
 
-            self.logins.update_one({'_id': id}, {"$set": {'Passwords': passwords}})
+            self.passwords.delete_one({'_id': id})
 
             return 'Process Done'
         except Exception as e:
@@ -127,16 +125,10 @@ class Model:
     def addNewLog(self, id, site, login, password):
         try:
             passwords = self.findPasswords(id)
-            item_id = len(passwords)
-            item = [item_id, site, login, password]
-
-            if passwords == []:
-                passwords = [item]
-            else:
-                passwords.append(item)
+            item = [site, login, password]
             
             print(d.Margin,passwords,d.Margin)
-            self.logins.update_one({'_id': id}, {"$set": {'Passwords': passwords}})
+            self.passwords.insert_one({'user_id': id}, {'login' : item})
 
             return 'Process Done'
         except Exception as e:
