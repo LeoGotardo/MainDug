@@ -1,0 +1,7 @@
+pymongo
+customtkinter
+CTktable
+tkinter
+alive_progress
+logging
+hashlib
