@@ -23,6 +23,7 @@ class View(ctk.CTk):
         self.Add = ctk.CTkImage(dark_image=img.open("icons/add.ico"))
         self.Delete = ctk.CTkImage(dark_image=img.open("icons/delete.ico"))
         self.edit = ctk.CTkImage(dark_image=img.open("icons/edit.ico"))
+        ctk.set_appearance_mode('dark')
         ctk.set_default_color_theme('green')
         self.mode = 'dark'
         self.login()
@@ -381,7 +382,7 @@ class View(ctk.CTk):
 
         self.passwords = self.c.findPasswords(id)
 
-        print(f"{d.Margin}passwords:{self.passwords}{d.Margin}")
+        print(f"{d.Margin}passwords typr:{type(self.passwords)}{d.Margin}")
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 

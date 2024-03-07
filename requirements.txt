@@ -1,0 +1,6 @@
+pymongo
+customtkinter
+CTktable
+alive_progress
+tk
+Pillow
