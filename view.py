@@ -33,14 +33,13 @@ class View(ctk.CTk):
     def fullGeneratePass(self, len, upper, lower, symbol, number):
         try:
             len = int(len)
+            resp = [number,lower,symbol,upper,len]
+            password = self.g.generator(resp)
+
+            return password
+
         except:
-            print('Password Length must be a integer number.')
-
-        resp = [number,lower,symbol,upper,len]
-
-        ctk.CTkToplevel(self.app)
-        
-        password = self.g.generator(resp)
+            msg.showerror(message='Password Length must be a integer number.', title="error")
 
 
     def deleteItem(self, id):
@@ -266,6 +265,7 @@ class View(ctk.CTk):
         self.app.title("Signup")
         self.signupFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
         self.app.iconbitmap(default="icons/Heart.ico")
+        
 
 
         title = ctk.CTkLabel(

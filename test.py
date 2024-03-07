@@ -1,13 +1,18 @@
 import customtkinter
+import time
+
+def start():
+    progress.start()
 
 app = customtkinter.CTk()
+app.geometry('500x500')
 
-def checkbox_event():
-    print("checkbox toggled, current value:", check_var.get())
-
-check_var = customtkinter.StringVar(value="on")
-checkbox = customtkinter.CTkCheckBox(app, text="CTkCheckBox", command=checkbox_event,
-                                     variable=check_var, onvalue="on", offvalue="off")
-
-checkbox.pack()
+progress = customtkinter.CTkProgressBar(app,orientation='horizontal')
+progress.pack(padx=40, pady=40)
+progress.set(0)
+button = customtkinter.CTkButton(app, text="click me", command=lambda: start())
+button.pack()
 app.mainloop()
+
+
+

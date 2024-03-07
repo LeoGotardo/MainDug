@@ -1,4 +1,5 @@
 from alive_progress import alive_bar, config_handler
+import customtkinter as ctk
 import random as r
 import Debug as d
 import string
@@ -15,6 +16,17 @@ class Generator:
         self.cls = os.system("cls")
     
     def generator(self, resp):
+        self.app = ctk.CTk()
+        self.popupFrame = ctk.CTkFrame(master=self.app,)
+        self.popupFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
+
+        popup = ctk.CTkToplevel(self.popupFrame)
+        popup.title("Loading")
+        popup.iconbitmap(default="icons/Heart.ico")
+        popup.geometry("500x250")
+        bar = ctk.CTkProgressBar(self.popupFrame, mode='indeterminate')
+        bar.pack()
+
         config_handler.set_global(length=50)
 
         print(d.Margin)
@@ -39,13 +51,17 @@ class Generator:
         if maius == 'on':
             for i in range(len(self.may)):
                 fin.append(self.may[i])
-                
+            
+        bar.start()
         with alive_bar(syze, title="Generating your password...") as bar:
             for i in range(syze):
                 act = r.choice(fin)
                 password.append(act)
                 bar()
         fin_pass = ''.join(password)
+        bar.stop()
+
+
 
         return fin_pass
 
