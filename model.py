@@ -109,6 +109,9 @@ class Model:
     def findPasswords(self, id):
         user = self.passwords.find({"_id":id})
 
+        if type(user) != 'list':
+            user = []
+
         return user
     
     def delete_item(self, id, item_id):
