@@ -106,8 +106,11 @@ class Model:
             logging.error(f"Failed to delete user: {e}")
             return False
     
-    def findPasswords(self, id):
-        user = self.passwords.find({"_id":id})
+    def findPasswords(self, user_id):
+        print(type(user_id))
+        user = self.passwords.find({"user_id":user_id})
+        print(user_id)
+
 
         if type(user) != 'list':
             user = []
@@ -131,7 +134,7 @@ class Model:
             item = [site, login, password]
             
             print(d.Margin,passwords,d.Margin)
-            self.passwords.insert_one({'user_id': id}, {'login' : item})
+            self.passwords.insert_one({'user_id': id, 'login' : item})
 
             return 'Process Done'
         except Exception as e:
