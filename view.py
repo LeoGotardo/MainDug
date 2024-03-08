@@ -34,13 +34,14 @@ class View(ctk.CTk):
     def fullGeneratePass(self, len, upper, lower, symbol, number):
         try:
             len = int(len)
-            resp = [number,lower,symbol,upper,len]
-            password = self.g.generator(resp)
-
-            return password
-
         except:
             msg.showerror(message='Password Length must be a integer number.', title="error")
+            return False
+        
+        resp = [number,lower,symbol,upper,len]
+        password = self.g.generator(resp)
+
+        return password
 
 
     def deleteItem(self, id):
@@ -380,9 +381,14 @@ class View(ctk.CTk):
         self.loggedFrame.pack(in_=self.app, anchor="center", fill='both', expand=True)
         self.app.iconbitmap(default="icons/Star.ico")
 
-        self.passwords = self.c.findPasswords(id)
+        passwords = self.c.findPasswords(id)
+        title = ['ID', 'Site', 'Login', 'Password']
 
-        print(f"{d.Margin}passwords typr:{type(self.passwords)}{d.Margin}")
+        passwords.insert(0, title)
+        
+        print(passwords)
+
+        print(f"{d.Margin}passwords type:{type(passwords)}{d.Margin}")
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
@@ -394,9 +400,9 @@ class View(ctk.CTk):
 
         table = CTkTable(
             master=tableFrame,
-            row=len(self.passwords),
+            row=len(passwords),
             column=4,
-            values=self.passwords,
+            values=passwords,
             width=200,
             colors=['#174a19','#292b29']
         )
@@ -831,6 +837,7 @@ class View(ctk.CTk):
         confirmButton.pack(padx=50, pady=10)
         cancelButton.pack(padx=50, pady=10)
 
+        self.app.bind("<Return>", lambda _: self.fullGeneratePass(passLen.get(), upperLetterValue.get(), lowerLetterValue.get(), symbol.get(), numberValue.get()))
 
     def addLog(self, id):
         self.addLogFrame = ctk.CTkFrame(master=self.app)
