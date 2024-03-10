@@ -24,6 +24,7 @@ class Model:
         except Exception as e:
             logging.error(f"Failed to connect to MongoDB: {e}")
 
+
     def  add_user(self, login, password):
         """
         Adds a new user to the 'Logins' collection.
@@ -36,6 +37,7 @@ class Model:
         except Exception as e:
             logging.error(f"Failed to add user: {e}")
             return str(e)
+
 
     def is_login_valid(self, login, Password):
         """
@@ -69,6 +71,7 @@ class Model:
         else:
             return 'Invalid password'
 
+
     def update_user(self, user_id, parameter, new_value):
         """
         Updates user information in the 'Logins' collection.
@@ -83,6 +86,7 @@ class Model:
             logging.error(f"Failed to update user: {e}")
             return e
 
+
     def find_user_id(self, login, password):
         """
         Finds the ID of a user based on login and password.
@@ -95,6 +99,7 @@ class Model:
             user = self.logins.find_one({"Login": login, "Password": password})
         return user["_id"] if user else None
 
+
     def delete_user(self, user_id):
         """
         Deletes a user based on the user ID.
@@ -106,6 +111,7 @@ class Model:
             logging.error(f"Failed to delete user: {e}")
             return False
     
+
     def findPasswords(self, user_id):
         print(type(user_id))
         user = self.passwords.find({"user_id":user_id})
@@ -117,6 +123,7 @@ class Model:
 
         return user
     
+
     def delete_item(self, id, item_id):
         try:
             passwords = self.findPasswords(id)
@@ -127,7 +134,8 @@ class Model:
             return 'Process Done'
         except Exception as e:
             return e
-        
+
+
     def addNewLog(self, id, site, login, password):
         try:
             passwords = self.findPasswords(id)
@@ -139,6 +147,7 @@ class Model:
             return 'Process Done'
         except Exception as e:
             return e
+
 
 if __name__ == "__main__":
     # Initialize logging

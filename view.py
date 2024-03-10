@@ -1,10 +1,25 @@
-from passgenerator import Generator
 from tkinter import messagebox as msg
+from typing import Mapping
+from passgenerator import Generator
 from controller import Controller
 from PIL import Image as img
+from threading import Thread
 from CTkTable import *
 import customtkinter as ctk
 import Debug as d
+
+class customThread(Thread):
+    def __init__(self, group: None, target: None, name: None, args:(), kwargs:{}, Verbose= None):
+        Thread.__init__(self, group, target, name, args, kwargs)
+        self._return = None
+
+        def run(self):
+            if self._target is not None:
+                self._return = self._target(*self._args, **self._kwargs)
+        
+        def join(self):
+            Thread.join(self)
+            return self._return
 
 
 class View(ctk.CTk):
@@ -38,8 +53,10 @@ class View(ctk.CTk):
             msg.showerror(message='Password Length must be a integer number.', title="error")
             return False
         
-        resp = [number,lower,symbol,upper,len]
-        password = self.g.generator(resp)
+        password = customThread(target=self.g.generator, args=(number,lower,symbol,upper,len), daemon=True)
+        password.start()
+
+        password = password.join()
 
         return password
 

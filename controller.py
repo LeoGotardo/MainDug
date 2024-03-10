@@ -15,30 +15,38 @@ class Controller:
         else:
             return self.model.is_credential_valid(login, password, password_confirm)
 
+
     def is_login_valid(self, login, Password):
         # Calls the is_login_valid method of Model and returns the result
         return self.model.is_login_valid(login, Password)
     
+
     def update_user(self, user_id, parameter, new_value):
         # Calls the update_user method of Model and returns the result
         return self.model.update_user(user_id, parameter, new_value)
+
 
     def delete_user(self, user_id):
         # Calls the delete_user method of Model and returns the result
         return self.model.delete_user(user_id)
 
+
     def find_user_id(self, login, password):
         # Calls the find_user_id method of Model and returns the user ID
         return self.model.find_user_id(login, password)
     
+
     def findPasswords(self,id):
         return self.model.findPasswords(id)
     
+
     def delete_item(self, id, item_id):
         return self.model.delete_item(id, item_id)
     
+
     def addNewLog(self, id, site, login, password):
         return self.model.addNewLog(id, site, login, password)
+
 
 if __name__ == "__main__":
     # Create a Controller instance to test the class
