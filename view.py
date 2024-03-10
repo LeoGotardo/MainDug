@@ -9,7 +9,7 @@ import customtkinter as ctk
 import Debug as d
 
 class customThread(Thread):
-    def __init__(self, group: None, target: None, name: None, args:(), kwargs:{}, Verbose= None):
+    def __init__(self, group= None, target= None, name= None, args=(), kwargs={}, Verbose= None):
         Thread.__init__(self, group, target, name, args, kwargs)
         self._return = None
 
@@ -53,10 +53,13 @@ class View(ctk.CTk):
             msg.showerror(message='Password Length must be a integer number.', title="error")
             return False
         
-        password = customThread(target=self.g.generator, args=(number,lower,symbol,upper,len), daemon=True)
+        password = customThread(target=self.g.generator, args=(number,lower,symbol,upper,len))
         password.start()
 
         password = password.join()
+
+        while True:
+            print(password)
 
         return password
 
