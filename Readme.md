@@ -88,4 +88,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-Remember, this is just a template. Depending on your project's complexity and specific functionalities, you might need to add or modify sections to provide the best documentation for your users.
