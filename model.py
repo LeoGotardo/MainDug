@@ -44,12 +44,12 @@ class Model:
         Checks if the given login exists in the 'Logins' collection.
         """
         hashed_password = hashlib.sha256(Password.encode()).hexdigest()
-        valid = self.logins.find_one({"Login": login},{"password":hashed_password})
+        valid = self.logins.find_one({'$and':[{"Login": login},{"password":hashed_password}]})
 
         itens = []
 
 
-        if self.logins.find_one({"Login": login},{"password":hashed_password}) is not None:
+        if valid is not None:
             itens.append(True) 
             itens.append(valid['_id'])
             return itens
@@ -114,14 +114,15 @@ class Model:
 
     def findPasswords(self, user_id):
         print(type(user_id))
-        user = self.passwords.find({"user_id":user_id})
-        print(user_id)
+        user = self.passwords.find_one({"user_id":user_id})
+        
+        try:
+            value = [[user["user_id"],user["login"[0]],user["login"[1]],user["login"[2]]]]
+            print(f"value:{value}")
+            return value
+        except:
+            return []
 
-
-        if type(user) != 'list':
-            user = []
-
-        return user
     
 
     def delete_item(self, id, item_id):
