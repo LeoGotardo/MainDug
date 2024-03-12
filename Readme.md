@@ -16,7 +16,7 @@ This project is a Password Manager Application developed using Python. It provid
 - [Troubleshooting](#troubleshooting)
 - [Contributors](#contributors)
 - [License](#license)
-- [Details](#`View.py` - GUI Management)
+- [Details](#View.py - GUI Management)
 
 ## Installation
 
