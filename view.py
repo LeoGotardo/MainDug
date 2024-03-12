@@ -50,18 +50,18 @@ class View(ctk.CTk):
         try:
             len = int(len)
         except:
-            msg.showerror(message='Password Length must be a integer number.', title="error")
+            msg.showerror(message='Password Length must be a integer number.', title="Error")
             return False
         
         password = customThread(target=self.g.generator, args=(number,lower,symbol,upper,len))
         password.start()
 
-        password = password.join()
+        fullpassword = password.join()
 
-        while True:
-            print(password)
 
-        return password
+        print(fullpassword)
+
+        return fullpassword
 
 
     def deleteItem(self, id):
@@ -132,6 +132,17 @@ class View(ctk.CTk):
                 msg.showerror("Error", "An error occurred while deleting the account.")
         else:
             print("Account deletion canceled.")
+
+
+    def editLog(self, id):
+        dialog = ctk.CTkInputDialog(text="What's the item ID:", title='Edit item')
+        itemID = dialog.get_input()
+        try:
+            int(itemID)
+        except:
+            msg.showerror(text='Item must be a number')
+
+        self.editItem(id, itemID)
 
 
     def validLogin(self, login, password):
@@ -485,7 +496,7 @@ class View(ctk.CTk):
         edit = ctk.CTkButton(
             master=self.loggedFrame,
             text="",
-            command=lambda:[self.edit()],
+            command=lambda:[self.editlog(id)],
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
@@ -953,6 +964,298 @@ class View(ctk.CTk):
         changeTheme.pack(padx=50, pady=10)
 
         self.app.bind("<Return>", lambda _: self.addLogDB(id, siteEntry.get(), loginEntry.get(), passwordEntry.get()))
+
+    
+    def editItem(self, id, itemID):
+        self.editItemFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Edit Item")
+        self.editItemFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
+        self.app.iconbitmap(default="icons/Alien.ico")
+
+
+        title = ctk.CTkLabel(
+            master=self.editItemFrame,
+            text="Edit Item",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+        )
+
+        siteButton = ctk.CTkButton(
+            master=self.editItemFrame,
+            text="Edit Site",
+            command=lambda: [self.siteEdit(id, itemID)],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        loginButton = ctk.CTkButton(
+            master=self.editItemFrame,
+            text="Edit Login",
+            command=lambda: [self.loginEdit(id, itemID)],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        passwordButton = ctk.CTkButton(
+            master=self.editItemFrame,
+            text="Edit Password",
+            command=lambda: [self.passwordEdit(id, itemID)],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        cancelButton = ctk.CTkButton(
+            master=self.editItemFrame,
+            text="Cancel",
+            command=lambda: [self.editItemFrame.destroy(), self.logged(id)],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        changeTheme = ctk.CTkButton(
+            master=self.addLogFrame,
+            text="",
+            command=lambda:self.theme(changeTheme),
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.white
+        )
+
+        title.pack(padx=50, pady=10)
+        siteButton.pack(padx=50, pady=10)
+        loginButton.pack(padx=50, pady=10)
+        passwordButton.pack(padx=50, pady=10)
+        cancelButton.pack(padx=50, pady=10)
+        changeTheme.pack(padx=50, pady=10)
+
+
+    def siteEdit(self, id):
+        self.editSiteFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Edit site")
+        self.editSiteFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
+
+
+        title = ctk.CTkLabel(
+            master=self.editSiteFrame, 
+            text="New site",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+        )
+
+        siteEntry = ctk.CTkEntry(
+            master=self.editSiteFrame,
+            placeholder_text="New site",
+            font=("RobotoSlab", 12),
+            border_width=2,
+            height=40,
+            width=200
+        )
+
+        siteEditButton = ctk.CTkButton(
+            master=self.editSiteFrame,
+            text="Edit site",
+            command=lambda:[self.editCred(id, "site", siteEntry.get())],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        backButton = ctk.CTkButton(
+            master=self.editSiteFrame,
+            text="Back",
+            command=lambda: [self.editSiteFrame.destroy(), self.logged(id)],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        changeTheme = ctk.CTkButton(
+            master=self.editSiteFrame,
+            text="",
+            command=lambda:[self.theme(changeTheme)],
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.white
+        )
+
+
+        title.pack(padx=50, pady=10)
+        siteEntry.pack(padx=50, pady=10)
+        siteEditButton.pack(padx=50, pady=10)
+        backButton.pack(padx=50, pady=10)
+        changeTheme.pack(padx=50, pady=10)
+
+        self.app.bind("<Return>", lambda _: self.editCred(id, "site", siteEntry.get()))
+
+
+    def loginEdit(self, id):
+        self.editLoginFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Edit Login")
+        self.editLoginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
+
+
+        title = ctk.CTkLabel(
+            master=self.editLoginFrame, 
+            text="New Login",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+        )
+
+        loginEntry = ctk.CTkEntry(
+            master=self.editLoginFrame,
+            placeholder_text="New Login",
+            font=("RobotoSlab", 12),
+            border_width=2,
+            height=40,
+            width=200
+        )
+
+        loginEditButton = ctk.CTkButton(
+            master=self.editLoginFrame,
+            text="Edit Login",
+            command=lambda:[self.editCred(id, "Login", loginEntry.get())],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        backButton = ctk.CTkButton(
+            master=self.editLoginFrame,
+            text="Back",
+            command=lambda: [self.editLoginFrame.destroy(), self.logged(id)],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        changeTheme = ctk.CTkButton(
+            master=self.editLoginFrame,
+            text="",
+            command=lambda:[self.theme(changeTheme)],
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.white
+        )
+
+
+        title.pack(padx=50, pady=10)
+        loginEntry.pack(padx=50, pady=10)
+        loginEditButton.pack(padx=50, pady=10)
+        backButton.pack(padx=50, pady=10)
+        changeTheme.pack(padx=50, pady=10)
+
+        self.app.bind("<Return>", lambda _: self.editCred(id, "Login", loginEntry.get()))
+
+
+    def passwordEdit(self, id):
+        self.editPasswordFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Edit Password")
+        self.editPasswordFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
+
+
+        title = ctk.CTkLabel(
+            master=self.editPasswordFrame, 
+            text="New Password",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+        )
+
+        passwordEntry = ctk.CTkEntry(
+            master=self.editPasswordFrame,
+            placeholder_text="New Password",
+            font=("RobotoSlab", 12),
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
+        
+
+        showPass = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="",
+            command=lambda:[self.seePass(passwordEntry, showPass)],
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.see
+        )
+
+        passwordConfirmEntry = ctk.CTkEntry(
+            master=self.editPasswordFrame,
+            placeholder_text="New Password Confirm",
+            font=("RobotoSlab", 12),
+            border_width=2,
+            height=40,
+            width=200,
+            show="*"
+        )
+
+        showPassConfirm = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="",
+            command=lambda:[self.seePass(passwordConfirmEntry, showPassConfirm)],
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.see
+        )
+
+        passEditButton = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="Edit Password",
+            command=lambda: [self.editCred(id, "Password", passwordEntry.get())],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        backButton = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="Back",
+            command=lambda: [self.editPasswordFrame.destroy(), self.logged(id)],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        theme = ctk.CTkButton(
+            master=self.editPasswordFrame,
+            text="",
+            command=lambda:[self.theme(theme)],
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.white
+        )
+
+
+        title.pack(padx=50, pady=10)
+        passwordEntry.pack(padx=50, pady=10)
+        passwordConfirmEntry.pack(padx=50, pady=10)
+        passEditButton.pack(padx=50, pady=10)
+        backButton.pack(padx=50, pady=10)
+        theme.pack(padx=50, pady=10)
+
 
 if __name__ == "__main__":
     view = View()
