@@ -1,5 +1,3 @@
-Based on the provided code, I'll draft a README that reflects the structure and functionality of your project, which seems to involve a password management application with a GUI. This README template includes standard sections; feel free to adjust or expand upon this template to better suit your project's needs.
-
 ---
 
 # Password Manager Application
