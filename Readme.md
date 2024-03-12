@@ -16,7 +16,7 @@ This project is a Password Manager Application developed using Python. It provid
 - [Troubleshooting](#troubleshooting)
 - [Contributors](#contributors)
 - [License](#license)
-- [Details](#View.py - GUI Management)
+- [Details](#View.py)
 
 ## Installation
 
@@ -79,7 +79,7 @@ Para detalhar cada função dos códigos fornecidos, organizarei as descrições
 
 ---
 
-## `View.py` - GUI Management
+## View.py
 
 ### `CustomThread`
 - **Purpose:** Subclass of `Thread` for running tasks in the background. Allows for the retrieval of the thread's return value.
