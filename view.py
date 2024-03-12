@@ -25,7 +25,6 @@ class View(ctk.CTk):
     def __init__(self):
         self.c = Controller()
         self.app = ctk.CTk()
-        self.g = Generator()
 
         self.app.geometry("500x600")
         self.see = ctk.CTkImage(dark_image=img.open("icons/see.ico"))
@@ -52,15 +51,10 @@ class View(ctk.CTk):
             msg.showerror(message='Password Length must be a integer number.', title="Error")
             return False
         
-        password = CustomThread(target=self.g.generator, args=(number,lower,symbol,upper,len))
+        password = CustomThread(target=Generator, args=(number,lower,symbol,upper,len))
         password.start()
 
-        fullpassword = password.join()
-
-
-        print(fullpassword)
-
-        return fullpassword
+        print(password.join())
 
 
     def deleteItem(self, id):
