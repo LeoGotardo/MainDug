@@ -4,6 +4,7 @@ from controller import Controller
 from PIL import Image as img
 from threading import Thread
 from CTkTable import *
+
 import customtkinter as ctk
 import Debug as d
 
