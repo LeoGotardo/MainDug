@@ -44,7 +44,7 @@ class Model:
         Checks if the given login exists in the 'Logins' collection.
         """
         hashed_password = hashlib.sha256(Password.encode()).hexdigest()
-        valid = self.logins.find_one({'$and':[{"Login": login},{"password":hashed_password}]})
+        valid = self.logins.find_one({'$and':[{"Login": login},{"Password":hashed_password}]})
 
         itens = []
 
@@ -114,7 +114,9 @@ class Model:
 
     def findPasswords(self, user_id):
         print(type(user_id))
-        user = self.passwords.find_one({"user_id":user_id})
+        user = self.passwords.find({"user_id":user_id})
+
+        print(user)
         
         try:
             value = [[user["user_id"],user["login"[0]],user["login"[1]],user["login"[2]]]]

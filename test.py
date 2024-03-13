@@ -1,17 +1,23 @@
-import hashlib
+from threading import Thread
 
-# Assume this is the hashed password stored in your database
-stored_hashed_password = hashlib.sha256("123".encode()).hexdigest()
+class CustomThread(Thread):
+    def __init__(self, group=None, target= None, name=None, args=(), kwargs={}, Verbose=None):
+        Thread.__init__(self, group, target, name, args, kwargs)
+        self._return = None
 
-# This is the password attempt by a user
-password_attempt = "123"
+    def run(self):
+        if self._target is not None:
+            self._return = self._target(*self._args, **self._kwargs)
 
-# Hash the password attempt
-attempt_hashed = hashlib.sha256(password_attempt.encode()).hexdigest()
+    def join(self):
+        Thread.join(self)
+        return self._return
 
-# Compare the hashes
-if attempt_hashed == stored_hashed_password:
-    print("Password matches!")
-else:
-    print("Password does not match.")
 
+def func(x,y):
+    sum= x+y
+    return sum
+
+t = CustomThread(target=func, args=(8,4))
+t.start()
+print(t.join())
