@@ -822,7 +822,7 @@ class View(ctk.CTk):
                                )
 
         numberValue = ctk.StringVar(value="on")
-        number = ctk.CTkCheckBox(self.generatePassFrame, text="Lower Case Letters",
+        number = ctk.CTkCheckBox(self.generatePassFrame, text="Numbers",
                                      variable=numberValue, onvalue="on", offvalue="off")
 
         lowerLetterValue = ctk.StringVar(value="on")
@@ -860,6 +860,7 @@ class View(ctk.CTk):
         title.pack(padx=50, pady=30)
         passLen.pack(padx=50, pady=10)
         number.pack(padx=50, pady=10)
+        symbol.pack(padx=50, pady=10)
         lowerLetter.pack(padx=50, pady=10)
         upperLetter.pack(padx=50, pady=10)
         confirmButton.pack(padx=50, pady=10)
