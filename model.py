@@ -114,18 +114,26 @@ class Model:
 
     def findPasswords(self, user_id):
         print(type(user_id))
-        user = self.passwords.find({"user_id":user_id})
+        # Use .find() to get a cursor for all documents matching the query
+        users = self.passwords.find({"user_id": user_id})
 
-        print(user)
-        
-        try:
-            value = [[user["user_id"],user["login"[0]],user["login"[1]],user["login"[2]]]]
-            print(f"value:{value}")
-            return value
-        except:
-            return []
+        results = []  # A list to store the results
 
-    
+        for user in users:
+            try:
+                # Assuming 'login' is a list in the user document, and you want to access its first three elements
+                # Make sure to check the length of 'login' to avoid IndexError
+                if "login" in user and len(user["login"]) >= 3:
+                    value = [user["user_id"], user["login"][0], user["login"][1], user["login"][2]]
+                    results.append(value)
+            except Exception as e:
+                print(f"Error processing user {user['user_id']}: {e}")
+                # Optionally, continue to the next user or handle the error as needed
+                continue
+
+        print(f"Results: {results}")
+        return results
+
 
     def delete_item(self, id, item_id):
         try:
