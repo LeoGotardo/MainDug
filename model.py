@@ -121,30 +121,37 @@ class Model:
 
         for user in users:
             try:
-                # Assuming 'login' is a list in the user document, and you want to access its first three elements
                 # Make sure to check the length of 'login' to avoid IndexError
                 if "login" in user and len(user["login"]) >= 3:
                     value = [user["_id"], user["login"][0], user["login"][1], user["login"][2]]
                     results.append(value)
             except Exception as e:
                 print(f"Error processing user {user['user_id']}: {e}")
-                # Optionally, continue to the next user or handle the error as needed
                 continue
 
         print(f"Results: {results}")
         return results
 
 
-    def delete_item(self, id, item_id):
+    def delete_item(self, id, item_id, logged_user_id):
         try:
-            passwords = self.findPasswords(id)
-            del passwords[item_id]
+            item = self.passwords.find({"user_id":logged_user_id})
 
-            self.passwords.delete_one({'_id': id})
+            userID = item["user_id"]
 
-            return 'Process Done'
+
+            # Verifica se o usuário logado é o mesmo registrado na DB
+            if logged_user_id != userID:
+                return "Cant find this ID"
+            
+            result = self.logins.delete_one({'_id': item_id})
+            if result.deleted_count > 0:
+                return True, "Item deleted successfully."
+            else:
+                return False, "Item not found."
         except Exception as e:
-            return e
+            logging.error(f"Failed to delete item: {e}")
+            return False, "Failed to delete item: an error occurred."        
 
 
     def addNewLog(self, id, site, login, password):

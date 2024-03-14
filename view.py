@@ -57,11 +57,15 @@ class View(ctk.CTk):
         password = CustomThread(target=self.g.generator, args=(number,lower,symbol,upper,len))
         password.start()
 
-        print(password.join())
+        fullPassword = password.join()
+        
+        print(fullPassword)
+        self.generatePassFrame.destroy()
+        self.addWithPass(id, fullPassword)
 
 
     def deleteItem(self, id):
-        dialog = ctk.CTkInputDialog(title="Delete Iten", text="What's the iten ID that you want to delete?")
+        dialog = ctk.CTkInputDialog(title="Delete Item", text="What's the item ID that you want to delete?")
         item_id = dialog.get_input()
         try:
             item_id = int(item_id)
@@ -103,12 +107,16 @@ class View(ctk.CTk):
             self.loggedFrame.destroy()
             self.addLog(id)
 
-    def addLogDB(self, id, site, login, password):
-        ret = self.c.addNewLog(id, site, login, password)
-        msg.showinfo(title="Info", message=ret)
+    def addLogDB(self, id, site, login, password, frame):
+        if frame is not None:
+            ret = self.c.addNewLog(id, site, login, password)
+            msg.showinfo(title="Info", message=ret)
 
-        self.addLogFrame.destroy()
-        self.addLog(id)
+            self.addPassFrame.destroy()
+            self.logged(id)
+        else:
+            ret = self.c.addNewLog(id, site, login, password)
+            msg.showinfo(title="Info", message=ret)
 
 
     def delete(self, id):
@@ -923,7 +931,7 @@ class View(ctk.CTk):
         doneButton = ctk.CTkButton(
             master=self.addLogFrame,
             text="Done",
-            command=lambda: [self.addLogDB(id, siteEntry.get(), loginEntry.get(), passwordEntry.get())],
+            command=lambda: [self.addLogDB(id, siteEntry.get(), loginEntry.get(), passwordEntry.get(), None)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -961,7 +969,7 @@ class View(ctk.CTk):
         cancelButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _: self.addLogDB(id, siteEntry.get(), loginEntry.get(), passwordEntry.get()))
+        self.app.bind("<Return>", lambda _: self.addLogDB(id, siteEntry.get(), loginEntry.get(), passwordEntry.get(), None))
 
     
     def editItem(self, id, itemID):
@@ -1254,6 +1262,76 @@ class View(ctk.CTk):
         backButton.pack(padx=50, pady=10)
         theme.pack(padx=50, pady=10)
 
+
+    def addWithPass(self, id, password):
+        self.addPassFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Login")
+        self.addPassFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
+        self.app.iconbitmap(default="icons/Alien.ico")
+
+        title = ctk.CTkLabel(
+            master=self.addPassFrame,
+            text="Add New Login",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+        )
+
+        site = ctk.CTkEntry(
+            master=self.addPassFrame,
+            placeholder_text="site",
+            font=("RobotoSlab", 12),
+            border_width=2,
+            height=40,
+            width=200
+        )
+
+        login = ctk.CTkEntry(
+            master=self.addPassFrame,
+            placeholder_text="login",
+            font=("RobotoSlab", 12),
+            border_width=2,
+            height=40,
+            width=200
+        )
+
+        done = ctk.CTkButton(
+            master=self.addPassFrame,
+            text="Done",
+            command=lambda: [self.addLogDB(id, site.get(), login.get(), password, self.addPassFrame)],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        cancel = ctk.CTkButton(
+            master=self.addPassFrame,
+            text="Cancel",
+            command=lambda: [self.loginFrame.destroy(), self.logged(id)],
+            font=("RobotoSlab", 12),
+            corner_radius=20,
+            height=40,
+            width=100
+        )
+
+        changeTheme = ctk.CTkButton(
+            master=self.addPassFrame,
+            text="",
+            command=lambda:self.theme(changeTheme),
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.white
+        )
+        
+        title.pack(padx=50, pady=10)
+        site.pack(padx=50, pady=10)
+        login.pack(padx=50, pady=10)
+        done.pack(padx=50, pady=10)
+        cancel.pack(padx=50, pady=10)
+        changeTheme.pack(padx=50, pady=10)
+
+        self.app.bind("<Return>", lambda _: self.addLogDB(id, site.get(), login.get(), password, self.addPassFrame))
 
 if __name__ == "__main__":
     view = View()
