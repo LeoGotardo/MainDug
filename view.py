@@ -500,6 +500,7 @@ class View(ctk.CTk):
             image=self.edit
         )
 
+
         configButton.place(relx=0.05, rely=0.05,anchor="center")
         title.place(relx=0.5, rely=0.1, anchor="center")
 
