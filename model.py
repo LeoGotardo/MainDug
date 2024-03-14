@@ -124,7 +124,7 @@ class Model:
                 # Assuming 'login' is a list in the user document, and you want to access its first three elements
                 # Make sure to check the length of 'login' to avoid IndexError
                 if "login" in user and len(user["login"]) >= 3:
-                    value = [user["user_id"], user["login"][0], user["login"][1], user["login"][2]]
+                    value = [user["_id"], user["login"][0], user["login"][1], user["login"][2]]
                     results.append(value)
             except Exception as e:
                 print(f"Error processing user {user['user_id']}: {e}")
