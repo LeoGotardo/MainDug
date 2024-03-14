@@ -43,6 +43,7 @@ class View(ctk.CTk):
         self.mode = 'dark'
         self.login()
 
+        self.app.resizable(width=False, height=False)
         self.app.mainloop()
 
 
