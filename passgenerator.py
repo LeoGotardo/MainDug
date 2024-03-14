@@ -1,4 +1,3 @@
-from alive_progress import alive_bar, config_handler
 import random as r
 
 
@@ -10,8 +9,6 @@ class Generator:
         self.numb = ['0','1','2','3','4','5','6','7','8','9']
         
     def generator(self, num, letter, symb, maius, syze):
-        config_handler.set_global(length=50)
-
         password = []
         fin = []
 
@@ -28,11 +25,10 @@ class Generator:
             for i in range(len(self.may)):
                 fin.append(self.may[i])
             
-        with alive_bar(syze, title="Generating your password...") as bar:
-            for i in range(syze):
-                act = r.choice(fin)
-                password.append(act)
-                bar()
+        for i in range(syze):
+            act = r.choice(fin)
+            password.append(act)
+
         fin_pass = ''.join(password)
 
         return fin_pass
