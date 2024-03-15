@@ -1,5 +1,5 @@
 import logging
-import tk
+import tkinter as tk
 import customtkinter as ctk
 from tkinter import messagebox as msg
 
