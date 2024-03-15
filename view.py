@@ -3,10 +3,12 @@ from passgenerator import Generator
 from controller import Controller
 from PIL import Image as img
 from threading import Thread
+from icecream import ic
 from CTkTable import *
 
 import customtkinter as ctk
 import Debug as d
+import os
 
 class CustomThread(Thread):
     def __init__(self, group=None, target= None, name=None, args=(), kwargs={}, Verbose=None):
@@ -24,6 +26,9 @@ class CustomThread(Thread):
 
 class View(ctk.CTk):
     def __init__(self):
+        os.system("cls")
+        ic.configureOutput(prefix=f"{d.Margin}\nDebug | ")
+
         self.c = Controller()
         self.app = ctk.CTk()
         self.g = Generator()
@@ -40,7 +45,7 @@ class View(ctk.CTk):
 
         ctk.set_appearance_mode('dark')
         ctk.set_default_color_theme('green')
-        
+
         self.mode = 'dark'
         self.login()
 
@@ -49,7 +54,7 @@ class View(ctk.CTk):
         self.app.mainloop()
 
 
-    def fullGeneratePass(self, len, upper, lower, symbol, number):
+    def fullGeneratePass(self, id, len, upper, lower, symbol, number):
         try:
             len = int(len)
         except:
@@ -61,7 +66,7 @@ class View(ctk.CTk):
 
         fullPassword = password.join()
         
-        print(fullPassword)
+        ic(fullPassword)
         self.generatePassFrame.destroy()
         self.addWithPass(id, fullPassword)
 
@@ -129,12 +134,12 @@ class View(ctk.CTk):
             try:
                 # Perform account deletion logic here
                 self.c.delete_user(id)
-                print(f"{d.Margin}Account {id} deleted successfully.{d.Margin}")
+                print(f"{d.Margin}\nAccount {id} deleted successfully.{d.Margin}")
                 msg.showinfo('Done',f'Account {id} sucessfull deleted.')
                 self.eraseFrame.destroy()
                 self.login()
             except Exception as e:
-                print(f"{d.Margin}Account deletion failed: {e}{d.Margin}")
+                print(f"Account deletion failed: {e}")
                 msg.showerror("Error", "An error occurred while deleting the account.")
         else:
             print("Account deletion canceled.")
@@ -155,7 +160,7 @@ class View(ctk.CTk):
         # Verifica se o login é válido e realiza a ação apropriada
         if login != '' or password != '':
             itens = self.c.is_login_valid(login, password)
-            print(f"{d.Margin}Itens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
+            print(f"{d.Margin}\nItens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
             if itens[0] == True:
                 self.loginFrame.destroy()
 
@@ -171,10 +176,10 @@ class View(ctk.CTk):
 
 
     def addCad(self, login, password, passwordConfirm):
-        print(f"{d.Margin}Login:{login} \nPassword:{password}\nPasswordConfirm:{passwordConfirm}{d.Margin}")
+        ic(login,password,passwordConfirm)
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.add_user(login, password, passwordConfirm)
-        print(f"{d.Margin}error = {error}{d.Margin}")
+        ic(error)
         if error == True:
             self.alert("Susses","Sussesfull Signup")
             self.signupFrame.destroy()
@@ -423,9 +428,7 @@ class View(ctk.CTk):
 
         passwords.insert(0, title)
         
-        print(passwords)
-
-        print(f"{d.Margin}passwords type:{type(passwords)}{d.Margin}")
+        ic(passwords)
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
@@ -850,7 +853,7 @@ class View(ctk.CTk):
         confirmButton = ctk.CTkButton(
             master=self.generatePassFrame,
             text="Next",
-            command=lambda: [self.fullGeneratePass(passLen.get(), upperLetterValue.get(), lowerLetterValue.get(), symbol.get(), numberValue.get())],
+            command=lambda: [self.fullGeneratePass(id, passLen.get(), upperLetterValue.get(), lowerLetterValue.get(), symbol.get(), numberValue.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -876,7 +879,7 @@ class View(ctk.CTk):
         confirmButton.pack(padx=50, pady=10)
         cancelButton.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _: self.fullGeneratePass(passLen.get(), upperLetterValue.get(), lowerLetterValue.get(), symbol.get(), numberValue.get()))
+        self.app.bind("<Return>", lambda _: self.fullGeneratePass(id ,passLen.get(), upperLetterValue.get(), lowerLetterValue.get(), symbol.get(), numberValue.get()))
 
     def addLog(self, id):
         self.addLogFrame = ctk.CTkFrame(master=self.app)

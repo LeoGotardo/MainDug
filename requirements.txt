@@ -4,3 +4,4 @@ CTktable
 alive_progress
 tk
 Pillow
+icecream

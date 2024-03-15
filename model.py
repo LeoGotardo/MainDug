@@ -1,4 +1,6 @@
 from pymongo import MongoClient
+from icecream import ic
+
 import Debug as d
 import logging
 import hashlib
@@ -7,6 +9,7 @@ import os
 
 class Model:
     def __init__(self):
+        ic.configureOutput(prefix=f"{d.Margin}\nDebug | ")
         # Clear screen in a cross-platform way
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -113,7 +116,6 @@ class Model:
     
 
     def findPasswords(self, user_id):
-        print(type(user_id))
         # Use .find() to get a cursor for all documents matching the query
         users = self.passwords.find({"user_id": user_id})
 
@@ -129,7 +131,7 @@ class Model:
                 print(f"Error processing user {user['user_id']}: {e}")
                 continue
 
-        print(f"Results: {results}")
+        ic(results)
         return results
 
 
@@ -159,7 +161,7 @@ class Model:
             passwords = self.findPasswords(id)
             item = [site, login, password]
             
-            print(d.Margin,passwords,d.Margin)
+            ic(passwords)
             self.passwords.insert_one({'user_id': id, 'login' : item})
 
             return 'Process Done'
