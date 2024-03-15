@@ -135,22 +135,22 @@ class Model:
         return results
 
 
-    def delete_item(self, id, item_id, logged_user_id):
+    def delete_item(self, logged_user_id, item_id):
         try:
-            item = self.passwords.find({"user_id":logged_user_id})
+            item = self.passwords.find({"_id":item_id})
 
             userID = item["user_id"]
 
 
             # Verifica se o usuário logado é o mesmo registrado na DB
-            if logged_user_id != userID:
-                return "Cant find this ID"
-            
-            result = self.logins.delete_one({'_id': item_id})
-            if result.deleted_count > 0:
-                return True, "Item deleted successfully."
+            if logged_user_id == userID:
+                result = self.logins.delete_one({'_id': item_id})
+                if result.deleted_count > 0:
+                    return True, "Item deleted successfully."
+                else:
+                    return False, "Item not found."
             else:
-                return False, "Item not found."
+                return "Cant find matching logs, try again..."
         except Exception as e:
             logging.error(f"Failed to delete item: {e}")
             return False, "Failed to delete item: an error occurred."        

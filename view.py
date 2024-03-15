@@ -61,14 +61,18 @@ class View(ctk.CTk):
             msg.showerror(message='Password Length must be a integer number.', title="Error")
             return False
         
-        password = CustomThread(target=self.g.generator, args=(number,lower,symbol,upper,len))
-        password.start()
+        if len > 20:
+            msg.showinfo(title='Item Len', message='Item Len must be lower than 20.')
+            return 0
+        else:
+            password = CustomThread(target=self.g.generator, args=(number,lower,symbol,upper,len))
+            password.start()
 
-        fullPassword = password.join()
-        
-        ic(fullPassword)
-        self.generatePassFrame.destroy()
-        self.addWithPass(id, fullPassword)
+            fullPassword = password.join()
+            
+            ic(fullPassword)
+            self.generatePassFrame.destroy()
+            self.addWithPass(id, fullPassword)
 
 
     def deleteItem(self, id):
@@ -76,14 +80,15 @@ class View(ctk.CTk):
         item_id = dialog.get_input()
         try:
             item_id = int(item_id)
-            deleted = self.c.delete_item(id, item_id)
-            msg.showinfo(title='Info', message=deleted)
-            self.loggedFrame.destroy()
-            self.logged(id)
         except:
             msg.showerror(title="Error", message="ID must be a number.")
             dialog
+            return 0
 
+        deleted = self.c.delete_item(id, item_id)
+        msg.showinfo(title='Info', message=deleted)
+        self.loggedFrame.destroy()
+        self.logged(id)
     
     def editCred(self, id, paramter, newPar):
         if paramter == "Login":
