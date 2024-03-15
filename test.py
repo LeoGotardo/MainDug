@@ -1,20 +1,40 @@
-import logging
-import tkinter as tk
-import customtkinter as ctk
-from tkinter import messagebox as msg
+from cryptography.fernet import Fernet
+import base64
+from hashlib import sha256
+from icecream import ic 
+
+def keyGenerator(s):
+    # Passo 1: Hash da string usando SHA-256 para garantir 32 bytes
+    hash_bytes = sha256(s.encode('utf-8')).digest()
+    
+    # Passo 2: Codifica o resultado do hash em base64 para ser usado como chave Fernet
+    base64_key = base64.urlsafe_b64encode(hash_bytes)
+    
+    return base64_key
 
 
-def delete_item(self, id, item_id, logged_user_id):
-        try:
-            # Verifica se o usuário logado é o mesmo registrado na DB
-            if logged_user_id != id:
-                return False, "Unauthorized: Cannot delete item of another user."
-            
-            result = self.logins.delete_one({'_id': item_id})
-            if result.deleted_count > 0:
-                return True, "Item deleted successfully."
-            else:
-                return False, "Item not found."
-        except Exception as e:
-            logging.error(f"Failed to delete item: {e}")
-            return False, "Failed to delete item: an error occurred."
+def encryptSentence(massege, key):
+    cypher = Fernet(key)
+    encryptedMessege = cypher.encrypt(massege.encode('utf-8'))
+
+    return encryptedMessege
+
+def decryptSentence(encriptedString, key):
+    cypher = Fernet(key)
+    decriptedMessege = cypher.decrypt(encriptedString).decode('utf-8')
+
+    return decriptedMessege
+
+
+textToEncrypt = "HelloWord!"
+keySeed = "UserPassword"
+
+key = keyGenerator(keySeed)
+encryptedText = encryptSentence(textToEncrypt, key)
+decryptedText = decryptSentence(encryptedText, key)
+
+ic(textToEncrypt)
+ic(keySeed)
+ic(key)
+ic(encryptedText)
+ic(decryptedText)
