@@ -28,7 +28,6 @@ class View(ctk.CTk):
         self.app = ctk.CTk()
         self.g = Generator()
 
-        self.app.geometry("500x600")
         self.see = ctk.CTkImage(dark_image=img.open("icons/see.ico"))
         self.unsee = ctk.CTkImage(dark_image=img.open("icons/unsee.ico"))
         self.white = ctk.CTkImage(dark_image=img.open("icons/White.ico"))
@@ -38,11 +37,14 @@ class View(ctk.CTk):
         self.Add = ctk.CTkImage(dark_image=img.open("icons/add.ico"))
         self.Delete = ctk.CTkImage(dark_image=img.open("icons/delete.ico"))
         self.edit = ctk.CTkImage(dark_image=img.open("icons/edit.ico"))
+
         ctk.set_appearance_mode('dark')
         ctk.set_default_color_theme('green')
+        
         self.mode = 'dark'
         self.login()
 
+        self.app.geometry("500x600")
         self.app.resizable(width=False, height=False)
         self.app.mainloop()
 
