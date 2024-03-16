@@ -186,7 +186,20 @@ class Model:
                 if paramter == "site":
                     itemToEdit = self.passwords.find_one({'_id':id})
                     itemToEdit = itemToEdit['logins']
-                    ic(itemToEdit)
+                    itemToEdit[0] = newLog
+                    self.passwords.update_one({'_id':id}, {'logins':itemToEdit})
+
+                elif paramter == "login":
+                    itemToEdit = self.passwords.find_one({'_id':id})
+                    itemToEdit = itemToEdit['logins']
+                    itemToEdit[1] = newLog
+                    self.passwords.update_one({'_id':id}, {'logins':itemToEdit})
+
+                elif paramter == "password":
+                    itemToEdit = self.passwords.find_one({'_id':id})
+                    itemToEdit = itemToEdit['logins']
+                    itemToEdit[2] = newLog
+                    self.passwords.update_one({'_id':id}, {'logins':itemToEdit})
         except Exception as e:
             return e
 
