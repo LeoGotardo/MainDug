@@ -985,7 +985,7 @@ class View(ctk.CTk):
         self.app.bind("<Return>", lambda _: self.addLogDB(id, siteEntry.get(), loginEntry.get(), passwordEntry.get(), None))
 
     
-    def editItem(self, id, itemID):
+    def editItem(self, id, itemId):
         self.editItemFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Item")
         self.editItemFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1021,7 +1021,7 @@ class View(ctk.CTk):
         passwordButton = ctk.CTkButton(
             master=self.editItemFrame,
             text="Edit Password",
-            command=lambda: [self.editItemFrame.destroy(), self.passwordEdit(id, itemID)],
+            command=lambda: [self.editItemFrame.destroy(), self.passwordEdit(id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1091,7 +1091,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editSiteFrame,
             text="Back",
-            command=lambda: [self.editSiteFrame.destroy(), self.editItem(id)],
+            command=lambda: [self.editSiteFrame.destroy(), self.editItem(id, itemID)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1153,7 +1153,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Back",
-            command=lambda: [self.editLoginFrame.destroy(), self.editItem(id)],
+            command=lambda: [self.editLoginFrame.destroy(), self.editItem(id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1249,7 +1249,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Back",
-            command=lambda: [self.editPasswordFrame.destroy(), self.editItem(id)],
+            command=lambda: [self.editPasswordFrame.destroy(), self.editItem(id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
