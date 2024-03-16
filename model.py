@@ -184,7 +184,9 @@ class Model:
                 return "Cant find metching paramters... Please try again"
             else:
                 if paramter == "site":
-                    itemToEdit = self.passwords.find_one_and_update({'_id':id},{'logins'})
+                    itemToEdit = self.passwords.find_one({'_id':id})
+                    itemToEdit = itemToEdit['logins']
+                    ic(itemToEdit)
         except Exception as e:
             return e
 
