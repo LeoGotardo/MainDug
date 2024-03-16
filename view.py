@@ -1257,7 +1257,7 @@ class View(ctk.CTk):
         passEditButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Edit Password",
-            command=lambda: [self.passVerify(passwordEntry.get(),passwordConfirmEntry.get())], #need fix
+            command=lambda: [self.passVerify(passwordEntry.get(),passwordConfirmEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
