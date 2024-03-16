@@ -177,6 +177,16 @@ class Model:
             return e
 
 
+    def editLog(self, paramter, user_id, id, newLog):
+        try:
+            find = self.passwords.find_one({'_id':id})
+            if find["user_id"] != user_id:
+                return "Cant find metching paramters... Please try again"
+            else:
+                if paramter == "site":
+                    itemToEdit = self.passwords.find_one_and_update({'_id':id},)
+
+
 if __name__ == "__main__":
     # Initialize logging
     logging.basicConfig(level=logging.INFO)

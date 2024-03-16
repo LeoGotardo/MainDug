@@ -222,14 +222,21 @@ class View(ctk.CTk):
         msg.showwarning(title=title,message=text)
 
 
+    def editLogFunc(self, paramter, user_id, id, newLog):
+        try:
+            self.c.editLog(paramter, user_id, id, newLog)
+            return True
+        except Exception as e:
+            msg.showwarning(title='Error', message=str(e))
+            return False
+
+
     def login(self):
         # Configura a página de login
         self.loginFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Login")
         self.loginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
         self.app.iconbitmap(default="icons/Alien.ico")
-        
-
 
         title = ctk.CTkLabel(
             master=self.loginFrame,
@@ -820,6 +827,7 @@ class View(ctk.CTk):
 
         self.app.bind("<Return>", lambda _: self.delete(id))
 
+
     def generatePass(self, id):
         self.generatePassFrame = ctk.CTkFrame(master=self.app)
         self.app.title("New Login")
@@ -1057,7 +1065,7 @@ class View(ctk.CTk):
         changeTheme.pack(padx=50, pady=10)
 
 
-    def siteEdit(self, id, itemID):
+    def siteEdit(self, id, itemId):
         self.editSiteFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit site")
         self.editSiteFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1081,7 +1089,7 @@ class View(ctk.CTk):
         siteEditButton = ctk.CTkButton(
             master=self.editSiteFrame,
             text="Edit site",
-            command=lambda:[self.editCred(id, "site", siteEntry.get())],
+            command=lambda:[self.editLogFunc("site", id, itemId, siteEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1091,7 +1099,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editSiteFrame,
             text="Back",
-            command=lambda: [self.editSiteFrame.destroy(), self.editItem(id, itemID)],
+            command=lambda: [self.editSiteFrame.destroy(), self.editItem(id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1143,7 +1151,7 @@ class View(ctk.CTk):
         loginEditButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Edit Login",
-            command=lambda:[self.editCred(id, "Login", loginEntry.get())],
+            command=lambda:[self.editLogFunc("login", id, itemId, loginEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1239,7 +1247,7 @@ class View(ctk.CTk):
         passEditButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Edit Password",
-            command=lambda: [self.editCred(id, "Password", passwordEntry.get())],
+            command=lambda: [self.editLogFunc("password", id, itemId, passwordEntry.get())], #need fix
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,

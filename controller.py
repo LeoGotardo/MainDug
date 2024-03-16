@@ -48,6 +48,10 @@ class Controller:
         return self.model.addNewLog(id, site, login, password)
 
 
+    def editLog(self, paramter, user_id, id, newLog):
+        return self.model.editLog(paramter, user_id, id, newLog)
+
+
 if __name__ == "__main__":
     # Create a Controller instance to test the class
     controller = Controller()
