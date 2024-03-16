@@ -1001,7 +1001,7 @@ class View(ctk.CTk):
         siteButton = ctk.CTkButton(
             master=self.editItemFrame,
             text="Edit Site",
-            command=lambda: [self.editItemFrame.destroy(), self.siteEdit(id, itemID)],
+            command=lambda: [self.editItemFrame.destroy(), self.siteEdit(id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1011,7 +1011,7 @@ class View(ctk.CTk):
         loginButton = ctk.CTkButton(
             master=self.editItemFrame,
             text="Edit Login",
-            command=lambda: [self.editItemFrame.destroy(), self.loginEdit(id, itemID)],
+            command=lambda: [self.editItemFrame.destroy(), self.loginEdit(id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
