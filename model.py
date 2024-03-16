@@ -132,8 +132,8 @@ class Model:
         for user in users:
             try:
                 # Make sure to check the length of 'login' to avoid IndexError
-                if "login" in user and len(user["login"]) >= 3:
-                    value = [user["_id"], user["login"][0], user["login"][1], user["login"][2]]
+                if "logins" in user and len(user["logins"]) >= 3:
+                    value = [user["_id"], user["logins"][0], user["logins"][1], user["logins"][2]]
                     results.append(value)
             except Exception as e:
                 print(f"Error processing user {user['user_id']}: {e}")
@@ -170,7 +170,7 @@ class Model:
             item = [site, login, password]
             
             ic(passwords)
-            self.passwords.insert_one({'user_id': id, 'login' : item})
+            self.passwords.insert_one({'user_id': id, 'logins' : item})
 
             return 'Process Done'
         except Exception as e:
@@ -184,8 +184,9 @@ class Model:
                 return "Cant find metching paramters... Please try again"
             else:
                 if paramter == "site":
-                    itemToEdit = self.passwords.find_one_and_update({'_id':id},)
-
+                    itemToEdit = self.passwords.find_one_and_update({'_id':id},{'logins'})
+        except Exception as e:
+            return e
 
 if __name__ == "__main__":
     # Initialize logging
