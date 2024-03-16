@@ -1,9 +1,11 @@
 from pymongo import MongoClient
 from icecream import ic
+from PIL import Image
 
 import Debug as d
 import logging
 import hashlib
+import io
 import os
 
 
@@ -27,6 +29,11 @@ class Model:
         except Exception as e:
             logging.error(f"Failed to connect to MongoDB: {e}")
 
+
+    def converter_imagem_para_binario(caminho_da_imagem):
+        with open(caminho_da_imagem, 'rb') as arquivo:
+            conteudo_binario = arquivo.read()
+        return conteudo_binario
 
     def  add_user(self, login, password):
         """
@@ -108,6 +115,7 @@ class Model:
         Deletes a user based on the user ID.
         """
         try:
+            logs = self.passwords.delete_many({'user_id': user_id})
             result = self.logins.delete_one({'_id': user_id})
             return result.deleted_count > 0
         except Exception as e:

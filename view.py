@@ -90,6 +90,7 @@ class View(ctk.CTk):
         self.loggedFrame.destroy()
         self.logged(id)
     
+    
     def editCred(self, id, paramter, newPar):
         if paramter == "Login":
             new = self.c.find_user_id(newPar, "$exists")
@@ -158,6 +159,7 @@ class View(ctk.CTk):
         except:
             msg.showerror(text='Item must be a number')
 
+        self.loggedFrame.destroy()
         self.editItem(id, itemID)
 
 
@@ -386,6 +388,7 @@ class View(ctk.CTk):
             height=40,
             width=100,
         )
+
         
         loginButton = ctk.CTkButton(
             master=self.signupFrame,
@@ -510,7 +513,7 @@ class View(ctk.CTk):
         edit = ctk.CTkButton(
             master=self.loggedFrame,
             text="",
-            command=lambda:[self.editlog(id)],
+            command=lambda:[self.editLog(id)],
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
@@ -998,7 +1001,7 @@ class View(ctk.CTk):
         siteButton = ctk.CTkButton(
             master=self.editItemFrame,
             text="Edit Site",
-            command=lambda: [self.siteEdit(id, itemID)],
+            command=lambda: [self.editItemFrame.destroy(), self.siteEdit(id, itemID)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1008,7 +1011,7 @@ class View(ctk.CTk):
         loginButton = ctk.CTkButton(
             master=self.editItemFrame,
             text="Edit Login",
-            command=lambda: [self.loginEdit(id, itemID)],
+            command=lambda: [self.editItemFrame.destroy(), self.loginEdit(id, itemID)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1018,7 +1021,7 @@ class View(ctk.CTk):
         passwordButton = ctk.CTkButton(
             master=self.editItemFrame,
             text="Edit Password",
-            command=lambda: [self.passwordEdit(id, itemID)],
+            command=lambda: [self.editItemFrame.destroy(), self.passwordEdit(id, itemID)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1036,7 +1039,7 @@ class View(ctk.CTk):
         )
 
         changeTheme = ctk.CTkButton(
-            master=self.addLogFrame,
+            master=self.editItemFrame,
             text="",
             command=lambda:self.theme(changeTheme),
             font=("RobotoSlab", 12),
@@ -1054,7 +1057,7 @@ class View(ctk.CTk):
         changeTheme.pack(padx=50, pady=10)
 
 
-    def siteEdit(self, id):
+    def siteEdit(self, id, itemID):
         self.editSiteFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit site")
         self.editSiteFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1088,7 +1091,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editSiteFrame,
             text="Back",
-            command=lambda: [self.editSiteFrame.destroy(), self.logged(id)],
+            command=lambda: [self.editSiteFrame.destroy(), self.editItem(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1116,7 +1119,7 @@ class View(ctk.CTk):
         self.app.bind("<Return>", lambda _: self.editCred(id, "site", siteEntry.get()))
 
 
-    def loginEdit(self, id):
+    def loginEdit(self, id, itemId):
         self.editLoginFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Login")
         self.editLoginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1150,7 +1153,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Back",
-            command=lambda: [self.editLoginFrame.destroy(), self.logged(id)],
+            command=lambda: [self.editLoginFrame.destroy(), self.editItem(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1178,7 +1181,7 @@ class View(ctk.CTk):
         self.app.bind("<Return>", lambda _: self.editCred(id, "Login", loginEntry.get()))
 
 
-    def passwordEdit(self, id):
+    def passwordEdit(self, id, itemId):
         self.editPasswordFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Password")
         self.editPasswordFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1246,7 +1249,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Back",
-            command=lambda: [self.editPasswordFrame.destroy(), self.logged(id)],
+            command=lambda: [self.editPasswordFrame.destroy(), self.editItem(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
