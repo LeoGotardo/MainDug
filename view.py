@@ -74,6 +74,16 @@ class View(ctk.CTk):
             self.generatePassFrame.destroy()
             self.addWithPass(id, fullPassword)
 
+    def passVerify(self, password, passwordConfirm, id, itemId, ):
+        if password == passwordConfirm:
+            try:
+                self.editLogFunc("password", id, itemId, password)
+            except Exception as e:
+                msg.showerror(title="Error", message=str(e))
+        else:
+            msg.showerror(title="Error", message="Passwords do not match...")
+            return 0
+
 
     def deleteItem(self, id):
         dialog = ctk.CTkInputDialog(title="Delete Item", text="What's the item ID that you want to delete?")
@@ -1247,7 +1257,7 @@ class View(ctk.CTk):
         passEditButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Edit Password",
-            command=lambda: [self.editLogFunc("password", id, itemId, passwordEntry.get())], #need fix
+            command=lambda: [self.passVerify(passwordEntry.get(),passwordConfirmEntry.get())], #need fix
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
