@@ -1,9 +1,10 @@
-from model import Model
+from model import Model, Generator
 
 class Controller:
     def __init__(self):
         # Initialize a Model object in the Controller instance
         self.model = Model()
+        self.Generator = Generator()
 
     def add_user(self, login, password, password_confirm):
         # Calls the add_user method of Model and returns the result
@@ -50,6 +51,9 @@ class Controller:
 
     def editLog(self, paramter, user_id, id, newLog):
         return self.model.editLog(paramter, user_id, id, newLog)
+    
+    def generator(self, number, lower, symbol, upper, len):
+        return self.Generator.generator(number, lower, symbol, upper, len)
 
 
 if __name__ == "__main__":
