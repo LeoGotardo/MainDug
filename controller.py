@@ -1,3 +1,4 @@
+
 from model import Model, Generator
 
 class Controller:
