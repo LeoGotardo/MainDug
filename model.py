@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from icecream import ic
 from PIL import Image
 
+import random as r
 import Debug as d
 import logging
 import hashlib
@@ -186,9 +187,56 @@ class Model:
                 if paramter == "site":
                     itemToEdit = self.passwords.find_one({'_id':id})
                     itemToEdit = itemToEdit['logins']
-                    ic(itemToEdit)
+                    itemToEdit[0] = newLog
+                    self.passwords.update_one({'_id':id}, {'logins':itemToEdit})
+
+                elif paramter == "login":
+                    itemToEdit = self.passwords.find_one({'_id':id})
+                    itemToEdit = itemToEdit['logins']
+                    itemToEdit[1] = newLog
+                    self.passwords.update_one({'_id':id}, {'logins':itemToEdit})
+
+                elif paramter == "password":
+                    itemToEdit = self.passwords.find_one({'_id':id})
+                    itemToEdit = itemToEdit['logins']
+                    itemToEdit[2] = newLog
+                    self.passwords.update_one({'_id':id}, {'logins':itemToEdit})
         except Exception as e:
             return e
+
+
+class Generator:
+    def __init__(self):
+        self.let = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+        self.may = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+        self.sim = ['!','@','#','$','%','¨','&','*','(',')','+','=','|','<','>',':',';','?']
+        self.numb = ['0','1','2','3','4','5','6','7','8','9']
+        
+    def generator(self, num, letter, symb, maius, syze):
+        password = []
+        fin = []
+
+        if num == 'on':
+            for i in range(len(self.numb)):
+                fin.append(self.numb[i])
+        if letter == 'on':
+            for i in range(len(self.let)):
+                fin.append(self.let[i])
+        if symb == 'on':
+            for i in range(len(self.sim)):
+                fin.append(self.sim[i])
+        if maius == 'on':
+            for i in range(len(self.may)):
+                fin.append(self.may[i])
+            
+        for i in range(syze):
+            act = r.choice(fin)
+            password.append(act)
+
+        fin_pass = ''.join(password)
+
+        return fin_pass
+    
 
 if __name__ == "__main__":
     # Initialize logging
@@ -196,3 +244,4 @@ if __name__ == "__main__":
 
     # Create an instance of the Model class for testing
     model = Model()
+    generator = Generator()

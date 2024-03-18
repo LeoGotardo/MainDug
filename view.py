@@ -1,5 +1,4 @@
 from tkinter import messagebox as msg
-from passgenerator import Generator
 from controller import Controller
 from PIL import Image as img
 from threading import Thread
@@ -31,7 +30,6 @@ class View(ctk.CTk):
 
         self.c = Controller()
         self.app = ctk.CTk()
-        self.g = Generator()
 
         self.see = ctk.CTkImage(dark_image=img.open("icons/see.ico"))
         self.unsee = ctk.CTkImage(dark_image=img.open("icons/unsee.ico"))
@@ -65,7 +63,7 @@ class View(ctk.CTk):
             msg.showinfo(title='Item Len', message='Item Len must be lower than 20.')
             return 0
         else:
-            password = CustomThread(target=self.g.generator, args=(number,lower,symbol,upper,len))
+            password = CustomThread(target=self.c.generator, args=(number,lower,symbol,upper,len))
             password.start()
 
             fullPassword = password.join()

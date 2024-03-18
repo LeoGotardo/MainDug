@@ -26,8 +26,8 @@ def decryptSentence(encriptedString, key):
     return decriptedMessege
 
 
-textToEncrypt = "HelloWord!"
-keySeed = "UserPassword"
+textToEncrypt = input("text:")
+keySeed = input("keyseed:")
 
 key = keyGenerator(keySeed)
 encryptedText = encryptSentence(textToEncrypt, key)
