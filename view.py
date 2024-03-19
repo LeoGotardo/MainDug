@@ -860,19 +860,19 @@ class View(ctk.CTk):
 
         numberValue = ctk.StringVar(value="on")
         number = ctk.CTkCheckBox(self.generatePassFrame, text="Numbers",
-                                     variable=numberValue, onvalue="on", offvalue="off")
+                                     variable=numberValue, onvalue=True, offvalue=False)
 
         lowerLetterValue = ctk.StringVar(value="on")
         lowerLetter = ctk.CTkCheckBox(self.generatePassFrame, text="Lower Case Letters",
-                                     variable=lowerLetterValue, onvalue="on", offvalue="off")
+                                     variable=lowerLetterValue, onvalue=True, offvalue=False)
 
         upperLetterValue = ctk.StringVar(value="on")
         upperLetter = ctk.CTkCheckBox(self.generatePassFrame, text="Upper Case Letters",
-                                     variable=upperLetterValue, onvalue="on", offvalue="off")
+                                     variable=upperLetterValue, onvalue=True, offvalue=False)
 
         symbolValue = ctk.StringVar(value="on")
         symbol = ctk.CTkCheckBox(self.generatePassFrame, text="Symbols",
-                                     variable=symbolValue, onvalue="on", offvalue="off")
+                                     variable=symbolValue, onvalue=True, offvalue=False)
         
         confirmButton = ctk.CTkButton(
             master=self.generatePassFrame,
