@@ -362,7 +362,7 @@ class Cryptograth:
     def __init__(self) -> None:
         pass
 
-    def key_generator(secret: str) -> bytes:
+    def keyGenerator(secret: str) -> bytes:
         """
         Generates a secure key from a given secret using SHA-256 hashing and Base64 encoding.
 
@@ -384,7 +384,7 @@ class Cryptograth:
         return base64_key
     
     
-    def encrypt_sentence(message: str, key: bytes) -> bytes:
+    def encryptSentence(message: str, key: bytes) -> bytes:
         """
         Encrypts a message using Fernet symmetric encryption with the provided key.
 
@@ -401,7 +401,7 @@ class Cryptograth:
         return encrypted_message
     
 
-    def decrypt_sentence(encrypted_string: bytes, key: bytes) -> str:
+    def decryptSentence(encrypted_string: bytes, key: bytes) -> str:
         """
         Decrypts an encrypted message using Fernet symmetric decryption with the provided key.
 
