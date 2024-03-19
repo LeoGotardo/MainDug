@@ -5,7 +5,7 @@ class Controller:
         self.model = Model()
         self.generator = Generator()
 
-    def add_user(self, login: str, password: str, password_confirm: str) -> bool:
+    def addUser(self, login: str, password: str, password_confirm: str) -> bool:
         """Adds a new user if the credentials are valid and unique.
         
         Args:
@@ -23,10 +23,10 @@ class Controller:
             else:
                 return user_add_result
         else:
-            return self.model.is_credential_valid(login, password, password_confirm)
+            return self.model.isCredentialValid(login, password, password_confirm)
         
 
-    def is_login_valid(self, login: str, password: str) -> bool:
+    def isLoginValid(self, login: str, password: str) -> bool:
         """Checks if login credentials are valid.
         
         Args:
@@ -36,10 +36,10 @@ class Controller:
         Returns:
             True if the login credentials are valid, False otherwise.
         """
-        return self.model.is_login_valid(login, password)
+        return self.model.isLoginValid(login, password)
 
 
-    def update_user(self, user_id, parameter: str, new_value: str) -> bool:
+    def updateUser(self, user_id, parameter: str, new_value: str) -> bool:
         """Updates a user's information.
         
         Args:
@@ -50,10 +50,10 @@ class Controller:
         Returns:
             True if the update was successful, False otherwise.
         """
-        return self.model.update_user(user_id, parameter, new_value)
+        return self.model.updateUser(user_id, parameter, new_value)
     
 
-    def delete_user(self, user_id) -> bool:
+    def deleteUser(self, user_id) -> bool:
         """Deletes a user.
         
         Args:
@@ -62,10 +62,10 @@ class Controller:
         Returns:
             True if the user was successfully deleted, False otherwise.
         """
-        return self.model.delete_user(user_id)
+        return self.model.deleteUser(user_id)
     
 
-    def find_user_id(self, login: str, password: str) -> int:
+    def findUserId(self, login: str, password: str) -> int:
         """Finds a user's ID based on login credentials.
         
         Args:
@@ -75,10 +75,10 @@ class Controller:
         Returns:
             The user's ID if found, otherwise returns None.
         """
-        return self.model.find_user_id(login, password)
+        return self.model.findUserId(login, password)
     
 
-    def find_passwords(self, user_id) -> list:
+    def findPasswords(self, user_id) -> list:
         """Finds all passwords associated with a user.
         
         Args:
@@ -87,10 +87,10 @@ class Controller:
         Returns:
             A list of passwords associated with the user.
         """
-        return self.model.find_passwords(user_id)
+        return self.model.findPasswords(user_id)
     
 
-    def delete_item(self, user_id, item_id) -> bool:
+    def deleteItem(self, user_id, item_id) -> bool:
         """Deletes an item for a user.
         
         Args:
@@ -100,10 +100,10 @@ class Controller:
         Returns:
             True if the item was successfully deleted, False otherwise.
         """
-        return self.model.delete_item(user_id, item_id)
+        return self.model.deleteItem(user_id, item_id)
     
 
-    def add_new_log(self, user_id, site: str, login: str, password: str) -> bool:
+    def addNewLog(self, user_id, site: str, login: str, password: str) -> bool:
         """Adds a new log for a user.
         
         Args:
@@ -115,10 +115,10 @@ class Controller:
         Returns:
             True if the log was successfully added, False otherwise.
         """
-        return self.model.add_new_log(user_id, site, login, password)
+        return self.model.addNewLog(user_id, site, login, password)
     
 
-    def edit_log(self, parameter: str, user_id, log_id, new_log: str) -> bool:
+    def editLog(self, parameter: str, user_id, log_id, new_log: str) -> bool:
         """Edits a log for a user.
         
         Args:
@@ -130,10 +130,10 @@ class Controller:
         Returns:
             True if the log was successfully edited, False otherwise.
         """
-        return self.model.edit_log(parameter, user_id, log_id, new_log)
+        return self.model.editLog(parameter, user_id, log_id, new_log)
     
     
-    def generate_password(self, number: bool, lower: bool, symbol: bool, upper: bool, length: int) -> str:
+    def generatePassword(self, number: bool, lower: bool, symbol: bool, upper: bool, length: int) -> str:
         """Generates a password based on specified criteria.
         
         Args:

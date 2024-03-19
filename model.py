@@ -31,12 +31,13 @@ class Model:
             logging.error(f"Failed to connect to MongoDB: {e}")
 
 
-    def converter_imagem_para_binario(caminho_da_imagem):
-        with open(caminho_da_imagem, 'rb') as arquivo:
+    def imgToBinary(path):
+        with open(path, 'rb') as arquivo:
             conteudo_binario = arquivo.read()
         return conteudo_binario
 
-    def  add_user(self, login, password):
+
+    def  addUser(self, login, password):
         """
         Adds a new user to the 'Logins' collection.
         """
@@ -50,7 +51,7 @@ class Model:
             return str(e)
 
 
-    def is_login_valid(self, login, Password):
+    def isLoginValid(self, login, Password):
         """
         Checks if the given login exists in the 'Logins' collection.
         """
@@ -70,7 +71,7 @@ class Model:
             return itens
 
 
-    def is_credential_valid(self,login, password, password_confirm):
+    def isCredentialValid(self,login, password, password_confirm):
         """
         Checks if the password matches the confirmation password.
         """
@@ -83,7 +84,7 @@ class Model:
             return 'Invalid password'
 
 
-    def update_user(self, user_id, parameter, new_value):
+    def updateUser(self, user_id, parameter, new_value):
         """
         Updates user information in the 'Logins' collection.
         """
@@ -98,7 +99,7 @@ class Model:
             return e
 
 
-    def find_user_id(self, login, password):
+    def findUserId(self, login, password):
         """
         Finds the ID of a user based on login and password.
         """
@@ -111,13 +112,13 @@ class Model:
         return user["_id"] if user else None
 
 
-    def delete_user(self, user_id):
+    def deleteUser(self, user_id):
         """
         Deletes a user based on the user ID.
         """
         try:
-            logs = self.passwords.delete_many({'user_id': user_id})
             result = self.logins.delete_one({'_id': user_id})
+            logs = self.passwords.delete_many({'user_id': user_id})
             return result.deleted_count > 0
         except Exception as e:
             logging.error(f"Failed to delete user: {e}")
@@ -144,7 +145,7 @@ class Model:
         return results
 
 
-    def delete_item(self, logged_user_id, item_id):
+    def deleteItem(self, logged_user_id, item_id):
         try:
             item = self.passwords.find({"_id":item_id})
 

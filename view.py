@@ -93,7 +93,7 @@ class View(ctk.CTk):
             dialog
             return 0
 
-        deleted = self.c.delete_item(id, item_id)
+        deleted = self.c.deleteItem(id, item_id)
         msg.showinfo(title='Info', message=deleted)
         self.loggedFrame.destroy()
         self.logged(id)
@@ -101,9 +101,9 @@ class View(ctk.CTk):
     
     def editCred(self, id, paramter, newPar):
         if paramter == "Login":
-            new = self.c.find_user_id(newPar, "$exists")
+            new = self.c.findUserId(newPar, "$exists")
             if new == []:
-                sull = self.c.update_user(id, paramter, newPar)
+                sull = self.c.updateUser(id, paramter, newPar)
                 self.alert("Info", sull)
 
                 self.editLoginFrame.destroy()
@@ -111,7 +111,7 @@ class View(ctk.CTk):
             else:
                 self.alert("ERROR",f'This login alredy exists.')
         elif paramter == "Password":
-            sull = self.c.update_user(id, paramter, newPar)
+            sull = self.c.updateUser(id, paramter, newPar)
             self.alert("Info", sull)
 
             self.editPasswordFrame.destroy()
@@ -147,7 +147,7 @@ class View(ctk.CTk):
         if response == "yes":
             try:
                 # Perform account deletion logic here
-                self.c.delete_user(id)
+                self.c.deleteUser(id)
                 print(f"{d.Margin}\nAccount {id} deleted successfully.{d.Margin}")
                 msg.showinfo('Done',f'Account {id} sucessfull deleted.')
                 self.eraseFrame.destroy()
@@ -174,7 +174,7 @@ class View(ctk.CTk):
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
         if login != '' or password != '':
-            itens = self.c.is_login_valid(login, password)
+            itens = self.c.isLoginValid(login, password)
             print(f"{d.Margin}\nItens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
             if itens[0] == True:
                 self.loginFrame.destroy()
@@ -193,7 +193,7 @@ class View(ctk.CTk):
     def addCad(self, login, password, passwordConfirm):
         ic(login,password,passwordConfirm)
         # Adiciona um novo usuário e exibe uma mensagem apropriada
-        error = self.c.add_user(login, password, passwordConfirm)
+        error = self.c.addUser(login, password, passwordConfirm)
         ic(error)
         if error == True:
             self.alert("Susses","Sussesfull Signup")
