@@ -1,7 +1,8 @@
 from cryptography.fernet import Fernet
-import base64
 from hashlib import sha256
-from icecream import ic 
+from icecream import ic
+ 
+import base64
 
 def keyGenerator(s):
     # Passo 1: Hash da string usando SHA-256 para garantir 32 bytes
