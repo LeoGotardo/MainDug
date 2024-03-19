@@ -216,16 +216,16 @@ class Generator:
         password = []
         fin = []
 
-        if num == 'on':
+        if num == True:
             for i in range(len(self.numb)):
                 fin.append(self.numb[i])
-        if letter == 'on':
+        if letter == True:
             for i in range(len(self.let)):
                 fin.append(self.let[i])
-        if symb == 'on':
+        if symb == True:
             for i in range(len(self.sim)):
                 fin.append(self.sim[i])
-        if maius == 'on':
+        if maius == True:
             for i in range(len(self.may)):
                 fin.append(self.may[i])
             
