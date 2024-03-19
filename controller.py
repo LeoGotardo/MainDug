@@ -5,6 +5,7 @@ class Controller:
         self.model = Model()
         self.generator = Generator()
 
+
     def addUser(self, login: str, password: str, password_confirm: str) -> bool:
         """Adds a new user if the credentials are valid and unique.
         
