@@ -9,6 +9,7 @@ import customtkinter as ctk
 import Debug as d
 import os
 
+
 class CustomThread(Thread):
     def __init__(self, group=None, target= None, name=None, args=(), kwargs={}, Verbose=None):
         Thread.__init__(self, group, target, name, args, kwargs)

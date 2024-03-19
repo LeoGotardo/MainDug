@@ -1,9 +1,9 @@
-from model import Model, Generator
+from model import Model, PasswordGenerator
 
 class Controller:
     def __init__(self):
         self.model = Model()
-        self.generator = Generator()
+        self.PasswordGenerator = PasswordGenerator()
 
 
     def addUser(self, login: str, password: str, password_confirm: str) -> bool:
