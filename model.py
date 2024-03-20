@@ -1,9 +1,9 @@
-from pymongo import MongoClient
-from icecream import ic
-from PIL import Image
 from cryptography.fernet import Fernet
+from pymongo import MongoClient
+from dotenv import load_dotenv
 from hashlib import sha256
 from icecream import ic
+from PIL import Image
  
 import random as r
 import Debug as d
@@ -22,8 +22,10 @@ class Model:
         # Clear screen in a cross-platform way
         os.system('cls' if os.name == 'nt' else 'clear')
 
-        DB_USER = 'leleo1208'
-        DB_PASSWORD = '1234'
+        load_dotenv()
+
+        DB_USER = os.getenv('DB_USER')
+        DB_PASSWORD = os.getenv('DB_PASSWORD')
 
         # MongoDB connection setup
         try:
