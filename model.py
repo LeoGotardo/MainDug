@@ -28,10 +28,17 @@ class Model:
         # MongoDB connection setup
         try:
             connection_string = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@cluster0.gcolnp2.mongodb.net/"
+
             self.client = MongoClient(connection_string)
             self.db = self.client["Belle"]
             self.logins = self.db["Logins"]
             self.passwords = self.db["Password"]
+
+            if "Logins" not in self.db.list_collection_names():
+                self.db.create_collection("Logins")
+            if "Password" not in self.db.list_collection_names():
+                self.db.create_collection("Passwords")
+
         except Exception as e:
             logging.error(f"Failed to connect to MongoDB: {e}")
 
@@ -218,7 +225,7 @@ class Model:
         return results
 
 
-    def deleteItem(self, logged_user_id: str, item_id: str) -> tuple:
+    def deleteItem(self, logged_user_id: str, item_id: int) -> tuple:
         """
         Attempts to delete a specified item for a logged-in user.
 
@@ -237,19 +244,19 @@ class Model:
             userID = item["user_id"]
 
             if logged_user_id == userID:
-                result = self.logins.delete_one({'_id': item_id})
+                result = self.passwords.delete_one({'_id': item_id})
                 if result.deleted_count > 0:
-                    return True, "Item deleted successfully."
+                    return "Item deleted successfully."
                 else:
-                    return False, "Item not found."
+                    return "Item not found."
             else:
-                return False, "Cannot find matching logs, try again..."
+                return "Item not found."
         except Exception as e:
             logging.error(f"Failed to delete item: {e}")
-            return False, f"Failed to delete item: {e}"
+            return f"Failed to delete item: {e}"
 
 
-    def addNewLog(self, user_id: str, site: str, login: str, password: str) -> str:
+    def addNewLog(self, user_id, site: str, login: str, password: str) -> str:
         """
         Adds a new login entry for a specific user.
 
@@ -266,14 +273,27 @@ class Model:
             str: A message indicating the completion of the process or describing any errors encountered.
         """
         try:
-            self.passwords.insert_one({'user_id': user_id, 'logins': [site, login, password]})
+            passId = self.findPassID()
+            self.passwords.insert_one({'_id': passId, 'user_id': user_id, 'logins': [site, login, password]})
             return 'Log added successfully.'
         except Exception as e:
             logging.error(f"Failed to add new log: {e}")
             return str(e)
 
 
-    def editLog(self, parameter: str, user_id: str, log_id: str, new_value: str) -> str:
+    def validEditArgs(self, user_id, log_id):
+        try:
+            log_entry = self.passwords.find_one({'_id': int(log_id)})
+            # Check if the log entry exists and belongs to the user.
+            if log_entry and log_entry.get('user_id') == user_id:
+                return True
+            else:
+                return "Cannot find matching log entry or user mismatch. Please try again."
+        except Exception as e:
+            return e
+
+
+    def editLog(self, parameter: str, log_id: int, new_value: str) -> str:
         """
         Edits a specific field ('site', 'login', or 'password') of a log entry for a user.
 
@@ -293,22 +313,47 @@ class Model:
             Exception: If an error occurs during the find or update operations on the database.
         """
         try:
-            log_entry = self.passwords.find_one({'_id': log_id})
-            # Check if the log entry exists and belongs to the user.
-            if log_entry and log_entry["user_id"] == user_id:
-                # Update the specified parameter in the 'logins' field of the document.
-                if parameter in ["site", "login", "password"]:
-                    # Construct the update statement dynamically based on the parameter.
-                    field_to_update = f"logins.{['site', 'login', 'password'].index(parameter)}"
-                    self.passwords.update_one({'_id': log_id}, {'$set': {field_to_update: new_value}})
-                    return f"{parameter.capitalize()} updated successfully."
-                else:
-                    return "Invalid parameter specified. Please use 'site', 'login', or 'password'."
-            else:
-                return "Cannot find matching log entry or user mismatch. Please try again."
+            if parameter == 'site':
+                itens = self.passwords.find_one({'_id': int(log_id)})
+                ic(itens)
+                itens = itens["logins"]
+                ic(itens)
+                itens[0] = new_value
+                self.passwords.update_one({'_id': log_id}, {'$set': {'login': itens}})
+                return f"{parameter.capitalize()} updated successfully."
+            elif parameter == 'login':
+                itens = self.passwords.find_one({'_id': log_id})
+                itens = itens["logins"]
+                ic(itens)
+                itens[1] = new_value
+                self.passwords.update_one({'_id': log_id}, {'$set': {'login': itens}})                
+                return f"{parameter.capitalize()} updated successfully."
+            elif parameter == 'password':
+                itens = self.passwords.find_one({'_id': log_id})
+                itens = itens["logins"]
+                ic(itens)
+                itens[2] = new_value
+                self.passwords.update_one({'_id': log_id}, {'$set': {'login': itens}})
+                return f"{parameter.capitalize()} updated successfully."
         except Exception as e:
             logging.error(f"Failed to edit log: {e}")
             return str(e)
+        
+
+    def findPassID(self) -> int:
+        # Buscar todos os documentos na coleção que tenham um campo _id.
+        cursor = self.passwords.find({'_id': {'$exists': True}})
+    
+        # Extrair os _id's e colocá-los em um conjunto para busca rápida.
+        ids_set = {doc['_id'] for doc in cursor}
+
+        # Iniciar a busca pelo menor _id inteiro positivo ausente.
+        i = 1
+        while True:
+            if i not in ids_set:
+                return i
+            i += 1
+
 
 
 class PasswordGenerator:

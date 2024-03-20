@@ -1,41 +1,17 @@
-from cryptography.fernet import Fernet
-from hashlib import sha256
 from icecream import ic
- 
-import base64
 
-def keyGenerator(s):
-    # Passo 1: Hash da string usando SHA-256 para garantir 32 bytes
-    hash_bytes = sha256(s.encode('utf-8')).digest()
-    
-    # Passo 2: Codifica o resultado do hash em base64 para ser usado como chave Fernet
-    base64_key = base64.urlsafe_b64encode(hash_bytes)
-    
-    return base64_key
+a =  [3, 1, 4, 5, 9, 2]
+
+ic(a)
 
 
-def encryptSentence(massege, key):
-    cypher = Fernet(key)
-    encryptedMessege = cypher.encrypt(massege.encode('utf-8'))
+def findLowerMissing(list: list)-> int:
+    i = 1
+    list_set = set(list)
+    ic(list)
+    while True:
+        if i not in list_set:
+            return i
+        i+=1
 
-    return encryptedMessege
-
-def decryptSentence(encriptedString, key):
-    cypher = Fernet(key)
-    decriptedMessege = cypher.decrypt(encriptedString).decode('utf-8')
-
-    return decriptedMessege
-
-
-textToEncrypt = input("text:")
-keySeed = input("keyseed:")
-
-key = keyGenerator(keySeed)
-encryptedText = encryptSentence(textToEncrypt, key)
-decryptedText = decryptSentence(encryptedText, key)
-
-ic(textToEncrypt)
-ic(keySeed)
-ic(key)
-ic(encryptedText)
-ic(decryptedText)
+ic(findLowerMissing(a))

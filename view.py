@@ -64,7 +64,7 @@ class View(ctk.CTk):
             msg.showinfo(title='Item Len', message='Item Len must be lower than 20.')
             return 0
         else:
-            password = CustomThread(target=self.c.generator, args=(number,lower,symbol,upper,len))
+            password = CustomThread(target=self.c.generatePassword, args=(number,lower,symbol,upper,len))
             password.start()
 
             fullPassword = password.join()
@@ -72,6 +72,7 @@ class View(ctk.CTk):
             ic(fullPassword)
             self.generatePassFrame.destroy()
             self.addWithPass(id, fullPassword)
+
 
     def passVerify(self, password, passwordConfirm, id, itemId, ):
         if password == passwordConfirm:
@@ -93,11 +94,13 @@ class View(ctk.CTk):
             msg.showerror(title="Error", message="ID must be a number.")
             dialog
             return 0
-
-        deleted = self.c.deleteItem(id, item_id)
-        msg.showinfo(title='Info', message=deleted)
-        self.loggedFrame.destroy()
-        self.logged(id)
+        try:
+            deleted = self.c.deleteItem(id, item_id)
+            msg.showinfo(title='Info', message=deleted)
+            self.loggedFrame.destroy()
+            self.logged(id)
+        except Exception as e:
+            msg.showerror(title="Error", message=e)
     
     
     def editCred(self, id, paramter, newPar):
@@ -167,9 +170,11 @@ class View(ctk.CTk):
             int(itemID)
         except:
             msg.showerror(text='Item must be a number')
-
-        self.loggedFrame.destroy()
-        self.editItem(id, itemID)
+        if self.c.validEditArgs(id, itemID) == True:
+            self.loggedFrame.destroy()
+            self.editItem(id, itemID)
+        else:
+            msg.showerror(title="Error", message=self.c.validEditArgs(id, itemID))
 
 
     def validLogin(self, login, password):
@@ -233,7 +238,8 @@ class View(ctk.CTk):
 
     def editLogFunc(self, paramter, user_id, id, newLog):
         try:
-            self.c.editLog(paramter, user_id, id, newLog)
+            e =self.c.editLog(paramter, id, newLog)
+            msg.showinfo(title="Info", message=e)
             return True
         except Exception as e:
             msg.showwarning(title='Error', message=str(e))
@@ -1256,7 +1262,7 @@ class View(ctk.CTk):
         passEditButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Edit Password",
-            command=lambda: [self.passVerify(passwordEntry.get(),passwordConfirmEntry.get())],
+            command=lambda: [self.passVerify(passwordEntry.get(),passwordConfirmEntry.get(), id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,

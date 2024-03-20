@@ -17,8 +17,8 @@ class Controller:
         Returns:
             True if the user was added successfully, otherwise returns an error message.
         """
-        if self.model.is_credential_valid(login, password, password_confirm):
-            user_add_result = self.model.add_user(login, password)
+        if self.model.isCredentialValid(login, password, password_confirm):
+            user_add_result = self.model.addUser(login, password)
             if type(user_add_result) != str:
                 return True
             else:
@@ -119,7 +119,7 @@ class Controller:
         return self.model.addNewLog(user_id, site, login, password)
     
 
-    def editLog(self, parameter: str, user_id, log_id, new_log: str) -> bool:
+    def editLog(self, parameter: str, log_id, new_log: str) -> bool:
         """Edits a log for a user.
         
         Args:
@@ -131,7 +131,7 @@ class Controller:
         Returns:
             True if the log was successfully edited, False otherwise.
         """
-        return self.model.editLog(parameter, user_id, log_id, new_log)
+        return self.model.editLog(parameter, log_id, new_log)
     
     
     def generatePassword(self, number: bool, lower: bool, symbol: bool, upper: bool, length: int) -> str:
@@ -147,7 +147,10 @@ class Controller:
         Returns:
             The generated password.
         """
-        return self.generator.generate(number, lower, symbol, upper, length)
+        return self.PasswordGenerator.generate_password(number, lower, symbol, upper, length)
+    
+    def validEditArgs(self, user_id, log_id):
+        return self.model.validEditArgs(user_id, log_id)
 
 if __name__ == "__main__":
     controller = Controller()
