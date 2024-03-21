@@ -217,7 +217,7 @@ class Model:
         for user in users:
             try:
                 if "logins" in user and len(user["logins"]) >= 3:
-                    value = [user["_id"], user["logins"][0], user["logins"][1], user["logins"][2]]
+                    value = [user["_id"], user["logins"]['site'], user["logins"]['login'], user["logins"]['password']]
                     results.append(value)
             except Exception as e:
                 print(f"Error processing user {user['user_id']}: {e}")
@@ -276,7 +276,7 @@ class Model:
         """
         try:
             passId = self.findPassID()
-            self.passwords.insert_one({'_id': passId, 'user_id': user_id, 'logins': [site, login, password]})
+            self.passwords.insert_one({'_id': passId, 'user_id': user_id, 'logins': {'site':site, 'login':login, 'password':password}})
             return 'Log added successfully.'
         except Exception as e:
             logging.error(f"Failed to add new log: {e}")
@@ -315,28 +315,14 @@ class Model:
             Exception: If an error occurs during the find or update operations on the database.
         """
         try:
-            if parameter == 'site':
-                itens = self.passwords.find_one({'_id': int(log_id)})
-                ic(itens)
-                itens = itens["logins"]
-                ic(itens)
-                itens[0] = new_value
-                self.passwords.update_one({'_id': log_id}, {'$set': {'login': itens}})
-                return f"{parameter.capitalize()} updated successfully."
-            elif parameter == 'login':
-                itens = self.passwords.find_one({'_id': log_id})
-                itens = itens["logins"]
-                ic(itens)
-                itens[1] = new_value
-                self.passwords.update_one({'_id': log_id}, {'$set': {'login': itens}})                
-                return f"{parameter.capitalize()} updated successfully."
-            elif parameter == 'password':
-                itens = self.passwords.find_one({'_id': log_id})
-                itens = itens["logins"]
-                ic(itens)
-                itens[2] = new_value
-                self.passwords.update_one({'_id': log_id}, {'$set': {'login': itens}})
-                return f"{parameter.capitalize()} updated successfully."
+            itens = self.passwords.find_one({'_id': int(log_id)})
+            ic(itens)
+            item = itens["logins"]
+            ic(item)
+            item[parameter] = new_value
+            ic(item)
+            self.passwords.update_one({'_id': int(log_id)}, {'$set': {'login': item}})
+            return f"{parameter.capitalize()} updated successfully."
         except Exception as e:
             logging.error(f"Failed to edit log: {e}")
             return str(e)
