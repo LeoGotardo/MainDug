@@ -117,7 +117,7 @@ class Model:
         Returns:
             True if credentials are valid, otherwise returns an error message.
         """
-        if password == password_confirm and password:
+        if password == password_confirm:
             if self.logins.find_one({'Login': login}) is None:
                 return True
             else:

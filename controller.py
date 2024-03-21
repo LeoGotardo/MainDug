@@ -17,14 +17,15 @@ class Controller:
         Returns:
             True if the user was added successfully, otherwise returns an error message.
         """
-        if self.model.isCredentialValid(login, password, password_confirm):
+        item = self.model.isCredentialValid(login, password, password_confirm)
+        if item:
             user_add_result = self.model.addUser(login, password)
             if type(user_add_result) != str:
                 return True
             else:
                 return user_add_result
         else:
-            return self.model.isCredentialValid(login, password, password_confirm)
+            return item
         
 
     def isLoginValid(self, login: str, password: str) -> bool:
