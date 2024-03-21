@@ -297,15 +297,11 @@ class Model:
 
     def editLog(self, parameter: str, log_id: int, new_value: str) -> str:
         """
-        Edits a specific field ('site', 'login', or 'password') of a log entry for a user.
-
-        This method first retrieves the log entry by its ID to ensure it belongs to the given user.
-        If the log entry is found and belongs to the user, it updates the specified field with the new value provided.
+       Edits a specific field ('site', 'login', or 'password') of a log entry for a user.
 
         Args:
             parameter (str): The field of the log entry to update ('site', 'login', or 'password').
-            user_id (str): The ID of the user who owns the log entry.
-            log_id (str): The ID of the log entry to be edited.
+            log_id (int): The ID of the log entry to be edited.
             new_value (str): The new value to be set for the specified field.
 
         Returns:
@@ -315,17 +311,24 @@ class Model:
             Exception: If an error occurs during the find or update operations on the database.
         """
         try:
-            itens = self.passwords.find_one({'_id': int(log_id)})
-            ic(itens)
-            item = itens["logins"]
-            ic(item)
+            # Attempt to find and update the log entry
+            itens = self.passwords.find_one({'_id':int(log_id)})
+            item = itens['logins']
             item[parameter] = new_value
-            ic(item)
-            self.passwords.update_one({'_id': int(log_id)}, {'$set': {'login': item}})
-            return f"{parameter.capitalize()} updated successfully."
+            update_result = self.passwords.update_one(
+                {'_id': int(log_id)},
+                {'$set': {'logins': item}}
+            )
+
+            # Check if the update was successful
+            if update_result.modified_count == 1:
+                return f"{parameter.capitalize()} updated successfully."
+            else:
+                return "Log entry not found or no update required."
+
         except Exception as e:
             logging.error(f"Failed to edit log: {e}")
-            return str(e)
+            return f"Failed to edit log: {e}"
         
 
     def findPassID(self) -> int:
