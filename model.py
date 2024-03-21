@@ -317,8 +317,8 @@ class Model:
         if parameter == 'password':
             secret = self.logins.find_one({'_id': user_id})
             secret = secret['login']
-            key = Cryptograth.keyGenerator(str(secret))
-            new_value = Cryptograth.encryptSentence(new_value, key)
+            key = Cryptography.keyGenerator(str(secret))
+            new_value = Cryptography.encryptSentence(new_value, key)
 
         try:
             # Attempt to find and update the log entry
@@ -404,7 +404,7 @@ class PasswordGenerator:
         return ''.join(password)
 
 
-class Cryptograth:
+class Cryptography:
     def __init__(self) -> None:
         pass
 
