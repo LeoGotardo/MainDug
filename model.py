@@ -276,8 +276,8 @@ class Model:
         """
         secret = self.logins.find_one({'_id': user_id})
         secret = secret['Login']
-        key = Cryptograth.keyGenerator(str(secret))
-        password = Cryptograth.encryptSentence(password, key)
+        key = Cryptography.keyGenerator(str(secret))
+        password = Cryptography.encryptSentence(password, key)
         try:
             passId = self.findPassID()
             self.passwords.insert_one({'_id': passId, 'user_id': user_id, 'logins': {'site':site, 'login':login, 'password':password}})
