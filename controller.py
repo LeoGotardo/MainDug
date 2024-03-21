@@ -119,7 +119,7 @@ class Controller:
         return self.model.addNewLog(user_id, site, login, password)
     
 
-    def editLog(self, parameter: str, log_id, new_log: str) -> bool:
+    def editLog(self, user_id: int, parameter: str, log_id, new_log: str) -> bool:
         """Edits a log for a user.
         
         Args:
@@ -131,7 +131,7 @@ class Controller:
         Returns:
             True if the log was successfully edited, False otherwise.
         """
-        return self.model.editLog(parameter, log_id, new_log)
+        return self.model.editLog(user_id, parameter, log_id, new_log)
     
     
     def generatePassword(self, number: bool, lower: bool, symbol: bool, upper: bool, length: int) -> str:

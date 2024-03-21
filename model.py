@@ -274,6 +274,10 @@ class Model:
         Returns:
             str: A message indicating the completion of the process or describing any errors encountered.
         """
+        secret = self.logins.find_one({'_id': user_id})
+        secret = secret['Login']
+        key = Cryptograth.keyGenerator(str(secret))
+        password = Cryptograth.encryptSentence(password, key)
         try:
             passId = self.findPassID()
             self.passwords.insert_one({'_id': passId, 'user_id': user_id, 'logins': {'site':site, 'login':login, 'password':password}})
@@ -295,7 +299,7 @@ class Model:
             return e
 
 
-    def editLog(self, parameter: str, log_id: int, new_value: str) -> str:
+    def editLog(self, user_id: int, parameter: str, log_id: int, new_value: str) -> str:
         """
        Edits a specific field ('site', 'login', or 'password') of a log entry for a user.
 
@@ -310,6 +314,12 @@ class Model:
         Raises:
             Exception: If an error occurs during the find or update operations on the database.
         """
+        if parameter == 'password':
+            secret = self.logins.find_one({'_id': user_id})
+            secret = secret['login']
+            key = Cryptograth.keyGenerator(str(secret))
+            new_value = Cryptograth.encryptSentence(new_value, key)
+
         try:
             # Attempt to find and update the log entry
             itens = self.passwords.find_one({'_id':int(log_id)})

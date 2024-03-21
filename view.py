@@ -238,7 +238,7 @@ class View(ctk.CTk):
 
     def editLogFunc(self, paramter, user_id, id, newLog):
         try:
-            e =self.c.editLog(paramter, id, newLog)
+            e =self.c.editLog(user_id, paramter, id, newLog)
             msg.showinfo(title="Info", message=e)
             return True
         except Exception as e:
