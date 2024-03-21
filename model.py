@@ -7,6 +7,7 @@ from PIL import Image
  
 import random as r
 import Debug as d
+import pyperclip
 import logging
 import hashlib
 import base64
@@ -210,6 +211,11 @@ class Model:
         Returns:
             list: A list of lists, each containing the document ID and the first three logins for each matching document.
         """
+        secret = self.logins.find_one({'_id': user_id})
+        secret = secret['Login']
+        key = Cryptography.keyGenerator(secret)
+        i=0
+
         users = self.passwords.find({"user_id": user_id})
 
         results = []  # A list to store the results
@@ -222,8 +228,10 @@ class Model:
             except Exception as e:
                 print(f"Error processing user {user['user_id']}: {e}")
                 continue
-
-        ic(results)
+        for item in results:
+            decrypted_password = Cryptography.decryptSentence(item[3], key)
+            results[i][3] = decrypted_password
+            i+=1
         return results
 
 
@@ -287,14 +295,14 @@ class Model:
             return str(e)
 
 
-    def validEditArgs(self, user_id, log_id):
+    def validEditArgs(self, user_id, log_id: int):
         try:
             log_entry = self.passwords.find_one({'_id': int(log_id)})
             # Check if the log entry exists and belongs to the user.
             if log_entry and log_entry.get('user_id') == user_id:
                 return True
             else:
-                return "Cannot find matching log entry or user mismatch. Please try again."
+                return False, "Cannot find matching log entry or user mismatch. Please try again."
         except Exception as e:
             return e
 
@@ -355,6 +363,27 @@ class Model:
                 return i
             i += 1
 
+
+    def copy(self, id, itemID: int) -> str:
+        try:
+            item = self.passwords.find_one({'_id': int(itemID)})
+            ic(item)
+            if item['user_id'] == id:
+                item = item['logins']
+                password = item['password']
+                key = self.logins.find_one({'_id': id})
+                key = key['Login']
+                key = Cryptography.keyGenerator(key)
+                password = Cryptography.decryptSentence(password, key)
+                ic(item)
+                copy = f"Login: {item['login']} \nPassword: {password}"
+                ic(copy)
+                pyperclip.copy(copy)
+                return True, "Login and Password copied to your clipboard"
+            else:
+                return False, "Cant find any matching item"
+        except Exception as e:
+            return e, "Cant find any matching item"
 
 
 class PasswordGenerator:

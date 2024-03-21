@@ -1,8 +1,10 @@
-pymongo
-customtkinter
-CTktable
 alive_progress
-tk
-Pillow
-icecream
+python-dotenv
+customtkinter
 cryptography
+pyperclip
+CTktable
+icecream
+pymongo
+Pillow
+tk

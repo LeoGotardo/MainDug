@@ -149,8 +149,14 @@ class Controller:
         """
         return self.PasswordGenerator.generate_password(number, lower, symbol, upper, length)
     
-    def validEditArgs(self, user_id, log_id):
+
+    def validEditArgs(self, user_id, log_id: int) -> bool or str: # type: ignore
         return self.model.validEditArgs(user_id, log_id)
+    
+
+    def copy(self, id , itemID: int) -> bool or str: # type: ignore
+        return self.model.copy(id, itemID)
+    
 
 if __name__ == "__main__":
     controller = Controller()

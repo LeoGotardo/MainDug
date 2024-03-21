@@ -41,6 +41,7 @@ class View(ctk.CTk):
         self.Add = ctk.CTkImage(dark_image=img.open("icons/add.ico"))
         self.Delete = ctk.CTkImage(dark_image=img.open("icons/delete.ico"))
         self.edit = ctk.CTkImage(dark_image=img.open("icons/edit.ico"))
+        self.copy = ctk.CTkImage(dark_image=img.open("icons/copy.ico"))
 
         ctk.set_appearance_mode('dark')
         ctk.set_default_color_theme('green')
@@ -69,7 +70,6 @@ class View(ctk.CTk):
 
             fullPassword = password.join()
             
-            ic(fullPassword)
             self.generatePassFrame.destroy()
             self.addWithPass(id, fullPassword)
 
@@ -197,10 +197,8 @@ class View(ctk.CTk):
 
 
     def addCad(self, login, password, passwordConfirm):
-        ic(login,password,passwordConfirm)
         # Adiciona um novo usuário e exibe uma mensagem apropriada
         error = self.c.addUser(login, password, passwordConfirm)
-        ic(error)
         if error == True:
             self.alert("Susses","Sussesfull Signup")
             self.signupFrame.destroy()
@@ -238,12 +236,23 @@ class View(ctk.CTk):
 
     def editLogFunc(self, paramter, user_id, id, newLog):
         try:
-            e =self.c.editLog(user_id, paramter, id, newLog)
+            e = self.c.editLog(user_id, paramter, id, newLog)
             msg.showinfo(title="Info", message=e)
             return True
         except Exception as e:
             msg.showwarning(title='Error', message=str(e))
             return False
+
+
+    def copyFunc(self, id):
+        try:
+            dialog = ctk.CTkInputDialog(text="What's the item ID:", title='Copy item credentials...')
+            itemID = dialog.get_input()
+            copy = self.c.copy(id, itemID)
+            msg.showinfo(message=copy[1])
+            ic(copy[0])
+        except Exception as e:
+            msg.showerror(title="ERROR", message=e)
 
 
     def login(self):
@@ -458,7 +467,6 @@ class View(ctk.CTk):
 
         passwords.insert(0, title)
         
-        ic(passwords)
 
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
@@ -543,6 +551,17 @@ class View(ctk.CTk):
             image=self.edit
         )
 
+        copy = ctk.CTkButton(
+            master=self.loggedFrame,
+            text="",
+            command=lambda:[self.copyFunc(id)],
+            font=("RobotoSlab", 12),
+            corner_radius=50,
+            height=10,
+            width=10,
+            image=self.copy
+        )
+
 
         configButton.place(relx=0.05, rely=0.05,anchor="center")
         title.place(relx=0.5, rely=0.1, anchor="center")
@@ -551,11 +570,12 @@ class View(ctk.CTk):
         tableFrame.pack(fill='both', expand=True)
         table.place(in_=tableFrame)
 
-        edit.place(relx=0.3,rely=0.9, anchor="center")
-        add.place(relx=0.4,rely=0.9, anchor="center")
-        exitButton.place(relx=0.5, rely=0.9, anchor="center")
-        theme.place(relx=0.6, rely=0.9, anchor="center")
-        delete.place(relx=0.7,rely=0.9, anchor="center")
+        copy.place(relx=0.25,rely=0.9, anchor="center")
+        edit.place(relx=0.35,rely=0.9, anchor="center")
+        add.place(relx=0.45,rely=0.9, anchor="center")
+        exitButton.place(relx=0.55, rely=0.9, anchor="center")
+        theme.place(relx=0.65, rely=0.9, anchor="center")
+        delete.place(relx=0.75,rely=0.9, anchor="center")
 
 
     def config(self, id):
