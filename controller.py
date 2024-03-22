@@ -18,7 +18,7 @@ class Controller:
             True if the user was added successfully, otherwise returns an error message.
         """
         item = self.model.isCredentialValid(login, password, password_confirm)
-        if item:
+        if item == True:
             user_add_result = self.model.addUser(login, password)
             if type(user_add_result) != str:
                 return True

@@ -118,10 +118,13 @@ class Model:
             True if credentials are valid, otherwise returns an error message.
         """
         if password == password_confirm:
-            if self.logins.find_one({'Login': login}) is None:
-                return True
+            if password != "":
+                if self.logins.find_one({'Login': login}) is None:
+                    return True
+                else:
+                    return 'Login already exists.'
             else:
-                return 'Login already exists.'
+                return "Password can't be empty"
         else:
             return 'Password and confirmation do not match.'
 
