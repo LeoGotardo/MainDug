@@ -1,5 +1,13 @@
-import pyperclip as p
+import customtkinter as ctk
+from CTkColorPicker import *
 
-text = 'dawdawjndkpandoadnaljd'
+def ask_color():
+    pick_color = AskColor() # open the color picker
+    color = pick_color.get() # get the color string
+    print(color)
+    
+root = ctk.CTk()
 
-p(text)
+button = ctk.CTkButton(master=root, text="CHOOSE COLOR", text_color="black", command=ask_color)
+button.pack(padx=30, pady=20)
+root.mainloop()

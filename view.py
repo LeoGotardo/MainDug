@@ -2,6 +2,7 @@ from tkinter import messagebox as msg
 from controller import Controller
 from PIL import Image as img
 from threading import Thread
+from CTkColorPicker import *
 from icecream import ic
 from CTkTable import *
 
@@ -42,9 +43,11 @@ class View(ctk.CTk):
         self.Delete = ctk.CTkImage(dark_image=img.open("icons/delete.ico"))
         self.edit = ctk.CTkImage(dark_image=img.open("icons/edit.ico"))
         self.copy = ctk.CTkImage(dark_image=img.open("icons/copy.ico"))
+        self.newColor = ctk.CTkImage(dark_image=img.open("icons/newColor.ico"))
+        self.priColor = '#1b1b1b'
+        self.secColor = self.priColor
 
         ctk.set_appearance_mode('dark')
-        ctk.set_default_color_theme('green')
 
         self.mode = 'dark'
         self.login()
@@ -52,6 +55,12 @@ class View(ctk.CTk):
         self.app.geometry("500x600")
         self.app.resizable(width=False, height=False)
         self.app.mainloop()
+
+
+    def askColor(self):
+        pick_color = AskColor() # open the color picker
+        self.priColor = pick_color.get() # get the color string
+        print(self.priColor)
 
 
     def fullGeneratePass(self, id, len, upper, lower, symbol, number):
@@ -74,7 +83,7 @@ class View(ctk.CTk):
             self.addWithPass(id, fullPassword)
 
 
-    def passVerify(self, password, passwordConfirm, id, itemId, ):
+    def passVerify(self, password, passwordConfirm, id, itemId):
         if password == passwordConfirm:
             try:
                 self.editLogFunc("password", id, itemId, password)
@@ -131,6 +140,7 @@ class View(ctk.CTk):
         elif newPass == 'no':
             self.loggedFrame.destroy()
             self.addLog(id)
+
 
     def addLogDB(self, id, site, login, password, frame):
         if frame is not None:
@@ -293,6 +303,8 @@ class View(ctk.CTk):
             command=lambda:[self.seePass(passwordEntry, showPass)],
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.see
@@ -303,6 +315,8 @@ class View(ctk.CTk):
             text="Login",
             command=lambda: [self.validLogin(loginEntry.get(), passwordEntry.get())],
             font=("RobotoSlab", 12),
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             corner_radius=20,
             height=40,
             width=100
@@ -314,6 +328,8 @@ class View(ctk.CTk):
             command=lambda: [self.loginFrame.destroy(), self.signup()],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
@@ -324,11 +340,12 @@ class View(ctk.CTk):
             command=lambda:self.theme(changeTheme),
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.white
         )
-
 
         title.pack(padx=50, pady=10)
         loginEntry.pack(padx=50, pady=10)
@@ -383,6 +400,8 @@ class View(ctk.CTk):
             text="",
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.see
@@ -416,6 +435,8 @@ class View(ctk.CTk):
             command=lambda: [self.addCad(loginEntry.get(), passwordEntry.get(), passwordConfirmEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100,
         )
@@ -427,6 +448,8 @@ class View(ctk.CTk):
             command=lambda:[self.signupFrame.destroy(), self.login()],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
@@ -437,6 +460,8 @@ class View(ctk.CTk):
             command=lambda:[self.theme(theme)],
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.white
@@ -482,7 +507,7 @@ class View(ctk.CTk):
             column=4,
             values=passwords,
             width=200,
-            colors=['#174a19','#292b29']
+            colors=[self.priColor,'#292b29']
         )
 
         exitButton = ctk.CTkButton(
@@ -491,6 +516,8 @@ class View(ctk.CTk):
             text="",
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.exit
@@ -502,6 +529,8 @@ class View(ctk.CTk):
             text="",
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image= self.Config
@@ -513,6 +542,8 @@ class View(ctk.CTk):
             command=lambda:[self.theme(theme)],
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.white
@@ -523,6 +554,8 @@ class View(ctk.CTk):
             text="",
             command=lambda:[self.add(id)],
             font=("RobotoSlab", 12),
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             corner_radius=50,
             height=10,
             width=10,
@@ -535,6 +568,8 @@ class View(ctk.CTk):
             command=lambda:[self.deleteItem(id)],
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.Delete
@@ -547,6 +582,8 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=10,
             image=self.edit
         )
@@ -557,6 +594,8 @@ class View(ctk.CTk):
             command=lambda:[self.copyFunc(id)],
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.copy
@@ -595,6 +634,8 @@ class View(ctk.CTk):
             text="Edit Login",
             command=lambda: [self.configFrame.destroy(), self.editLogin(id)],
             font=("RobotoSlab", 12),
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             corner_radius=20,
             height=40,
             width=100
@@ -605,6 +646,8 @@ class View(ctk.CTk):
             text="Edit Password",
             command=lambda: [self.configFrame.destroy(), self.editPass(id)],
             font=("RobotoSlab", 12),
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             corner_radius=20,
             height=40,
             width=100
@@ -615,6 +658,8 @@ class View(ctk.CTk):
             text="Erase Account",
             command=lambda: [self.configFrame.destroy(), self.erase(id)],
             font=("RobotoSlab", 12),
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             corner_radius=20,
             height=40,
             width=100
@@ -627,6 +672,8 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=100
         )
 
@@ -638,9 +685,22 @@ class View(ctk.CTk):
             corner_radius=50,
             height=10,
             width=10,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             image=self.white
         )
 
+        changeColor = ctk.CTkButton(
+            master=self.configFrame,
+            text="",
+            command=lambda:self.askColor(),
+            corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.priColor,
+            height=10,
+            width=10,
+            image=self.newColor
+        )
 
         title.pack(padx=50, pady=10)
         loginEditButton.pack(padx=50, pady=10)
@@ -648,7 +708,7 @@ class View(ctk.CTk):
         eraseButton.pack(padx=50, pady=10)
         backButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
-
+        changeColor.pack(padx=50, pady=10)
 
     def editLogin(self, id):
         self.editLoginFrame = ctk.CTkFrame(master=self.app)
@@ -677,6 +737,8 @@ class View(ctk.CTk):
             command=lambda:[self.editCred(id, "Login", loginEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
@@ -686,6 +748,8 @@ class View(ctk.CTk):
             text="Back",
             command=lambda: [self.editLoginFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             corner_radius=20,
             height=40,
             width=100
@@ -697,6 +761,8 @@ class View(ctk.CTk):
             command=lambda:[self.theme(changeTheme)],
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.white
@@ -751,6 +817,8 @@ class View(ctk.CTk):
             placeholder_text="New Password Confirm",
             font=("RobotoSlab", 12),
             border_width=2,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=200,
             show="*"
@@ -762,6 +830,8 @@ class View(ctk.CTk):
             command=lambda:[self.seePass(passwordConfirmEntry, showPassConfirm)],
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.see
@@ -773,6 +843,8 @@ class View(ctk.CTk):
             command=lambda: [self.editCred(id, "Password", passwordEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
@@ -783,6 +855,8 @@ class View(ctk.CTk):
             command=lambda: [self.editPasswordFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
@@ -793,6 +867,8 @@ class View(ctk.CTk):
             command=lambda:[self.theme(theme)],
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.white
@@ -840,6 +916,8 @@ class View(ctk.CTk):
             command=lambda: [self.eraseFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
@@ -851,10 +929,12 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=10,
             image=self.white
         )
-
+        
         title.pack(padx=50, pady=10)
         eraseButton.pack(padx=50, pady=10)
         backButton.pack(padx=50, pady=10)
@@ -868,7 +948,6 @@ class View(ctk.CTk):
         self.app.title("New Login")
         self.generatePassFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
         self.app.iconbitmap(default="icons/Alien.ico")
-
 
         title = ctk.CTkLabel(
             master=self.generatePassFrame,
@@ -907,6 +986,8 @@ class View(ctk.CTk):
             command=lambda: [self.fullGeneratePass(id, passLen.get(), upperLetterValue.get(), lowerLetterValue.get(), symbol.get(), numberValue.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
@@ -917,6 +998,8 @@ class View(ctk.CTk):
             command=lambda: [self.generatePassFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
@@ -979,6 +1062,8 @@ class View(ctk.CTk):
             command=lambda:[self.seePass(passwordEntry, showPass)],
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.see
@@ -991,6 +1076,8 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=100
         )
 
@@ -1001,6 +1088,8 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=100
         )
 
@@ -1010,11 +1099,12 @@ class View(ctk.CTk):
             command=lambda:self.theme(changeTheme),
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.white
         )
-
 
         title.pack(padx=50, pady=10)
         siteEntry.pack(padx=50, pady=10)
@@ -1057,6 +1147,8 @@ class View(ctk.CTk):
             command=lambda: [self.editItemFrame.destroy(), self.loginEdit(id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
@@ -1066,6 +1158,8 @@ class View(ctk.CTk):
             text="Edit Password",
             command=lambda: [self.editItemFrame.destroy(), self.passwordEdit(id, itemId)],
             font=("RobotoSlab", 12),
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             corner_radius=20,
             height=40,
             width=100
@@ -1076,6 +1170,8 @@ class View(ctk.CTk):
             text="Cancel",
             command=lambda: [self.editItemFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             corner_radius=20,
             height=40,
             width=100
@@ -1087,6 +1183,8 @@ class View(ctk.CTk):
             command=lambda:self.theme(changeTheme),
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.white
@@ -1128,6 +1226,8 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=100
         )
 
@@ -1138,6 +1238,8 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=100
         )
 
@@ -1148,10 +1250,11 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=10,
             image=self.white
         )
-
 
         title.pack(padx=50, pady=10)
         siteEntry.pack(padx=50, pady=10)
@@ -1190,6 +1293,8 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=100
         )
 
@@ -1200,6 +1305,8 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=100
         )
 
@@ -1210,8 +1317,23 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=10,
             image=self.white
+        )
+
+
+        changeColor = ctk.CTkButton(
+            master=self.editLoginFrame,
+            text="",
+            command=lambda:self.AskColor(),
+            corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.priColor,
+            height=10,
+            width=10,
+            image=self.newColor
         )
 
 
@@ -1286,6 +1408,8 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=100
         )
 
@@ -1295,6 +1419,8 @@ class View(ctk.CTk):
             command=lambda: [self.editPasswordFrame.destroy(), self.editItem(id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
@@ -1305,6 +1431,8 @@ class View(ctk.CTk):
             command=lambda:[self.theme(theme)],
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.white
@@ -1354,6 +1482,8 @@ class View(ctk.CTk):
             text="Done",
             command=lambda: [self.addLogDB(id, site.get(), login.get(), password, self.addPassFrame)],
             font=("RobotoSlab", 12),
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             corner_radius=20,
             height=40,
             width=100
@@ -1365,6 +1495,8 @@ class View(ctk.CTk):
             command=lambda: [self.loginFrame.destroy(), self.logged(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
@@ -1375,6 +1507,8 @@ class View(ctk.CTk):
             command=lambda:self.theme(changeTheme),
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.white
