@@ -158,6 +158,8 @@ class Controller:
     def copy(self, id , itemID: int) -> bool or str: # type: ignore
         return self.model.copy(id, itemID)
     
+    def invertColor(self, color):
+        return self.model.invertColor(color)
 
 if __name__ == "__main__":
     controller = Controller()
