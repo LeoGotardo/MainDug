@@ -57,10 +57,12 @@ class View(ctk.CTk):
         self.app.mainloop()
 
 
-    def askColor(self):
+    def askColor(self, id):
         pick_color = AskColor() # open the color picker
         self.priColor = pick_color.get() # get the color string
         print(self.priColor)
+        self.configFrame.destroy()
+        self.config(id)
 
 
     def fullGeneratePass(self, id, len, upper, lower, symbol, number):
@@ -413,7 +415,6 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             border_width=2,
             height=40,
-            bg_color='black',
             width=200,
             show="*"
         )
@@ -425,6 +426,8 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             width=10,
             image=self.see
         )
@@ -454,6 +457,7 @@ class View(ctk.CTk):
             width=100
         )
 
+
         theme = ctk.CTkButton(
             master=self.signupFrame,
             text="",
@@ -470,7 +474,7 @@ class View(ctk.CTk):
         title.pack(padx=50, pady=10)
         loginEntry.pack(padx=50, pady=10)
         passwordEntry.pack(padx=50, pady=10)
-        showpass.place(relx=0.85, rely=0.332)
+        showpass.place(relx=0.85, rely=0.338)
         passwordConfirmEntry.pack(padx=50, pady=10)
         showPassConfirm.place(relx=0.85, rely=0.48)
         signupButton.pack(padx=50, pady=10)
@@ -527,13 +531,9 @@ class View(ctk.CTk):
             master=self.loggedFrame,
             command=lambda: [self.loggedFrame.destroy(), self.config(id)],
             text="",
-            font=("RobotoSlab", 12),
-            corner_radius=50,
-            fg_color=self.priColor,
-            hover_color=self.secColor,
-            height=10,
-            width=10,
-            image= self.Config
+            height=50,
+            width=50,
+            image=self.user
         )
 
         theme = ctk.CTkButton(
@@ -693,7 +693,7 @@ class View(ctk.CTk):
         changeColor = ctk.CTkButton(
             master=self.configFrame,
             text="",
-            command=lambda:self.askColor(),
+            command=lambda:self.askColor(id),
             corner_radius=50,
             fg_color=self.priColor,
             hover_color=self.priColor,
@@ -1321,19 +1321,6 @@ class View(ctk.CTk):
             hover_color=self.secColor,
             width=10,
             image=self.white
-        )
-
-
-        changeColor = ctk.CTkButton(
-            master=self.editLoginFrame,
-            text="",
-            command=lambda:self.AskColor(),
-            corner_radius=50,
-            fg_color=self.priColor,
-            hover_color=self.priColor,
-            height=10,
-            width=10,
-            image=self.newColor
         )
 
 

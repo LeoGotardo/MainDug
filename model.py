@@ -46,41 +46,6 @@ class Model:
             logging.error(f"Failed to connect to MongoDB: {e}")
 
 
-    def imgToBinary(self, path: str) -> bytes:
-        """
-        Converts an image file to its binary representation.
-
-        This function opens an image file from the given path, reads it in binary mode, and 
-        returns the binary content. This is useful for storing or processing images in their 
-        binary form.
-
-        Args:
-            path (str): The filesystem path to the image file to be converted.
-
-        Returns:
-            bytes: The binary content of the image file.
-        """
-        with open(path, 'rb') as file:
-            binary_content = file.read()
-        return binary_content
-
-
-    def invertColor(self, cor_hex):
-        # Remove o símbolo '#' se estiver presente
-        cor_hex = cor_hex.strip('#')
-
-        # Converte o hexadecimal para RGB
-        r, g, b = int(cor_hex[0:2], 16), int(cor_hex[2:4], 16), int(cor_hex[4:6], 16)
-
-        # Inverte os valores RGB subtraindo de 255
-        r_invertido, g_invertido, b_invertido = 255 - r, 255 - g, 255 - b
-
-        # Converte de volta para o formato hexadecimal
-        cor_hex_invertida = f"#{r_invertido:02x}{g_invertido:02x}{b_invertido:02x}"
-
-        return cor_hex_invertida
-
-
     def addUser(self, login: str, password: str) -> bool:
         """
         Adds a new user to the 'Logins' collection with a hashed password.
@@ -519,3 +484,25 @@ if __name__ == "__main__":
 
     generator = PasswordGenerator()
     model = Model()
+
+
+
+
+
+
+
+
+
+
+#  __                                  ______              __                                __           
+# |  \                                /      \            |  \                              |  \          
+# | $$       ______    ______        |  $$$$$$\  ______  _| $$_     ______    ______    ____| $$  ______  
+# | $$      /      \  /      \       | $$ __\$$ /      \|   $$ \   |      \  /      \  /      $$ /      \ 
+# | $$     |  $$$$$$\|  $$$$$$\      | $$|    \|  $$$$$$\\$$$$$$    \$$$$$$\|  $$$$$$\|  $$$$$$$|  $$$$$$\
+# | $$     | $$    $$| $$  | $$      | $$ \$$$$| $$  | $$ | $$ __  /      $$| $$   \$$| $$  | $$| $$  | $$
+# | $$_____| $$$$$$$$| $$__/ $$      | $$__| $$| $$__/ $$ | $$|  \|  $$$$$$$| $$      | $$__| $$| $$__/ $$
+# | $$     \\$$     \ \$$    $$       \$$    $$ \$$    $$  \$$  $$ \$$    $$| $$       \$$    $$ \$$    $$
+#  \$$$$$$$$ \$$$$$$$  \$$$$$$         \$$$$$$   \$$$$$$    \$$$$   \$$$$$$$ \$$        \$$$$$$$  \$$$$$$ 
+#                                                                                                        
+                                                                                                        
+                                                                                                        
