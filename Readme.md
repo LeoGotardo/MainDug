@@ -88,5 +88,3 @@ To contribute to this project, please fork the repository and submit a pull requ
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ---
-
-This template provides a solid foundation for your project's README. Adjust it as necessary to better fit your project's needs and details.
