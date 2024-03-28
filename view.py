@@ -1139,6 +1139,8 @@ class View(ctk.CTk):
             command=lambda: [self.editItemFrame.destroy(), self.siteEdit(id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=40,
             width=100
         )
