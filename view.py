@@ -823,8 +823,6 @@ class View(ctk.CTk):
             placeholder_text="New Password Confirm",
             font=("RobotoSlab", 12),
             border_width=2,
-            fg_color=self.priColor,
-            hover_color=self.secColor,
             height=40,
             width=200,
             show="*"
@@ -883,7 +881,9 @@ class View(ctk.CTk):
 
         title.pack(padx=50, pady=10)
         passwordEntry.pack(padx=50, pady=10)
+        showPass.place(relx=8, rely=5)
         passwordConfirmEntry.pack(padx=50, pady=10)
+        showPassConfirm.place(relx=8, rely=6)
         passEditButton.pack(padx=50, pady=10)
         backButton.pack(padx=50, pady=10)
         theme.pack(padx=50, pady=10)
