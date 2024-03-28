@@ -115,22 +115,26 @@ class View(ctk.CTk):
     
     
     def editCred(self, id, paramter, newPar):
-        if paramter == "Login":
-            new = self.c.findUserId(newPar, "$exists")
-            if new == []:
+        if newPar != '':
+            if paramter == "Login":
+                new = self.c.findUserId(newPar, "$exists")
+                ic(new)
+                if new == None:
+                    sull = self.c.updateUser(id, paramter, newPar)
+                    self.alert("Info", sull)
+
+                    self.editLoginFrame.destroy()
+                    self.logged(id)
+                else:
+                    self.alert("ERROR",f'This login alredy exists.')
+            elif paramter == "Password":
                 sull = self.c.updateUser(id, paramter, newPar)
                 self.alert("Info", sull)
 
-                self.editLoginFrame.destroy()
+                self.editPasswordFrame.destroy()
                 self.logged(id)
-            else:
-                self.alert("ERROR",f'This login alredy exists.')
-        elif paramter == "Password":
-            sull = self.c.updateUser(id, paramter, newPar)
-            self.alert("Info", sull)
-
-            self.editPasswordFrame.destroy()
-            self.logged(id)
+        else:
+            self.alert('ERROR', f"{paramter} can't be empty.")
 
 
     def add(self, id):
