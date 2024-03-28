@@ -531,9 +531,11 @@ class View(ctk.CTk):
             master=self.loggedFrame,
             command=lambda: [self.loggedFrame.destroy(), self.config(id)],
             text="",
-            height=50,
-            width=50,
-            image=self.user
+            height=10,
+            width=10,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
+            image=self.Config
         )
 
         theme = ctk.CTkButton(
