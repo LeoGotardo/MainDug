@@ -153,11 +153,37 @@ class Controller:
 
     def validEditArgs(self, user_id, log_id: int) -> bool or str: # type: ignore
         return self.model.validEditArgs(user_id, log_id)
-    
+        """Validate arguments for editing credentials using the function of "model.py".
+        
+        Args: 
+            user_id: The ID of the user.
+            log_id: The ID of the log to edit.
+
+        Returns:
+            True if the validation is successful, False otherwise.
+          """
 
     def copy(self, id , itemID: int) -> bool or str: # type: ignore
         return self.model.copy(id, itemID)
-    
+        """Copy login credentials and password to clipboard using the function of "model.py"
 
+        Args:
+            itemID: The credentials copied to the clipboard. 
+        
+            Returns:
+            True if the user_id is the same as the credentials you want to copy, false otherwise.
+        """
+        
+    def darkColor(self, color: str, amount: int) -> str:
+        return self.model.darkColor(color, amount)
+        """Darkens the color chosen by the user for better visualization of the interface using the function of "model.py"
+        
+        Args:
+            Color: Color in hexadecimal chosen by the user.
+        
+        Returns:
+            The color chosen by the user but a little darker.
+        """
+    
 if __name__ == "__main__":
     controller = Controller()

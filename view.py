@@ -12,6 +12,19 @@ import os
 
 
 class CustomThread(Thread):
+    """Initialize CustomThread Object
+    
+    Args:
+        group(object): Thread Group.
+        target(callabe): Target Function to call when thread starts.
+        name(str): Thread name.
+        args(tuple): arguments to pass to the target function
+        kwargs(dict): keyword arguments to pass to the target function.
+        verbose(bool): Verbosity level.
+        
+    Returns:
+        The return value of the target function if it exists.
+    """
     def __init__(self, group=None, target= None, name=None, args=(), kwargs={}, Verbose=None):
         Thread.__init__(self, group, target, name, args, kwargs)
         self._return = None
@@ -45,7 +58,7 @@ class View(ctk.CTk):
         self.copy = ctk.CTkImage(dark_image=img.open("icons/copy.ico"))
         self.newColor = ctk.CTkImage(dark_image=img.open("icons/newColor.ico"))
         self.priColor = '#1b1b1b'
-        self.secColor = self.priColor
+        self.secColor = self.c.darkColor(self.priColor, 50)
 
         ctk.set_appearance_mode('dark')
 
@@ -58,8 +71,19 @@ class View(ctk.CTk):
 
 
     def askColor(self, id):
+        """Prompt the user to choose a color. Opens a color picker dialog and sets the primary and secondary colors based on the chosen color, and configures the frame accordingly.
+        Args:
+            id(int): Identifier parameter.
+            pick_color = Open the color picker.
+            self.priColor: Get the color string.
+            self.secColor: Computes a darker shade for secondary color.
+            print: Prints the primary color (for debugging or logging).
+            self.configFrame: Destroys the configuration frame.
+            self.config: Configures the frame based on the provided identifier.
+        """
         pick_color = AskColor() # open the color picker
         self.priColor = pick_color.get() # get the color string
+        self.secColor = self.c.darkColor(self.priColor, 50)
         print(self.priColor)
         self.configFrame.destroy()
         self.config(id)
@@ -86,14 +110,23 @@ class View(ctk.CTk):
 
 
     def passVerify(self, password, passwordConfirm, id, itemId):
-        if password == passwordConfirm:
+        if self.passVerifyFunc(password, passwordConfirm):
             try:
                 self.editLogFunc("password", id, itemId, password)
             except Exception as e:
                 msg.showerror(title="Error", message=str(e))
+
+
+    def passVerifyFunc(self, password, confirm):
+        if password == confirm:
+            if password != "":
+                return True
+            else:
+                self.alert("ERROR", "Password can't be empty")
+                return False
         else:
-            msg.showerror(title="Error", message="Passwords do not match...")
-            return 0
+            self.alert("ERROR", "Passwords do not metch")
+            return False
 
 
     def deleteItem(self, id):
@@ -127,12 +160,13 @@ class View(ctk.CTk):
                     self.logged(id)
                 else:
                     self.alert("ERROR",f'This login alredy exists.')
-            elif paramter == "Password":
-                sull = self.c.updateUser(id, paramter, newPar)
-                self.alert("Info", sull)
+            if paramter == "Password":
+                if self.passVerifyFunc(newPar[0], newPar[1]):
+                    sull = self.c.updateUser(id, paramter, newPar)
+                    self.alert("Info", sull)
 
-                self.editPasswordFrame.destroy()
-                self.logged(id)
+                    self.editPasswordFrame.destroy()
+                    self.logged(id)
         else:
             self.alert('ERROR', f"{paramter} can't be empty.")
 
@@ -702,7 +736,7 @@ class View(ctk.CTk):
             command=lambda:self.askColor(id),
             corner_radius=50,
             fg_color=self.priColor,
-            hover_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.newColor
@@ -752,7 +786,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Back",
-            command=lambda: [self.editLoginFrame.destroy(), self.logged(id)],
+            command=lambda: [self.editLoginFrame.destroy(), self.config(id)],
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -813,6 +847,8 @@ class View(ctk.CTk):
             command=lambda:[self.seePass(passwordEntry, showPass)],
             font=("RobotoSlab", 12),
             corner_radius=50,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
             height=10,
             width=10,
             image=self.see
@@ -844,7 +880,7 @@ class View(ctk.CTk):
         passEditButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Edit Password",
-            command=lambda: [self.editCred(id, "Password", passwordEntry.get())],
+            command=lambda: [self.editCred(id, "Password", [passwordEntry.get(), passwordConfirmEntry.get()])],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -856,7 +892,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Back",
-            command=lambda: [self.editPasswordFrame.destroy(), self.logged(id)],
+            command=lambda: [self.editPasswordFrame.destroy(), self.config(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -878,15 +914,16 @@ class View(ctk.CTk):
             image=self.white
         )
 
-
         title.pack(padx=50, pady=10)
         passwordEntry.pack(padx=50, pady=10)
-        showPass.place(relx=8, rely=5)
+        showPass.place(relx=0.8, rely=0.22)
         passwordConfirmEntry.pack(padx=50, pady=10)
-        showPassConfirm.place(relx=8, rely=6)
+        showPassConfirm.place(relx=0.8, rely=0.39)
         passEditButton.pack(padx=50, pady=10)
         backButton.pack(padx=50, pady=10)
         theme.pack(padx=50, pady=10)
+
+        self.app.bind("<Return>", lambda _:self.editCred(id, "Password", [passwordEntry.get(), passwordConfirmEntry.get()]))
 
 
     def erase(self, id):
@@ -919,7 +956,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.eraseFrame,
             text="Back",
-            command=lambda: [self.eraseFrame.destroy(), self.logged(id)],
+            command=lambda: [self.eraseFrame.destroy(), self.config(id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,

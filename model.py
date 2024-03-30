@@ -46,6 +46,24 @@ class Model:
             logging.error(f"Failed to connect to MongoDB: {e}")
 
 
+    def darkColor(self, hex_color: str, darken_by: int) -> str:
+        """Darkens the color chosen by the user for better visualization of the interface.
+        
+        Args:
+            r, g, b = int: Converts Hex to RGB.
+            r, g, b = max: Darkens the RGB components.
+        Return:
+           Defines the interface color chosen by the user, but a little darker.
+        """
+        hex_color = hex_color.strip('#')
+
+        r, g, b = int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
+
+        r, g, b = max(0, r - darken_by), max(0, g - darken_by), max(0, b - darken_by)
+
+        return f'#{r:02x}{g:02x}{b:02x}'
+
+
     def addUser(self, login: str, password: str) -> bool:
         """
         Adds a new user to the 'Logins' collection with a hashed password.
@@ -128,7 +146,7 @@ class Model:
             str: A success message if the update was successful, or an error message if it failed.
         """
         if parameter == 'Password':
-            new_value = hashlib.sha256(new_value.encode()).hexdigest()
+            new_value = hashlib.sha256(new_value[0].encode()).hexdigest()
 
         try:
             self.logins.update_one({'_id': user_id}, {'$set': {parameter: new_value}})
@@ -282,9 +300,16 @@ class Model:
 
 
     def validEditArgs(self, user_id, log_id: int):
+        """Validates credential editing based on information provided by the user
+        
+        Args:
+            log_entry: Check if the log entry exists and belongs to the user.
+
+        Returns:
+            Edit the credentials of login if true, show error message otherwise.
+        """
         try:
             log_entry = self.passwords.find_one({'_id': int(log_id)})
-            # Check if the log entry exists and belongs to the user.
             if log_entry and log_entry.get('user_id') == user_id:
                 return True
             else:
@@ -336,13 +361,17 @@ class Model:
         
 
     def findPassID(self) -> int:
-        # Buscar todos os documentos na coleção que tenham um campo _id.
+        """Finds an ID by searching all documents.
+        
+        Args:
+            Cursor: Search for all documents in the collection that have an _id field. 
+            ids_set: Extract the _id's and put them in a set for quick searching.
+            i: Start searching for the smallest missing positive integer _id.
+        """
         cursor = self.passwords.find({'_id': {'$exists': True}})
     
-        # Extrair os _id's e colocá-los em um conjunto para busca rápida.
         ids_set = {doc['_id'] for doc in cursor}
 
-        # Iniciar a busca pelo menor _id inteiro positivo ausente.
         i = 1
         while True:
             if i not in ids_set:
@@ -351,6 +380,17 @@ class Model:
 
 
     def copy(self, id, itemID: int) -> str:
+        """A function do copy login credentials stored in DB to clipboard.
+        
+        Attributes:
+            item: Login of the user.
+            password: Password of the user.
+            Key: Create a key for get the Login of the user and encrypt the password.
+            Copy: The Login and Password already copied to the clipboard.
+
+        Returns:
+            The login credentials copied to the clipboard if True, False otherwise.
+        """
         try:
             item = self.passwords.find_one({'_id': int(itemID)})
             ic(item)
@@ -373,8 +413,7 @@ class Model:
 
 
 class PasswordGenerator:
-    """
-    A class for generating random passwords based on specified criteria.
+    """A class for generating random passwords based on specified criteria.
     
     Attributes:
         let (list of str): Lowercase letters.
@@ -382,7 +421,6 @@ class PasswordGenerator:
         sim (list of str): Special characters.
         numb (list of str): Digits from 0 to 9.
     """
-
     def __init__(self) -> None:
         """Initializes the PasswordGenerator with lists of characters used in password creation."""
         self.let = [chr(i) for i in range(97, 123)]  # a-z
@@ -392,9 +430,8 @@ class PasswordGenerator:
 
 
     def generate_password(self, include_numbers: bool, include_lowercase: bool, include_symbols: bool, include_uppercase: bool, size: int) -> str:
-        """
-        Generates a random password based on the specified criteria.
-        
+        """Generates a random password based on the specified criteria.
+
         Args:
             include_numbers (bool): Whether to include numbers in the password.
             include_lowercase (bool): Whether to include lowercase letters in the password.
@@ -424,8 +461,7 @@ class Cryptography:
         pass
 
     def keyGenerator(secret: str) -> bytes:
-        """
-        Generates a secure key from a given secret using SHA-256 hashing and Base64 encoding.
+        """Generates a secure key from a given secret using SHA-256 hashing and Base64 encoding.
 
         The function first hashes the secret using SHA-256 to ensure a fixed-length output. Then, it encodes the hash
         in Base64 format to create a suitable key for cryptographic operations, such as Fernet encryption.
@@ -446,8 +482,7 @@ class Cryptography:
     
     
     def encryptSentence(message: str, key: bytes) -> bytes:
-        """
-        Encrypts a message using Fernet symmetric encryption with the provided key.
+        """Encrypts a message using Fernet symmetric encryption with the provided key.
 
         Args:
             message (str): The plaintext message to encrypt.
@@ -463,8 +498,7 @@ class Cryptography:
     
 
     def decryptSentence(encrypted_string: bytes, key: bytes) -> str:
-        """
-        Decrypts an encrypted message using Fernet symmetric decryption with the provided key.
+        """Decrypts an encrypted message using Fernet symmetric decryption with the provided key.
 
         Args:
             encrypted_string (bytes): The encrypted message to decrypt.
@@ -507,4 +541,17 @@ if __name__ == "__main__":
 #  \$$$$$$$$ \$$$$$$$  \$$$$$$         \$$$$$$   \$$$$$$    \$$$$   \$$$$$$$ \$$        \$$$$$$$  \$$$$$$ 
 #                                                                                                        
                                                                                                         
+                                                                            
+# /$$$$$$$           /$$       /$$                 /$$$$$$$                                                       
+#| $$__  $$         | $$      | $$                | $$__  $$                                                      
+#| $$  \ $$ /$$$$$$ | $$$$$$$ | $$  /$$$$$$       | $$  \ $$  /$$$$$$  /$$$$$$/$$$$   /$$$$$$   /$$$$$$   /$$$$$$ 
+#| $$$$$$$/|____  $$| $$__  $$| $$ /$$__  $$      | $$$$$$$/ /$$__  $$| $$_  $$_  $$ /$$__  $$ /$$__  $$ /$$__  $$
+#| $$____/  /$$$$$$$| $$  \ $$| $$| $$  \ $$      | $$__  $$| $$  \ $$| $$ \ $$ \ $$| $$$$$$$$| $$  \__/| $$  \ $$
+#| $$      /$$__  $$| $$  | $$| $$| $$  | $$      | $$  \ $$| $$  | $$| $$ | $$ | $$| $$_____/| $$      | $$  | $$
+#| $$     |  $$$$$$$| $$$$$$$/| $$|  $$$$$$/      | $$  | $$|  $$$$$$/| $$ | $$ | $$|  $$$$$$$| $$      |  $$$$$$/
+#|__/      \_______/|_______/ |__/ \______/       |__/  |__/ \______/ |__/ |__/ |__/ \_______/|__/       \______/ 
+                                                                                                                 
+                                                                                                                 
+                                                                                                                 
+
                                                                                                         
