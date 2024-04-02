@@ -57,8 +57,10 @@ class View(ctk.CTk):
         self.edit = ctk.CTkImage(dark_image=img.open("icons/edit.ico"))
         self.copy = ctk.CTkImage(dark_image=img.open("icons/copy.ico"))
         self.newColor = ctk.CTkImage(dark_image=img.open("icons/newColor.ico"))
+        self.search = ctk.CTkImage(dark_image=img.open("icons/search.ico"))
         self.priColor = '#1b1b1b'
         self.secColor = self.c.darkColor(self.priColor, 50)
+        self.mode = 'Filter'
 
         ctk.set_appearance_mode('dark')
 
@@ -70,7 +72,21 @@ class View(ctk.CTk):
         self.app.mainloop()
 
 
-    def askColor(self, id):
+    def selectMode(self, mode):
+        self.mode = mode
+        print(self.mode)
+
+
+    def filterItens(self, filter, user_id):
+        try:
+            self.items = self.c.filterPasswords(filter, self.mode, user_id)
+            self.loggedFrame.destroy()
+            self.loggedFrame(user_id)
+        except Exception as e:
+            print(e)
+
+
+    def askColor(self, user_id):
         """Prompt the user to choose a color. Opens a color picker dialog and sets the primary and secondary colors based on the chosen color, and configures the frame accordingly.
         Args:
             id(int): Identifier parameter.
@@ -86,10 +102,10 @@ class View(ctk.CTk):
         self.secColor = self.c.darkColor(self.priColor, 50)
         print(self.priColor)
         self.configFrame.destroy()
-        self.config(id)
+        self.config(user_id)
 
 
-    def fullGeneratePass(self, id, len, upper, lower, symbol, number):
+    def fullGeneratePass(self, user_id, len, upper, lower, symbol, number):
         try:
             len = int(len)
         except:
@@ -106,13 +122,13 @@ class View(ctk.CTk):
             fullPassword = password.join()
             
             self.generatePassFrame.destroy()
-            self.addWithPass(id, fullPassword)
+            self.addWithPass(user_id, fullPassword)
 
 
-    def passVerify(self, password, passwordConfirm, id, itemId):
+    def passVerify(self, password, passwordConfirm, user_id, itemId):
         if self.passVerifyFunc(password, passwordConfirm):
             try:
-                self.editLogFunc("password", id, itemId, password)
+                self.editLogFunc("password", user_id, itemId, password)
             except Exception as e:
                 msg.showerror(title="Error", message=str(e))
 
@@ -129,7 +145,7 @@ class View(ctk.CTk):
             return False
 
 
-    def deleteItem(self, id):
+    def deleteItem(self, user_id):
         dialog = ctk.CTkInputDialog(title="Delete Item", text="What's the item ID that you want to delete?")
         item_id = dialog.get_input()
         try:
@@ -139,71 +155,75 @@ class View(ctk.CTk):
             dialog
             return 0
         try:
-            deleted = self.c.deleteItem(id, item_id)
+            deleted = self.c.deleteItem(user_id, item_id)
             msg.showinfo(title='Info', message=deleted)
             self.loggedFrame.destroy()
-            self.logged(id)
+            self.findPasswords(user_id)
+            self.logged(user_id)
         except Exception as e:
             msg.showerror(title="Error", message=e)
     
     
-    def editCred(self, id, paramter, newPar):
+    def editCred(self, user_id, paramter, newPar):
         if newPar != '':
             if paramter == "Login":
                 new = self.c.findUserId(newPar, "$exists")
                 ic(new)
                 if new == None:
-                    sull = self.c.updateUser(id, paramter, newPar)
+                    sull = self.c.updateUser(user_id, paramter, newPar)
                     self.alert("Info", sull)
 
                     self.editLoginFrame.destroy()
-                    self.logged(id)
+                    self.findPasswords(user_id)
+                    self.logged(user_id)
                 else:
                     self.alert("ERROR",f'This login alredy exists.')
             if paramter == "Password":
                 if self.passVerifyFunc(newPar[0], newPar[1]):
-                    sull = self.c.updateUser(id, paramter, newPar)
+                    sull = self.c.updateUser(user_id, paramter, newPar)
                     self.alert("Info", sull)
 
                     self.editPasswordFrame.destroy()
-                    self.logged(id)
+                    self.findPasswords(user_id)
+                    self.logged(user_id)
         else:
             self.alert('ERROR', f"{paramter} can't be empty.")
 
 
-    def add(self, id):
+    def add(self, user_id):
         newPass = msg.askquestion(title='New Login', message='Do you want to generate a new passwrd?')
 
         if newPass == 'yes':
             self.loggedFrame.destroy()
-            self.generatePass(id)
+            self.generatePass(user_id)
         elif newPass == 'no':
             self.loggedFrame.destroy()
-            self.addLog(id)
+            self.addLog(user_id)
 
 
-    def addLogDB(self, id, site, login, password, frame):
+    def addLogDB(self, user_id, site, login, password, frame):
         if frame is not None:
-            ret = self.c.addNewLog(id, site, login, password)
+            ret = self.c.addNewLog(user_id, site, login, password)
             msg.showinfo(title="Info", message=ret)
 
             self.addPassFrame.destroy()
-            self.logged(id)
+            self.findPasswords(user_id)
+            self.logged(user_id)
         else:
-            ret = self.c.addNewLog(id, site, login, password)
+            ret = self.c.addNewLog(user_id, site, login, password)
             msg.showinfo(title="Info", message=ret)
 
 
-    def delete(self, id):
+    def delete(self, user_id):
         response = msg.askquestion(title="Delete Account",
                                message="Are you sure you want to delete this account? This action cannot be undone.",
                                icon="warning")  # Use askquestion for a clear yes/no choice
         if response == "yes":
             try:
                 # Perform account deletion logic here
-                self.c.deleteUser(id)
-                print(f"{d.Margin}\nAccount {id} deleted successfully.{d.Margin}")
-                msg.showinfo('Done',f'Account {id} sucessfull deleted.')
+                self.c.deleteUser(user_id)
+                print(f"{d.Margin}\nAccount {user_id} deleted successfully.{d.Margin}")
+                msg.showinfo('Done',f'Account {user_id} sucessfull deleted.')
                 self.eraseFrame.destroy()
                 self.login()
             except Exception as e:
@@ -213,19 +233,24 @@ class View(ctk.CTk):
             print("Account deletion canceled.")
 
 
-    def editLog(self, id):
+    def editLog(self, user_id):
         dialog = ctk.CTkInputDialog(text="What's the item ID:", title='Edit item')
         itemID = dialog.get_input()
         try:
             int(itemID)
         except:
             msg.showerror(text='Item must be a number')
-        if self.c.validEditArgs(id, itemID) == True:
+        if self.c.validEditArgs(user_id, itemID) == True:
             self.loggedFrame.destroy()
-            self.editItem(id, itemID)
+            self.editItem(user_id, itemID)
         else:
-            msg.showerror(title="Error", message=self.c.validEditArgs(id, itemID))
+            msg.showerror(title="Error", message=self.c.validEditArgs(user_id, itemID))
 
+
+    def findPasswords(self, user_id):
+            self.passwords = self.c.findPasswords(user_id)
+            title = ['ID', 'Site', 'Login', 'Password']
+            self.passwords.insert(0, title)
 
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
@@ -234,6 +259,7 @@ class View(ctk.CTk):
             print(f"{d.Margin}\nItens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
             if itens[0] == True:
                 self.loginFrame.destroy()
+                self.findPasswords(itens[1])
 
                 self.logged(itens[1])
             elif itens[0] == False:
@@ -284,9 +310,9 @@ class View(ctk.CTk):
         msg.showwarning(title=title,message=text)
 
 
-    def editLogFunc(self, paramter, user_id, id, newLog):
+    def editLogFunc(self, paramter, user_id, ID, newLog):
         try:
-            e = self.c.editLog(user_id, paramter, id, newLog)
+            e = self.c.editLog(user_id, paramter, ID, newLog)
             msg.showinfo(title="Info", message=e)
             return True
         except Exception as e:
@@ -294,11 +320,11 @@ class View(ctk.CTk):
             return False
 
 
-    def copyFunc(self, id):
+    def copyFunc(self, user_id):
         try:
             dialog = ctk.CTkInputDialog(text="What's the item ID:", title='Copy item credentials...')
             itemID = dialog.get_input()
-            copy = self.c.copy(id, itemID)
+            copy = self.c.copy(user_id, itemID)
             msg.showinfo(message=copy[1])
             ic(copy[0])
         except Exception as e:
@@ -323,6 +349,7 @@ class View(ctk.CTk):
             placeholder_text="Login",
             font=("RobotoSlab", 12),
             border_width=2,
+            border_color=self.priColor,
             height=40,
             width=200
         )
@@ -332,6 +359,7 @@ class View(ctk.CTk):
             placeholder_text="Password",
             font=("RobotoSlab", 12),
             border_width=2,
+            border_color=self.priColor,
             height=40,
             width=200,
             show="*"
@@ -405,8 +433,6 @@ class View(ctk.CTk):
         self.signupFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
         self.app.iconbitmap(default="icons/Heart.ico")
         
-
-
         title = ctk.CTkLabel(
             master=self.signupFrame, 
             text="Signup",
@@ -420,6 +446,7 @@ class View(ctk.CTk):
             placeholder_text="Login",
             font=("RobotoSlab", 12),
             border_width=2,
+            border_color=self.priColor,
             height=40,
             width=200
         )
@@ -429,6 +456,7 @@ class View(ctk.CTk):
             placeholder_text="Password",
             font=("RobotoSlab", 12),
             border_width=2,
+            border_color=self.priColor,
             height=40,
             width=200,
             show="*"
@@ -452,6 +480,7 @@ class View(ctk.CTk):
             placeholder_text="Password Confirm",
             font=("RobotoSlab", 12),
             border_width=2,
+            border_color=self.priColor,
             height=40,
             width=200,
             show="*"
@@ -522,32 +551,60 @@ class View(ctk.CTk):
         self.app.bind("<Return>", lambda _: self.addCad(loginEntry.get(), passwordEntry.get(), passwordConfirmEntry.get()))
 
 
-    def logged(self, id):
+    def logged(self, user_id):
         self.loggedFrame = ctk.CTkFrame(master=self.app)
         self.app.title("MainDug")
-        self.app.geometry("900x600")
+        self.app.geometry("900x650")
         self.loggedFrame.pack(in_=self.app, anchor="center", fill='both', expand=True)
         self.app.iconbitmap(default="icons/Star.ico")
 
-        passwords = self.c.findPasswords(id)
-        title = ['ID', 'Site', 'Login', 'Password']
-
-        passwords.insert(0, title)
+        ic(self.passwords)
         
-
+        modes = ['Filter','ID', 'Site', 'Login', 'Password']
+     
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
             text="Menu",
             font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
         )
-        tableFixFrame = ctk.CTkScrollableFrame(master=self.loggedFrame,width=800,height=400)
-        tableFrame = ctk.CTkFrame(master=tableFixFrame, height=2000)
+
+        tableFixFrame = ctk.CTkScrollableFrame(
+            master=self.loggedFrame,
+            width=800,
+            height=400)
+        
+        tableFrame = ctk.CTkFrame(
+            master=tableFixFrame,
+            height=10000)
+
+        modeSelector = ctk.CTkComboBox(
+            self.loggedFrame,
+            values=modes,
+            border_color=self.priColor,
+            command=self.selectMode,
+            button_color=self.priColor,
+            width=80)
+        
+        filterEntry = ctk.CTkEntry(
+            master=self.loggedFrame,
+            border_color=self.priColor,
+            placeholder_text='Item name',
+            width=300)
+        
+        filterItens = ctk.CTkButton(
+            self.loggedFrame,
+            text='',
+            command=lambda: self.filterItens(filterEntry.get(), user_id),
+            width=10,
+            fg_color=self.priColor,
+            hover_color=self.secColor,
+            image=self.search)
 
         table = CTkTable(
             master=tableFrame,
-            row=len(passwords),
+            row=len(self.passwords),
             column=4,
-            values=passwords,
+            values=self.passwords,
             width=200,
             colors=[self.priColor,'#292b29']
         )
@@ -592,7 +649,7 @@ class View(ctk.CTk):
         add = ctk.CTkButton(
             master=self.loggedFrame,
             text="",
-            command=lambda:[self.add(id)],
+            command=lambda:[self.add(user_id)],
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -605,7 +662,7 @@ class View(ctk.CTk):
         delete = ctk.CTkButton(
             master=self.loggedFrame,
             text="",
-            command=lambda:[self.deleteItem(id)],
+            command=lambda:[self.deleteItem(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=50,
             fg_color=self.priColor,
@@ -618,7 +675,7 @@ class View(ctk.CTk):
         edit = ctk.CTkButton(
             master=self.loggedFrame,
             text="",
-            command=lambda:[self.editLog(id)],
+            command=lambda:[self.editLog(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=50,
             height=10,
@@ -631,7 +688,7 @@ class View(ctk.CTk):
         copy = ctk.CTkButton(
             master=self.loggedFrame,
             text="",
-            command=lambda:[self.copyFunc(id)],
+            command=lambda:[self.copyFunc(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=50,
             fg_color=self.priColor,
@@ -643,9 +700,13 @@ class View(ctk.CTk):
 
 
         configButton.place(relx=0.05, rely=0.05,anchor="center")
-        title.place(relx=0.5, rely=0.1, anchor="center")
+        title.place(relx=0.5, rely=0.05, anchor="center")
 
-        tableFixFrame.place(relx=0.5, rely=0.5, anchor="center")
+        modeSelector.place(relx=0.34, rely=0.15, anchor="e")
+        filterEntry.place(relx=0.35, rely=0.15, anchor="w")
+        filterItens.place(relx=0.7, rely=0.15, anchor="w")
+
+        tableFixFrame.place(relx=0.5, rely=0.2, anchor="n")
         tableFrame.pack(fill='both', expand=True)
         table.place(in_=tableFrame)
 
@@ -657,7 +718,7 @@ class View(ctk.CTk):
         delete.place(relx=0.75,rely=0.9, anchor="center")
 
 
-    def config(self, id):
+    def config(self, user_id):
         self.configFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Config")
         self.configFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -672,7 +733,7 @@ class View(ctk.CTk):
         loginEditButton = ctk.CTkButton(
             master=self.configFrame,
             text="Edit Login",
-            command=lambda: [self.configFrame.destroy(), self.editLogin(id)],
+            command=lambda: [self.configFrame.destroy(), self.editLogin(user_id)],
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -684,7 +745,7 @@ class View(ctk.CTk):
         passEditButton = ctk.CTkButton(
             master=self.configFrame,
             text="Edit Password",
-            command=lambda: [self.configFrame.destroy(), self.editPass(id)],
+            command=lambda: [self.configFrame.destroy(), self.editPass(user_id)],
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -696,7 +757,7 @@ class View(ctk.CTk):
         eraseButton = ctk.CTkButton(
             master=self.configFrame,
             text="Erase Account",
-            command=lambda: [self.configFrame.destroy(), self.erase(id)],
+            command=lambda: [self.configFrame.destroy(), self.erase(user_id)],
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -708,7 +769,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.configFrame,
             text="Back",
-            command=lambda:[self.configFrame.destroy(), self.logged(id)],
+            command=lambda:[self.configFrame.destroy(), self.logged(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -733,7 +794,7 @@ class View(ctk.CTk):
         changeColor = ctk.CTkButton(
             master=self.configFrame,
             text="",
-            command=lambda:self.askColor(id),
+            command=lambda:self.askColor(user_id),
             corner_radius=50,
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -750,7 +811,8 @@ class View(ctk.CTk):
         changeTheme.pack(padx=50, pady=10)
         changeColor.pack(padx=50, pady=10)
 
-    def editLogin(self, id):
+
+    def editLogin(self, user_id):
         self.editLoginFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Login")
         self.editLoginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -766,6 +828,7 @@ class View(ctk.CTk):
             master=self.editLoginFrame,
             placeholder_text="New Login",
             font=("RobotoSlab", 12),
+            border_color=self.priColor,
             border_width=2,
             height=40,
             width=200
@@ -774,7 +837,7 @@ class View(ctk.CTk):
         loginEditButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Edit Login",
-            command=lambda:[self.editCred(id, "Login", loginEntry.get())],
+            command=lambda:[self.editCred(user_id, "Login", loginEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -786,7 +849,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Back",
-            command=lambda: [self.editLoginFrame.destroy(), self.config(id)],
+            command=lambda: [self.editLoginFrame.destroy(), self.config(user_id)],
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -815,10 +878,10 @@ class View(ctk.CTk):
         backButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _: self.editCred(id, "Login", loginEntry.get()))
+        self.app.bind("<Return>", lambda _: self.editCred(user_id, "Login", loginEntry.get()))
 
 
-    def editPass(self, id):
+    def editPass(self, user_id):
         self.editPasswordFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Password")
         self.editPasswordFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -834,6 +897,7 @@ class View(ctk.CTk):
             master=self.editPasswordFrame,
             placeholder_text="New Password",
             font=("RobotoSlab", 12),
+            border_color=self.priColor,
             border_width=2,
             height=40,
             width=200,
@@ -860,6 +924,7 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             border_width=2,
             height=40,
+            border_color=self.priColor,
             width=200,
             show="*"
         )
@@ -880,7 +945,7 @@ class View(ctk.CTk):
         passEditButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Edit Password",
-            command=lambda: [self.editCred(id, "Password", [passwordEntry.get(), passwordConfirmEntry.get()])],
+            command=lambda: [self.editCred(user_id, "Password", [passwordEntry.get(), passwordConfirmEntry.get()])],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -892,7 +957,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Back",
-            command=lambda: [self.editPasswordFrame.destroy(), self.config(id)],
+            command=lambda: [self.editPasswordFrame.destroy(), self.config(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -923,10 +988,10 @@ class View(ctk.CTk):
         backButton.pack(padx=50, pady=10)
         theme.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _:self.editCred(id, "Password", [passwordEntry.get(), passwordConfirmEntry.get()]))
+        self.app.bind("<Return>", lambda _:self.editCred(user_id, "Password", [passwordEntry.get(), passwordConfirmEntry.get()]))
 
 
-    def erase(self, id):
+    def erase(self, user_id):
     # Configura a página Erase
         self.eraseFrame = ctk.CTkFrame(master=self.app)
         self.app.title ("Erase")
@@ -943,7 +1008,7 @@ class View(ctk.CTk):
         eraseButton = ctk.CTkButton(
             master=self.eraseFrame,
             text="DELETE ACCOUNT",
-            command=lambda: [self.delete(id)],
+            command=lambda: [self.delete(user_id)],
             font=("RobotoSlab", 12),
             border_color="#000000",
             hover_color="#000000",
@@ -956,7 +1021,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.eraseFrame,
             text="Back",
-            command=lambda: [self.eraseFrame.destroy(), self.config(id)],
+            command=lambda: [self.eraseFrame.destroy(), self.config(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -983,10 +1048,10 @@ class View(ctk.CTk):
         backButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _: self.delete(id))
+        self.app.bind("<Return>", lambda _: self.delete(user_id))
 
 
-    def generatePass(self, id):
+    def generatePass(self, user_id):
         self.generatePassFrame = ctk.CTkFrame(master=self.app)
         self.app.title("New Login")
         self.generatePassFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1002,6 +1067,7 @@ class View(ctk.CTk):
             self.generatePassFrame,
             placeholder_text="Password Length",
             font=("RobotoSlab", 12),
+            border_color=self.priColor,
             border_width=2,
             height=40,
             width=200
@@ -1026,7 +1092,7 @@ class View(ctk.CTk):
         confirmButton = ctk.CTkButton(
             master=self.generatePassFrame,
             text="Next",
-            command=lambda: [self.fullGeneratePass(id, passLen.get(), upperLetterValue.get(), lowerLetterValue.get(), symbol.get(), numberValue.get())],
+            command=lambda: [self.fullGeneratePass(user_id, passLen.get(), upperLetterValue.get(), lowerLetterValue.get(), symbol.get(), numberValue.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -1038,7 +1104,7 @@ class View(ctk.CTk):
         cancelButton = ctk.CTkButton(
             master=self.generatePassFrame,
             text="Cancel",
-            command=lambda: [self.generatePassFrame.destroy(), self.logged(id)],
+            command=lambda: [self.generatePassFrame.destroy(), self.logged(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -1058,7 +1124,7 @@ class View(ctk.CTk):
 
         self.app.bind("<Return>", lambda _: self.fullGeneratePass(id ,passLen.get(), upperLetterValue.get(), lowerLetterValue.get(), symbol.get(), numberValue.get()))
 
-    def addLog(self, id):
+    def addLog(self, user_id):
         self.addLogFrame = ctk.CTkFrame(master=self.app)
         self.app.title("New Login")
         self.addLogFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1075,6 +1141,7 @@ class View(ctk.CTk):
             master=self.addLogFrame,
             placeholder_text="Site",
             font=("RobotoSlab", 12),
+            border_color=self.priColor,
             border_width=2,
             height=40,
             width=200
@@ -1084,6 +1151,7 @@ class View(ctk.CTk):
             master=self.addLogFrame,
             placeholder_text="Login",
             font=("RobotoSlab", 12),
+            border_color=self.priColor,
             border_width=2,
             height=40,
             width=200
@@ -1093,6 +1161,7 @@ class View(ctk.CTk):
             master=self.addLogFrame,
             placeholder_text="Password",
             font=("RobotoSlab", 12),
+            border_color=self.priColor,
             border_width=2,
             height=40,
             width=200,
@@ -1115,7 +1184,7 @@ class View(ctk.CTk):
         doneButton = ctk.CTkButton(
             master=self.addLogFrame,
             text="Done",
-            command=lambda: [self.addLogDB(id, siteEntry.get(), loginEntry.get(), passwordEntry.get(), None)],
+            command=lambda: [self.addLogDB(user_id, siteEntry.get(), loginEntry.get(), passwordEntry.get(), None)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1127,7 +1196,7 @@ class View(ctk.CTk):
         cancelButton = ctk.CTkButton(
             master=self.addLogFrame,
             text="Cancel",
-            command=lambda: [self.addLogFrame.destroy(), self.logged(id)],
+            command=lambda: [self.addLogFrame.destroy(), self.logged(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1158,10 +1227,10 @@ class View(ctk.CTk):
         cancelButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _: self.addLogDB(id, siteEntry.get(), loginEntry.get(), passwordEntry.get(), None))
+        self.app.bind("<Return>", lambda _: self.addLogDB(user_id, siteEntry.get(), loginEntry.get(), passwordEntry.get(), None))
 
     
-    def editItem(self, id, itemId):
+    def editItem(self, user_id, itemId):
         self.editItemFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Item")
         self.editItemFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1177,7 +1246,7 @@ class View(ctk.CTk):
         siteButton = ctk.CTkButton(
             master=self.editItemFrame,
             text="Edit Site",
-            command=lambda: [self.editItemFrame.destroy(), self.siteEdit(id, itemId)],
+            command=lambda: [self.editItemFrame.destroy(), self.siteEdit(user_id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -1189,7 +1258,7 @@ class View(ctk.CTk):
         loginButton = ctk.CTkButton(
             master=self.editItemFrame,
             text="Edit Login",
-            command=lambda: [self.editItemFrame.destroy(), self.loginEdit(id, itemId)],
+            command=lambda: [self.editItemFrame.destroy(), self.loginEdit(user_id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -1201,7 +1270,7 @@ class View(ctk.CTk):
         passwordButton = ctk.CTkButton(
             master=self.editItemFrame,
             text="Edit Password",
-            command=lambda: [self.editItemFrame.destroy(), self.passwordEdit(id, itemId)],
+            command=lambda: [self.editItemFrame.destroy(), self.passwordEdit(user_id, itemId)],
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -1213,7 +1282,7 @@ class View(ctk.CTk):
         cancelButton = ctk.CTkButton(
             master=self.editItemFrame,
             text="Cancel",
-            command=lambda: [self.editItemFrame.destroy(), self.logged(id)],
+            command=lambda: [self.editItemFrame.destroy(), self.logged(user_id)],
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -1243,7 +1312,7 @@ class View(ctk.CTk):
         changeTheme.pack(padx=50, pady=10)
 
 
-    def siteEdit(self, id, itemId):
+    def siteEdit(self, user_id, itemId):
         self.editSiteFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit site")
         self.editSiteFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1258,6 +1327,7 @@ class View(ctk.CTk):
         siteEntry = ctk.CTkEntry(
             master=self.editSiteFrame,
             placeholder_text="New site",
+            border_color=self.priColor,
             font=("RobotoSlab", 12),
             border_width=2,
             height=40,
@@ -1267,7 +1337,7 @@ class View(ctk.CTk):
         siteEditButton = ctk.CTkButton(
             master=self.editSiteFrame,
             text="Edit site",
-            command=lambda:[self.editLogFunc("site", id, itemId, siteEntry.get())],
+            command=lambda:[self.editLogFunc("site", user_id, itemId, siteEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1279,7 +1349,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editSiteFrame,
             text="Back",
-            command=lambda: [self.editSiteFrame.destroy(), self.editItem(id, itemId)],
+            command=lambda: [self.editSiteFrame.destroy(), self.editItem(user_id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1310,7 +1380,7 @@ class View(ctk.CTk):
         self.app.bind("<Return>", lambda _: self.editCred(id, "site", siteEntry.get()))
 
 
-    def loginEdit(self, id, itemId):
+    def loginEdit(self, user_id, itemId):
         self.editLoginFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Login")
         self.editLoginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1325,6 +1395,7 @@ class View(ctk.CTk):
         loginEntry = ctk.CTkEntry(
             master=self.editLoginFrame,
             placeholder_text="New Login",
+            border_color=self.priColor,
             font=("RobotoSlab", 12),
             border_width=2,
             height=40,
@@ -1334,7 +1405,7 @@ class View(ctk.CTk):
         loginEditButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Edit Login",
-            command=lambda:[self.editLogFunc("login", id, itemId, loginEntry.get())],
+            command=lambda:[self.editLogFunc("login", user_id, itemId, loginEntry.get())],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1346,7 +1417,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editLoginFrame,
             text="Back",
-            command=lambda: [self.editLoginFrame.destroy(), self.editItem(id, itemId)],
+            command=lambda: [self.editLoginFrame.destroy(), self.editItem(user_id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1375,10 +1446,10 @@ class View(ctk.CTk):
         backButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _: self.editCred(id, "Login", loginEntry.get()))
+        self.app.bind("<Return>", lambda _: self.editCred(user_id, "Login", loginEntry.get()))
 
 
-    def passwordEdit(self, id, itemId):
+    def passwordEdit(self, user_id, itemId):
         self.editPasswordFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Password")
         self.editPasswordFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1393,6 +1464,7 @@ class View(ctk.CTk):
         passwordEntry = ctk.CTkEntry(
             master=self.editPasswordFrame,
             placeholder_text="New Password",
+            border_color=self.priColor,
             font=("RobotoSlab", 12),
             border_width=2,
             height=40,
@@ -1416,6 +1488,7 @@ class View(ctk.CTk):
             master=self.editPasswordFrame,
             placeholder_text="New Password Confirm",
             font=("RobotoSlab", 12),
+            border_color=self.priColor,
             border_width=2,
             height=40,
             width=200,
@@ -1436,7 +1509,7 @@ class View(ctk.CTk):
         passEditButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Edit Password",
-            command=lambda: [self.passVerify(passwordEntry.get(),passwordConfirmEntry.get(), id, itemId)],
+            command=lambda: [self.passVerify(passwordEntry.get(),passwordConfirmEntry.get(), user_id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1448,7 +1521,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.editPasswordFrame,
             text="Back",
-            command=lambda: [self.editPasswordFrame.destroy(), self.editItem(id, itemId)],
+            command=lambda: [self.editPasswordFrame.destroy(), self.editItem(user_id, itemId)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -1479,7 +1552,7 @@ class View(ctk.CTk):
         theme.pack(padx=50, pady=10)
 
 
-    def addWithPass(self, id, password):
+    def addWithPass(self, user_id, password):
         self.addPassFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Login")
         self.addPassFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1495,6 +1568,7 @@ class View(ctk.CTk):
             master=self.addPassFrame,
             placeholder_text="site",
             font=("RobotoSlab", 12),
+            border_color=self.priColor,
             border_width=2,
             height=40,
             width=200
@@ -1506,13 +1580,14 @@ class View(ctk.CTk):
             font=("RobotoSlab", 12),
             border_width=2,
             height=40,
+            border_color=self.priColor,
             width=200
         )
 
         done = ctk.CTkButton(
             master=self.addPassFrame,
             text="Done",
-            command=lambda: [self.addLogDB(id, site.get(), login.get(), password, self.addPassFrame)],
+            command=lambda: [self.addLogDB(user_id, site.get(), login.get(), password, self.addPassFrame)],
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -1524,7 +1599,7 @@ class View(ctk.CTk):
         cancel = ctk.CTkButton(
             master=self.addPassFrame,
             text="Cancel",
-            command=lambda: [self.loginFrame.destroy(), self.logged(id)],
+            command=lambda: [self.loginFrame.destroy(), self.logged(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -1553,7 +1628,7 @@ class View(ctk.CTk):
         cancel.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _: self.addLogDB(id, site.get(), login.get(), password, self.addPassFrame))
+        self.app.bind("<Return>", lambda _: self.addLogDB(user_id, site.get(), login.get(), password, self.addPassFrame))
 
 if __name__ == "__main__":
     view = View()

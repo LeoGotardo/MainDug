@@ -11,7 +11,6 @@ import pyperclip
 import logging
 import hashlib
 import base64
-import io
 import os
 
 
@@ -47,13 +46,14 @@ class Model:
 
 
     def darkColor(self, hex_color: str, darken_by: int) -> str:
-        """Darkens the color chosen by the user for better visualization of the interface.
+        """
+        Darkens the color chosen by the user for better visualization of the interface.
         
         Args:
             r, g, b = int: Converts Hex to RGB.
             r, g, b = max: Darkens the RGB components.
         Return:
-           Defines the interface color chosen by the user, but a little darker.
+           Defines the interface color chosen by the user, but darker.
         """
         hex_color = hex_color.strip('#')
 
@@ -216,6 +216,7 @@ class Model:
             list: A list of lists, each containing the document ID and the first three logins for each matching document.
         """
         secret = self.logins.find_one({'_id': user_id})
+        ic(secret)
         secret = secret['Login']
         key = Cryptography.keyGenerator(secret)
         i=0
@@ -379,7 +380,7 @@ class Model:
             i += 1
 
 
-    def copy(self, id, itemID: int) -> str:
+    def copy(self, user_id, itemID: int) -> str:
         """A function do copy login credentials stored in DB to clipboard.
         
         Attributes:
@@ -394,10 +395,10 @@ class Model:
         try:
             item = self.passwords.find_one({'_id': int(itemID)})
             ic(item)
-            if item['user_id'] == id:
+            if item['user_id'] == user_id:
                 item = item['logins']
                 password = item['password']
-                key = self.logins.find_one({'_id': id})
+                key = self.logins.find_one({'_id': user_id})
                 key = key['Login']
                 key = Cryptography.keyGenerator(key)
                 password = Cryptography.decryptSentence(password, key)
@@ -410,6 +411,17 @@ class Model:
                 return False, "Cant find any matching item"
         except Exception as e:
             return e, "Cant find any matching item"
+        
+    def filterPasswords(self, filter: str, mode: str, userId) -> list:
+        try:
+            if mode == "ID":
+                filter = int(filter)
+            query = {"$and": [{mode: {"$regex": filter, "$options": "i"}}, 
+                     {"user_id": userId}
+                    ]}
+            return self.passwords.find(query)
+        except:
+            return []
 
 
 class PasswordGenerator:
@@ -551,7 +563,3 @@ if __name__ == "__main__":
 #| $$     |  $$$$$$$| $$$$$$$/| $$|  $$$$$$/      | $$  | $$|  $$$$$$/| $$ | $$ | $$|  $$$$$$$| $$      |  $$$$$$/
 #|__/      \_______/|_______/ |__/ \______/       |__/  |__/ \______/ |__/ |__/ |__/ \_______/|__/       \______/ 
                                                                                                                  
-                                                                                                                 
-                                                                                                                 
-
-                                                                                                        
