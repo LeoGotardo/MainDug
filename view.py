@@ -12,7 +12,8 @@ import os
 
 
 class CustomThread(Thread):
-    """Initialize CustomThread Object
+    """
+    Initialize CustomThread Object
     
     Args:
         group(object): Thread Group.
@@ -58,9 +59,11 @@ class View(ctk.CTk):
         self.copy = ctk.CTkImage(dark_image=img.open("icons/copy.ico"))
         self.newColor = ctk.CTkImage(dark_image=img.open("icons/newColor.ico"))
         self.search = ctk.CTkImage(dark_image=img.open("icons/search.ico"))
+        self.x = ctk.CTkImage(dark_image=img.open("icons/X.ico"))
+
         self.priColor = '#1b1b1b'
         self.secColor = self.c.darkColor(self.priColor, 50)
-        self.mode = 'Filter'
+        self.filterMode = 'Filter'
 
         ctk.set_appearance_mode('dark')
 
@@ -73,34 +76,46 @@ class View(ctk.CTk):
 
 
     def selectMode(self, mode):
-        self.mode = mode
-        print(self.mode)
+        self.filterMode = mode
+
+
+    def unfilter(self, user_id):
+        self.findPasswords(user_id)
+        self.loggedFrame.destroy()
+        self.logged(user_id)
 
 
     def filterItens(self, filter, user_id):
+
+        if self.filterMode == 'Filter':
+            msg.showinfo(message="You need to select a filter.")
+            return False
+
         try:
-            self.items = self.c.filterPasswords(filter, self.mode, user_id)
+            self.passwords = self.c.filterPasswords(filter, self.filterMode, user_id)
+            self.passwords.insert(0, self.title)
+            ic(self.passwords)
             self.loggedFrame.destroy()
-            self.loggedFrame(user_id)
+            self.logged(user_id)
+            return self.passwords
         except Exception as e:
-            print(e)
+            msg.showwarning(title="ERROR", message=e)
 
 
     def askColor(self, user_id):
-        """Prompt the user to choose a color. Opens a color picker dialog and sets the primary and secondary colors based on the chosen color, and configures the frame accordingly.
+        """
+        Prompt the user to choose a color. Opens a color picker dialog and sets the primary and secondary colors based on the chosen color, and configures the frame accordingly.
         Args:
             id(int): Identifier parameter.
             pick_color = Open the color picker.
             self.priColor: Get the color string.
             self.secColor: Computes a darker shade for secondary color.
-            print: Prints the primary color (for debugging or logging).
             self.configFrame: Destroys the configuration frame.
             self.config: Configures the frame based on the provided identifier.
         """
         pick_color = AskColor() # open the color picker
         self.priColor = pick_color.get() # get the color string
         self.secColor = self.c.darkColor(self.priColor, 50)
-        print(self.priColor)
         self.configFrame.destroy()
         self.config(user_id)
 
@@ -168,7 +183,6 @@ class View(ctk.CTk):
         if newPar != '':
             if paramter == "Login":
                 new = self.c.findUserId(newPar, "$exists")
-                ic(new)
                 if new == None:
                     sull = self.c.updateUser(user_id, paramter, newPar)
                     self.alert("Info", sull)
@@ -222,15 +236,13 @@ class View(ctk.CTk):
             try:
                 # Perform account deletion logic here
                 self.c.deleteUser(user_id)
-                print(f"{d.Margin}\nAccount {user_id} deleted successfully.{d.Margin}")
                 msg.showinfo('Done',f'Account {user_id} sucessfull deleted.')
                 self.eraseFrame.destroy()
                 self.login()
             except Exception as e:
-                print(f"Account deletion failed: {e}")
                 msg.showerror("Error", "An error occurred while deleting the account.")
         else:
-            print("Account deletion canceled.")
+            return False
 
 
     def editLog(self, user_id):
@@ -249,14 +261,13 @@ class View(ctk.CTk):
 
     def findPasswords(self, user_id):
             self.passwords = self.c.findPasswords(user_id)
-            title = ['ID', 'Site', 'Login', 'Password']
-            self.passwords.insert(0, title)
+            self.title = ['ID', 'Site', 'Login', 'Password']
+            self.passwords.insert(0, self.title)
 
     def validLogin(self, login, password):
         # Verifica se o login é válido e realiza a ação apropriada
         if login != '' or password != '':
             itens = self.c.isLoginValid(login, password)
-            print(f"{d.Margin}\nItens:{itens}\nLogin:{login}\nPassword:{password}{d.Margin}")
             if itens[0] == True:
                 self.loginFrame.destroy()
                 self.findPasswords(itens[1])
@@ -326,7 +337,6 @@ class View(ctk.CTk):
             itemID = dialog.get_input()
             copy = self.c.copy(user_id, itemID)
             msg.showinfo(message=copy[1])
-            ic(copy[0])
         except Exception as e:
             msg.showerror(title="ERROR", message=e)
 
@@ -558,9 +568,8 @@ class View(ctk.CTk):
         self.loggedFrame.pack(in_=self.app, anchor="center", fill='both', expand=True)
         self.app.iconbitmap(default="icons/Star.ico")
 
-        ic(self.passwords)
         
-        modes = ['Filter','ID', 'Site', 'Login', 'Password']
+        modes = ['Filter', 'Site', 'Login']
      
         title = ctk.CTkLabel(
             master=self.loggedFrame, 
@@ -599,6 +608,16 @@ class View(ctk.CTk):
             fg_color=self.priColor,
             hover_color=self.secColor,
             image=self.search)
+        
+        unfilterButton = ctk.CTkButton(
+            master= self.loggedFrame,
+            text='',
+            width=10,
+            command= lambda: self.unfilter(user_id),
+            fg_color=self.priColor,
+            hover_color=self.secColor,
+            image=self.x
+        )
 
         table = CTkTable(
             master=tableFrame,
@@ -702,8 +721,9 @@ class View(ctk.CTk):
         configButton.place(relx=0.05, rely=0.05,anchor="center")
         title.place(relx=0.5, rely=0.05, anchor="center")
 
-        modeSelector.place(relx=0.34, rely=0.15, anchor="e")
-        filterEntry.place(relx=0.35, rely=0.15, anchor="w")
+        modeSelector.place(relx=0.3, rely=0.15, anchor="e")
+        filterEntry.place(relx=0.31, rely=0.15, anchor="w")
+        unfilterButton.place(relx=0.65, rely = 0.15, anchor= 'w')
         filterItens.place(relx=0.7, rely=0.15, anchor="w")
 
         tableFixFrame.place(relx=0.5, rely=0.2, anchor="n")
@@ -716,6 +736,8 @@ class View(ctk.CTk):
         exitButton.place(relx=0.55, rely=0.9, anchor="center")
         theme.place(relx=0.65, rely=0.9, anchor="center")
         delete.place(relx=0.75,rely=0.9, anchor="center")
+
+        self.app.bind("<Return>", lambda _: self.filterItens(filterEntry.get(), user_id))
 
 
     def config(self, user_id):

@@ -1,4 +1,5 @@
 from cryptography.fernet import Fernet
+from pymongo.cursor import Cursor
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from hashlib import sha256
@@ -35,12 +36,6 @@ class Model:
             self.db = self.client["Belle"]
             self.logins = self.db["Logins"]
             self.passwords = self.db["Password"]
-
-            if "Logins" not in self.db.list_collection_names():
-                self.db.create_collection("Logins")
-            if "Password" not in self.db.list_collection_names():
-                self.db.create_collection("Passwords")
-
         except Exception as e:
             logging.error(f"Failed to connect to MongoDB: {e}")
 
@@ -216,7 +211,6 @@ class Model:
             list: A list of lists, each containing the document ID and the first three logins for each matching document.
         """
         secret = self.logins.find_one({'_id': user_id})
-        ic(secret)
         secret = secret['Login']
         key = Cryptography.keyGenerator(secret)
         i=0
@@ -301,7 +295,8 @@ class Model:
 
 
     def validEditArgs(self, user_id, log_id: int):
-        """Validates credential editing based on information provided by the user
+        """
+        Validates credential editing based on information provided by the user
         
         Args:
             log_entry: Check if the log entry exists and belongs to the user.
@@ -362,7 +357,8 @@ class Model:
         
 
     def findPassID(self) -> int:
-        """Finds an ID by searching all documents.
+        """
+        Finds an ID by searching all documents.
         
         Args:
             Cursor: Search for all documents in the collection that have an _id field. 
@@ -381,7 +377,8 @@ class Model:
 
 
     def copy(self, user_id, itemID: int) -> str:
-        """A function do copy login credentials stored in DB to clipboard.
+        """
+        A function do copy login credentials stored in DB to clipboard.
         
         Attributes:
             item: Login of the user.
@@ -394,7 +391,6 @@ class Model:
         """
         try:
             item = self.passwords.find_one({'_id': int(itemID)})
-            ic(item)
             if item['user_id'] == user_id:
                 item = item['logins']
                 password = item['password']
@@ -402,9 +398,7 @@ class Model:
                 key = key['Login']
                 key = Cryptography.keyGenerator(key)
                 password = Cryptography.decryptSentence(password, key)
-                ic(item)
                 copy = f"Login: {item['login']} \nPassword: {password}"
-                ic(copy)
                 pyperclip.copy(copy)
                 return True, "Login and Password copied to your clipboard"
             else:
@@ -412,17 +406,41 @@ class Model:
         except Exception as e:
             return e, "Cant find any matching item"
         
-    def filterPasswords(self, filter: str, mode: str, userId) -> list:
-        try:
-            if mode == "ID":
-                filter = int(filter)
-            query = {"$and": [{mode: {"$regex": filter, "$options": "i"}}, 
-                     {"user_id": userId}
-                    ]}
-            return self.passwords.find(query)
-        except:
-            return []
 
+    def filterPasswords(self, filter: str, mode: str, user_id) -> list:
+        try:
+            mode = mode.lower()
+            itens = []
+
+            # Retrieve user key
+            user_key_doc = self.logins.find_one({'_id': user_id})
+            if not user_key_doc or 'Login' not in user_key_doc:
+                return []  # User key not found or Login key is missing
+                
+            key = Cryptography.keyGenerator(user_key_doc['Login'])
+            
+            # Construct query based on mode
+            field_path = f"logins.{mode}"
+            query = {"$and": [{"user_id": user_id}, {field_path: {"$regex": filter, "$options": "i"}}]}
+            logs = self.passwords.find(query)
+
+            # Process logs
+            for log in logs:
+                if "logins" in log:
+                    try:
+                        value = [log["_id"], log["logins"]['site'], log["logins"]['login'], log["logins"]['password']]
+                        itens.append(value)
+                    except KeyError as e:
+                        print(f"Missing expected field in log {log['_id']}: {e}")
+
+            # Decrypt passwords
+            for item in itens:
+                decrypted_password = Cryptography.decryptSentence(item[3], key)
+                item[3] = decrypted_password
+            return itens
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return []
 
 class PasswordGenerator:
     """A class for generating random passwords based on specified criteria.
