@@ -94,7 +94,6 @@ class View(ctk.CTk):
         try:
             self.passwords = self.c.filterPasswords(filter, self.filterMode, user_id)
             self.passwords.insert(0, self.title)
-            ic(self.passwords)
             self.loggedFrame.destroy()
             self.logged(user_id)
             return self.passwords
@@ -116,6 +115,7 @@ class View(ctk.CTk):
         pick_color = AskColor() # open the color picker
         self.priColor = pick_color.get() # get the color string
         self.secColor = self.c.darkColor(self.priColor, 50)
+        self.c.changeColor(user_id, self.priColor)
         self.configFrame.destroy()
         self.config(user_id)
 
@@ -567,6 +567,8 @@ class View(ctk.CTk):
         self.app.geometry("900x650")
         self.loggedFrame.pack(in_=self.app, anchor="center", fill='both', expand=True)
         self.app.iconbitmap(default="icons/Star.ico")
+        self.priColor = self.c.findColor(user_id)
+        self.secColor = self.c.darkColor(self.priColor, 50)
 
         
         modes = ['Filter', 'Site', 'Login']
@@ -643,7 +645,7 @@ class View(ctk.CTk):
 
         configButton = ctk.CTkButton(
             master=self.loggedFrame,
-            command=lambda: [self.loggedFrame.destroy(), self.config(id)],
+            command=lambda: [self.loggedFrame.destroy(), self.config(user_id)],
             text="",
             height=10,
             width=10,
@@ -791,7 +793,7 @@ class View(ctk.CTk):
         backButton = ctk.CTkButton(
             master=self.configFrame,
             text="Back",
-            command=lambda:[self.configFrame.destroy(), self.logged(user_id)],
+            command=lambda:[self.configFrame.destroy(), self.findPasswords(user_id), self.logged(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1126,7 +1128,7 @@ class View(ctk.CTk):
         cancelButton = ctk.CTkButton(
             master=self.generatePassFrame,
             text="Cancel",
-            command=lambda: [self.generatePassFrame.destroy(), self.logged(user_id)],
+            command=lambda: [self.generatePassFrame.destroy(), self.findPasswords(user_id), self.logged(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,
@@ -1218,7 +1220,7 @@ class View(ctk.CTk):
         cancelButton = ctk.CTkButton(
             master=self.addLogFrame,
             text="Cancel",
-            command=lambda: [self.addLogFrame.destroy(), self.logged(user_id)],
+            command=lambda: [self.addLogFrame.destroy(), self.findPasswords(user_id), self.logged(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             height=40,
@@ -1304,7 +1306,7 @@ class View(ctk.CTk):
         cancelButton = ctk.CTkButton(
             master=self.editItemFrame,
             text="Cancel",
-            command=lambda: [self.editItemFrame.destroy(), self.logged(user_id)],
+            command=lambda: [self.editItemFrame.destroy(), self.findPasswords(user_id), self.logged(user_id)],
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -1621,7 +1623,7 @@ class View(ctk.CTk):
         cancel = ctk.CTkButton(
             master=self.addPassFrame,
             text="Cancel",
-            command=lambda: [self.loginFrame.destroy(), self.logged(user_id)],
+            command=lambda: [self.loginFrame.destroy(), self.findPasswords(user_id), self.logged(user_id)],
             font=("RobotoSlab", 12),
             corner_radius=20,
             fg_color=self.priColor,

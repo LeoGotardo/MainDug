@@ -71,7 +71,7 @@ class Model:
             The inserted user ID on success, or an error message on failure.
         """
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        user = {"Login": login, "Password": hashed_password}
+        user = {"Login": login, "Password": hashed_password, "Color": '#1b1b1b'}
         try:
             result = self.logins.insert_one(user)
             return result.inserted_id
@@ -441,6 +441,21 @@ class Model:
         except Exception as e:
             print(f"An error occurred: {e}")
             return []
+        
+
+    def changeColor(self, user_id, newColor):
+        try:
+            self.logins.find_one_and_update({"_id":user_id}, {"$set": {"Color": newColor}})
+            return True
+        except Exception as e:
+            ic(e)
+
+    
+    def findColor(self, user_id):
+        color = self.logins.find_one({"_id": user_id})
+        color = color["Color"]
+
+        return color
 
 class PasswordGenerator:
     """A class for generating random passwords based on specified criteria.

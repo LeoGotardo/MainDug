@@ -12,7 +12,7 @@ import os
 def createList():
     # Simulando a geração da lista sem o módulo bson, usando string para ObjectId
     lista = []
-    base_id = 1
+    base_id = 31
     user = input("Username:")
     user_id = input('User id:')
     user_id = ObjectId(user_id)
@@ -54,7 +54,7 @@ def createList():
 ]
 
 
-    for i in range(30):
+    for i in range(100):
         # Gerar detalhes aleatórios para cada item
         site = random.choice(sites)
         login = random.choice(names)

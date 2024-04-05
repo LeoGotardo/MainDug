@@ -187,6 +187,12 @@ class Controller:
     
     def filterPasswords(self, filter: str, mode: str, user_id) -> list:
         return self.model.filterPasswords(filter, mode, user_id)
+    
+    def changeColor(self, user_id, newColor):
+        return self.model.changeColor(user_id, newColor)
+
+    def findColor(self, user_id):
+        return self.model.findColor(user_id)
 
 if __name__ == "__main__":
     controller = Controller()
