@@ -3,7 +3,6 @@ from pymongo.cursor import Cursor
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from hashlib import sha256
-from icecream import ic
 from PIL import Image
  
 import random as r
@@ -18,8 +17,6 @@ import os
 class Model:
     def __init__(self)-> None:
         """Initializes the Model class and sets up MongoDB connection."""
-        # Configure debug output prefix
-        ic.configureOutput(prefix=f"{d.Margin}\nDebug | ")
         # Clear screen in a cross-platform way
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -448,7 +445,7 @@ class Model:
             self.logins.find_one_and_update({"_id":user_id}, {"$set": {"Color": newColor}})
             return True
         except Exception as e:
-            ic(e)
+            print(e)
 
     
     def findColor(self, user_id):

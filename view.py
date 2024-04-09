@@ -3,7 +3,6 @@ from controller import Controller
 from PIL import Image as img
 from threading import Thread
 from CTkColorPicker import *
-from icecream import ic
 from CTkTable import *
 
 import customtkinter as ctk
@@ -42,7 +41,6 @@ class CustomThread(Thread):
 class View(ctk.CTk):
     def __init__(self):
         os.system("cls")
-        ic.configureOutput(prefix=f"{d.Margin}\nDebug | ")
 
         self.c = Controller()
         self.app = ctk.CTk()
