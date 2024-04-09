@@ -1,3 +1,4 @@
+CTkColorPicker
 alive_progress
 python-dotenv
 customtkinter
