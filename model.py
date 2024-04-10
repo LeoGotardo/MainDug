@@ -6,7 +6,6 @@ from hashlib import sha256
 from PIL import Image
  
 import random as r
-import Debug as d
 import pyperclip
 import logging
 import hashlib

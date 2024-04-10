@@ -6,7 +6,6 @@ from CTkColorPicker import *
 from CTkTable import *
 
 import customtkinter as ctk
-import Debug as d
 import os
 
 
