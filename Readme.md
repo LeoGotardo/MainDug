@@ -1,7 +1,7 @@
 
 # MainDug
 
-Secure Password Manager is a Python application that helps users manage and store their passwords securely using modern encryption techniques. The application features a graphical user interface built with CustomTkinter, providing a user-friendly way to handle login credentials for various websites.
+MainDug is a Python application that helps users manage and store their passwords securely using modern encryption techniques. The application features a graphical user interface built with CustomTkinter, providing a user-friendly way to handle login credentials for various websites.
 
 ## Table of Contents
 
