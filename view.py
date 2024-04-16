@@ -39,6 +39,21 @@ class CustomThread(Thread):
 
 class View(ctk.CTk):
     def __init__(self):
+        """
+        Initializes the application.
+
+        Functionality:
+            - Clears the console screen.
+            - Configures the output for debug logging.
+            - Initializes the Controller instance.
+            - Creates the main application window.
+            - Loads various icons for different functionalities.
+            - Sets primary and secondary colors for the application.
+            - Sets appearance mode to 'dark'.
+            - Sets initial mode to 'dark' and calls the login function.
+            - Sets the geometry of the application window and prevents resizing.
+            - Starts the main event loop of the application.
+        """
         os.system("cls")
 
         self.c = Controller()
@@ -73,17 +88,57 @@ class View(ctk.CTk):
 
 
     def selectMode(self, mode):
+        """
+        Sets the filter mode.
+
+        Args:
+            self: The instance of the class.
+            mode (str): The filter mode to be set.
+
+        Functionality:
+            - Updates the filter mode attribute with the provided mode value.
+        """
         self.filterMode = mode
 
 
     def unfilter(self, user_id):
+        """
+        Removes the filter and displays all passwords.
+        
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+
+        Functionality:
+            - Calls the findPasswords method to retrieve all passwords for the user.
+            - Destroys the current logged frame.
+            - Calls the logged method to display all passwords again.
+        """
         self.findPasswords(user_id)
         self.loggedFrame.destroy()
         self.logged(user_id)
 
 
     def filterItens(self, filter, user_id):
+        """
+        Filters items based on the selected filter.
 
+        Args:
+            self: The instance of the class.
+            filter (str): The filter to apply.
+            user_id (int): Identifier of the user.
+
+        Returns:
+            list or False: A list of filtered items if successful, False otherwise.
+
+        Functionality:
+            - Checks if a filter mode is selected, if not, shows an information message and returns False.
+            - Attempts to filter passwords based on the provided filter and filter mode.
+            - Inserts the title at the beginning of the filtered passwords list.
+            - Destroys the current logged frame.
+            - Calls the logged method to display the filtered passwords.
+            - Returns the filtered passwords list.
+        """
         if self.filterMode == 'Filter':
             msg.showinfo(message="You need to select a filter.")
             return False
@@ -118,6 +173,20 @@ class View(ctk.CTk):
 
 
     def fullGeneratePass(self, user_id, len, upper, lower, symbol, number):
+        """
+        Generates a password based on the provided parameters and displays it to the user.
+        Args:
+            self: The instance of the class.
+            user_id (int):Identifier of the user.
+            len (int): Lenght of the password to be generated.
+            upper (bool): Indicates wheter to include uppercase letters in the password.
+            lower (bool): Indicates wheter to include lowercase letters in the password.
+            symbol (bool): Indicates wheter to include symbols in the password.
+            number (bool): Indicates wheter to include numbers in the password.
+            
+        Returns:
+            bool: False if an error occurs during password generations, otherwise returns true.
+        """
         try:
             len = int(len)
         except:
@@ -138,6 +207,21 @@ class View(ctk.CTk):
 
 
     def passVerify(self, password, passwordConfirm, user_id, itemId):
+        """
+        Verifies and updates a user's password.
+        
+        Args:
+            self: The instance of the class.
+            password (str): The new password entered by the user.
+            passwordConfirm (str): The confirmation of the new password.
+            user_id (int): Identifier of the user.
+            itemID (int): Identifier of the item.
+        
+        Functionality:
+            - Checks if the provided password and its confirmation match using the passVerifyFunc method.
+            - If the passwords match, attempts to update the password in the system's log using the editLogFunc method.
+            - If an exception occurs during the update process, displays an error message.
+        """
         if self.passVerifyFunc(password, passwordConfirm):
             try:
                 self.editLogFunc("password", user_id, itemId, password)
@@ -146,6 +230,22 @@ class View(ctk.CTk):
 
 
     def passVerifyFunc(self, password, confirm):
+        """
+         Verifies if the provided password matches its confirmation.
+         
+         Args:
+            self: The instance of the class.
+            password (str): The password entered by the user.
+            confirm (str): The confirmation of the password entered by the user.
+
+        Functionality:
+            - Compares the provided password with its confirmation.
+            - If they match:
+                - Checks if the password is not empty.
+                - If the password is not empty, returns True.
+                - If the password is empty, displays an error message and returns False.
+            - If they do not match, displays an error message and returns False.
+        """
         if password == confirm:
             if password != "":
                 return True
@@ -158,6 +258,22 @@ class View(ctk.CTk):
 
 
     def deleteItem(self, user_id):
+        """
+        Deletes an item associated with the provided user ID.
+        
+        Args:
+            self: the instance of the class.
+            user_id (int): Identifier of the user whose item is to be deleted.
+        
+        Functionality:
+            - Prompts the user to input the item ID to be deleted using a dialog window.
+            - Attempts to convert the input item ID to an integer.
+            - If conversion fails, displays an error message and returns 0.
+            - Attempts to delete the item associated with the provided user ID and item ID using the deleteItem method.
+            - Displays an information message about the deletion result.
+            - Destroys the current frame (loggedFrame).
+            - Calls the findPasswords and logged methods to update the user interface with the remaining items and user information.
+        """
         dialog = ctk.CTkInputDialog(title="Delete Item", text="What's the item ID that you want to delete?")
         item_id = dialog.get_input()
         try:
@@ -177,6 +293,32 @@ class View(ctk.CTk):
     
     
     def editCred(self, user_id, paramter, newPar):
+        """
+        Edits the user credentials such as login or password.
+        
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+            parameter (str): The parameter to be edited, either "Login" or "Password".
+            newPar (str or tuple): The new parameter value(S) to be set.
+            
+        Functionality:
+            - Check if the new parameter value is not empty.
+            - If editing the login:
+                - Checks if the new parameter value is not empty.
+                - If the new login does not exist, updates the user's login with the new value.
+                - Displays an information message about the update result.
+                - Destroys the current frame (editLoginFrame).
+                - Calls the findPasswords and logged methods to update the user's interface.
+                - Otherwise, displays an error message that the login already exists.
+            If editing the password:
+                - Verifies if the new password and its confirmation match using the passVerifyFunc method.
+                - If the password match and are not empty, update the user's password with the new value.
+                - Displays an information message about the update result.
+                - Destroys the current frame (editPasswordFrame).
+                - Calls the findPasswords and logged methods to update the user interface.
+            If the new parameter value is empty, displays an error message.
+        """
         if newPar != '':
             if paramter == "Login":
                 new = self.c.findUserId(newPar, "$exists")
@@ -202,6 +344,22 @@ class View(ctk.CTk):
 
 
     def add(self, user_id):
+        """
+        Adds a new login for the user.
+        
+        Args:
+            Self: The instance of the class.
+            user_id (int): Identifier of the user.
+        
+        Functionality:
+            - Prompt the users wheter ther want to generate a new password.
+            - If the user chooses to generate a new password:
+            - Destroys the current frame (loggedFrame).
+            - Calls the generatePass method to generate a new password for the user.
+            - If the user chooses not to generate a new password:
+            - Destroys the current frame (loggedFrame).
+            - Calls the addLog method to add a new login for the user.
+        """
         newPass = msg.askquestion(title='New Login', message='Do you want to generate a new passwrd?')
 
         if newPass == 'yes':
@@ -213,6 +371,26 @@ class View(ctk.CTk):
 
 
     def addLogDB(self, user_id, site, login, password, frame):
+        """
+        Adds a new login entry to the database.
+        
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+            site (str): Website or service associated with the login.
+            login (str): Username or login ID for the site.
+            password (str): Password for the site.
+            frame (object): Frame object to be destroyed upon successful addition of the login entry.
+        
+        Functionality:
+            - Adds a new login entry to the database using the addNewLog method.
+            - If a frame object is provided:
+                - Displays an information message about the addition result.
+                - Destroys the current frame (addPassFrame).
+                - Calls the findPasswords and logged methods to update the user interface.
+            - If no frame object is provided:
+                - Displays an information message about the addition result.
+        """
         if frame is not None:
             ret = self.c.addNewLog(user_id, site, login, password)
             msg.showinfo(title="Info", message=ret)
@@ -226,6 +404,26 @@ class View(ctk.CTk):
 
 
     def delete(self, user_id):
+        """
+        Deletes a user account.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.  
+
+        Returns:
+            bool: True if the user confirms deletion, False otherwise.
+
+        Functionality:
+            - Prompts the user with a warning message to confirm account deletion.
+            - If the user confirms (response is "yes"):
+             - Attempts to delete the user account using the deleteUser method.
+             - Displays an information message confirming successful deletion.
+             - Destroys the current frame (eraseFrame).
+             - Calls the login method to return to the login screen.
+            - If an exception occurs during account deletion, displays an error message.
+            - If the user cancels deletion (response is not "yes"), returns False.
+        """
         response = msg.askquestion(title="Delete Account",
                                message="Are you sure you want to delete this account? This action cannot be undone.",
                                icon="warning")  # Use askquestion for a clear yes/no choice
@@ -243,6 +441,23 @@ class View(ctk.CTk):
 
 
     def editLog(self, user_id):
+        """
+        Edits an item for the user.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+
+        Functionality:
+            - Prompts the user to input the item ID using a dialog window.
+            - Attempts to convert the input item ID to an integer.
+            - If conversion fails, displays an error message.
+            - Calls the validEditArgs method to check if the provided user ID and item ID are valid for editing.
+            - If the item ID is valid for editing:
+                - Destroys the current frame (loggedFrame).
+                - Calls the editItem method to edit the item associated with the user and item IDs.
+            - If the item ID is not valid for editing, displays an error message.
+        """
         dialog = ctk.CTkInputDialog(text="What's the item ID:", title='Edit item')
         itemID = dialog.get_input()
         try:
@@ -257,12 +472,44 @@ class View(ctk.CTk):
 
 
     def findPasswords(self, user_id):
-            self.passwords = self.c.findPasswords(user_id)
-            self.title = ['ID', 'Site', 'Login', 'Password']
-            self.passwords.insert(0, self.title)
+        """
+        Finds passwords associated with the provided user ID.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+
+        Functionality:
+            - Retrieves passwords associated with the provided user ID using the findPasswords method.
+            - Constructs a list of titles for the passwords table.
+            - Inserts the titles as the first row of the passwords list.
+        """
+        self.passwords = self.c.findPasswords(user_id)
+        self.title = ['ID', 'Site', 'Login', 'Password']
+        self.passwords.insert(0, self.title)
 
     def validLogin(self, login, password):
-        # Verifica se o login é válido e realiza a ação apropriada
+        """
+        Validates a user login.
+
+        Args:
+            self: The instance of the class.
+            login (str): User login.
+            password (str): User password.
+            
+        Functionality:
+        - Checks if the login and password are not empty.
+        - Calls the isLoginValid method to check if the provided login and password are valid.
+        - If the login is valid:
+            - Destroys the current frame (loginFrame).
+            - Calls the findPasswords method to retrieve passwords associated with the user.
+            - Calls the logged method to update the user interface.
+        - If the login is invalid:
+            - Displays an error message.
+            - Destroys the current frame (loginFrame).
+            - Calls the login method to return to the login screen.
+        - If the login or password is empty, displays an error message.
+        """
         if login != '' or password != '':
             itens = self.c.isLoginValid(login, password)
             if itens[0] == True:
@@ -281,7 +528,26 @@ class View(ctk.CTk):
 
 
     def addCad(self, login, password, passwordConfirm):
-        # Adiciona um novo usuário e exibe uma mensagem apropriada
+        """
+        Adds a new user.
+
+        Args:
+        self: The instance of the class.
+        login (str): New user's login.
+        password (str): New user's password.
+        passwordConfirm (str): Confirmation of the new user's password.
+        
+        Functionality:
+            - Calls the addUser method to add a new user with the provided login and password.
+            - If the user addition is successful:
+                - Displays a success message.
+                - Destroys the current frame (signupFrame).
+                - Calls the login method to return to the login screen.
+            - If there's an error adding the user:
+                - Displays an error message.
+                - Destroys the current frame (signupFrame).
+                - Calls the signup method to return to the signup screen.
+        """
         error = self.c.addUser(login, password, passwordConfirm)
         if error == True:
             self.alert("Susses","Sussesfull Signup")
@@ -294,6 +560,23 @@ class View(ctk.CTk):
 
     
     def seePass(self, entry, button):
+        """
+        Toggles the visibility of a password in an entry widget.
+
+        Args:
+            self: The instance of the class.
+            entry (Tkinter.Entry): Entry widget containing the password.
+            button (Tkinter.Button): Button widget used to toggle password visibility.
+
+        Functionality:
+            - Checks the current state of the entry widget.
+            - If the password is currently hidden:
+                - Configures the entry widget to display the password.
+                - Changes the button image to indicate that the password is visible.
+            - If the password is currently visible:
+                - Configures the entry widget to hide the password.
+                - Changes the button image to indicate that the password is hidden.
+        """
         if entry.cget('show') == "*":
             entry.configure(show="")
             button.configure(image=self.unsee)
@@ -303,6 +586,24 @@ class View(ctk.CTk):
 
 
     def theme(self, button):
+        """
+        Toggles between dark and light themes.
+
+        Args:
+            self: The instance of the class.
+            button (Tkinter.Button): Button widget used to toggle the theme.
+
+        Functionality:
+            - Checks the current theme mode.
+            - If the current mode is 'dark':
+                - Sets the appearance mode to 'light'.
+                - Changes the button image to indicate the light theme.
+                - Updates the mode attribute to 'light'.
+        - If the current mode is 'light':
+                - Sets the appearance mode to 'dark'.
+                - Changes the button image to indicate the dark theme.
+                - Updates the mode attribute to 'dark'.
+        """
         if self.mode == 'dark':
             ctk.set_appearance_mode('light')
             button.configure(image=self.dark)
@@ -314,11 +615,39 @@ class View(ctk.CTk):
 
 
     def alert(self, title, text):
-        # Exibe um alerta na página
+        """
+        Displays an alert message.
+
+        Args:
+            self: The instance of the class.
+            title (str): Title of the alert message.
+            text (str): Text of the alert message.
+
+        Functionality:
+            - Displays an alert message with the provided title and text using the showwarning method from the messagebox module.
+        """
         msg.showwarning(title=title,message=text)
 
 
     def editLogFunc(self, paramter, user_id, ID, newLog):
+        """
+        Edits a log entry.
+
+        Args:
+            self: The instance of the class.
+            paramter (str): Parameter to be edited.
+            user_id (int): Identifier of the user.
+            ID (int): Identifier of the log entry.
+            newLog (str): New value for the parameter.
+
+        Returns:
+            bool: True if the log entry is successfully edited, False otherwise.
+
+        Functionality:
+            - Attempts to edit the log entry using the editLog method.
+            - If successful, displays an information message with the result.
+            - If an exception occurs during editing, displays a warning message with the error.
+        """
         try:
             e = self.c.editLog(user_id, paramter, ID, newLog)
             msg.showinfo(title="Info", message=e)
@@ -329,6 +658,19 @@ class View(ctk.CTk):
 
 
     def copyFunc(self, user_id):
+        """
+        Copies item credentials.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+
+        Functionality:
+            - Prompts the user to input the item ID using a dialog window.
+            - Attempts to copy the item credentials using the copy method.
+            - Displays an information message with the result of the copy operation.
+            - If an exception occurs during copying, displays an error message.
+        """
         try:
             dialog = ctk.CTkInputDialog(text="What's the item ID:", title='Copy item credentials...')
             itemID = dialog.get_input()
@@ -339,7 +681,18 @@ class View(ctk.CTk):
 
 
     def login(self):
-        # Configura a página de login
+        """
+        Sets up the login page.
+
+        Args:
+            self: The instance of the class.
+
+        Functionality:
+            - Creates and configures the login frame.
+            - Creates labels, entry fields, buttons, and icons for login, password entry, show/hide password, login button, signup button, and theme change button.
+            - Binds the Return key to trigger the validLogin method when pressed.
+            - Places all widgets within the login frame with appropriate configurations.
+        """
         self.loginFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Login")
         self.loginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -434,7 +787,18 @@ class View(ctk.CTk):
 
 
     def signup(self):
-        # Configura a página de cadastro
+        """
+        Sets up the signup page.
+
+        Args:
+            self: The instance of the class.
+
+        Functionality:
+            - Creates and configures the signup frame.
+            - Creates labels, entry fields, buttons, and icons for signup, login entry, password entry, password confirmation entry, show/hide password, signup button, login button, and theme change button.
+            - Binds the Return key to trigger the addCad method when pressed.
+            - Places all widgets within the signup frame with appropriate configurations.
+        """
         self.signupFrame = ctk.CTkFrame(master=self.app,)
         self.app.title("Signup")
         self.signupFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -559,6 +923,21 @@ class View(ctk.CTk):
 
 
     def logged(self, user_id):
+        """
+        Sets up the logged page.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+
+        Functionality:
+            - Creates and configures the logged frame.
+            - Sets the title and icon for the application window.
+            - Retrieves primary and secondary colors for the user interface.
+            - Creates labels, buttons, entry fields, and icons for menu, mode selection, item filtering, table display, exit, configuration, theme change, add, delete, edit, and copy functionalities.
+            - Binds the Return key to trigger the filterItens method when pressed.
+            - Places all widgets within the logged frame with appropriate configurations.
+        """
         self.loggedFrame = ctk.CTkFrame(master=self.app)
         self.app.title("MainDug")
         self.app.geometry("900x650")
@@ -740,6 +1119,20 @@ class View(ctk.CTk):
 
 
     def config(self, user_id):
+        """
+        Sets up the configuration page.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+
+        Functionality:
+            - Creates and configures the configuration frame.
+            - Sets the title and icon for the application window.
+            - Creates labels, buttons, and icons for account configuration options such as editing login, editing password, erasing account, and changing theme/color.
+            - Binds the Back button to trigger the findPasswords and logged methods when clicked.
+            - Places all widgets within the configuration frame with appropriate configurations.
+        """
         self.configFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Config")
         self.configFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -834,6 +1227,20 @@ class View(ctk.CTk):
 
 
     def editLogin(self, user_id):
+        """
+        Sets up the edit login page.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+
+        Functionality:
+            - Creates and configures the edit login frame.
+            - Sets the title for the application window.
+            - Creates labels, entry fields, buttons, and icons for entering new login, editing login, navigating back, and changing theme.
+            - Binds the Return key to trigger the editCred method when pressed.
+            - Places all widgets within the edit login frame with appropriate configurations.
+        """
         self.editLoginFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Login")
         self.editLoginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -903,6 +1310,20 @@ class View(ctk.CTk):
 
 
     def editPass(self, user_id):
+        """
+        Sets up the edit password page.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+
+        Functionality:
+            - Creates and configures the edit password frame.
+            - Sets the title for the application window.
+            - Creates labels, entry fields, buttons, and icons for entering new password, confirming new password, editing password, navigating back, and changing theme.
+            - Binds the Return key to trigger the editCred method when pressed.
+            - Places all widgets within the edit password frame with appropriate configurations.
+        """
         self.editPasswordFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Password")
         self.editPasswordFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1013,7 +1434,20 @@ class View(ctk.CTk):
 
 
     def erase(self, user_id):
-    # Configura a página Erase
+        """
+        Sets up the erase page for deleting the account.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+
+        Functionality:
+            - Creates and configures the erase frame.
+            - Sets the title for the application window.
+            - Creates labels, buttons, and icons for deleting the account, navigating back, and changing theme.
+            - Binds the Return key to trigger the delete method when pressed.
+            - Places all widgets within the erase frame with appropriate configurations.
+        """
         self.eraseFrame = ctk.CTkFrame(master=self.app)
         self.app.title ("Erase")
         self.eraseFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1146,6 +1580,21 @@ class View(ctk.CTk):
         self.app.bind("<Return>", lambda _: self.fullGeneratePass(id ,passLen.get(), upperLetterValue.get(), lowerLetterValue.get(), symbol.get(), numberValue.get()))
 
     def addLog(self, user_id):
+        """
+        Sets up the generate password page for creating a new login.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+
+        Functionality:
+            - Creates and configures the generate password frame.
+            - Sets the title for the application window.
+            - Creates input fields for specifying password length and options for including numbers, upper case letters, lower case letters, and symbols.
+            - Creates buttons for confirming or canceling the password generation process.
+            - Binds the Return key to trigger the fullGeneratePass method when pressed.
+            - Places all widgets within the generate password frame with appropriate configurations.
+        """
         self.addLogFrame = ctk.CTkFrame(master=self.app)
         self.app.title("New Login")
         self.addLogFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1252,6 +1701,22 @@ class View(ctk.CTk):
 
     
     def editItem(self, user_id, itemId):
+        """
+        Sets up the edit item page for modifying a specific item.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+            itemId (int): Identifier of the item to be edited.
+
+        Functionality:
+            - Creates and configures the edit item frame.
+            - Sets the title for the application window.
+            - Creates buttons for editing site, login, and password fields of the specified item.
+            - Creates a button for canceling the editing process.
+            - Binds the Return key to trigger the findPasswords method when pressed.
+            - Places all widgets within the edit item frame with appropriate configurations.
+        """
         self.editItemFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Item")
         self.editItemFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1334,6 +1799,23 @@ class View(ctk.CTk):
 
 
     def siteEdit(self, user_id, itemId):
+        """
+        Sets up the edit site page for modifying the site field of a specific item.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+            itemId (int): Identifier of the item to be edited.
+
+        Functionality:
+            - Creates and configures the edit site frame.
+            - Sets the title for the application window.
+            - Creates an entry field for entering the new site.
+            - Creates a button for editing the site field of the specified item.
+            - Creates a button for canceling the editing process.
+            - Binds the Return key to trigger the editCred method with the "site" argument when pressed.
+            - Places all widgets within the edit site frame with appropriate configurations.
+        """
         self.editSiteFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit site")
         self.editSiteFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1402,6 +1884,23 @@ class View(ctk.CTk):
 
 
     def loginEdit(self, user_id, itemId):
+        """
+        Sets up the edit login page for modifying the login field of a specific item.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+            itemId (int): Identifier of the item to be edited.
+
+        Functionality:
+            - Creates and configures the edit login frame.
+            - Sets the title for the application window.
+            - Creates an entry field for entering the new login.
+            - Creates a button for editing the login field of the specified item.
+            - Creates a button for canceling the editing process.
+            - Binds the Return key to trigger the editCred method with the "Login" argument when pressed.
+            - Places all widgets within the edit login frame with appropriate configurations.
+        """
         self.editLoginFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Login")
         self.editLoginFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1471,6 +1970,26 @@ class View(ctk.CTk):
 
 
     def passwordEdit(self, user_id, itemId):
+        """
+        Sets up the edit password page for modifying the password field of a specific item.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+            itemId (int): Identifier of the item to be edited.
+
+        Functionality:
+            - Creates and configures the edit password frame.
+            - Sets the title for the application window.
+            - Creates an entry field for entering the new password.
+            - Creates a button for toggling password visibility.
+            - Creates an entry field for confirming the new password.
+            - Creates a button for editing the password field of the specified item.
+            - Creates a button for canceling the editing process.
+            - Creates a button for changing the theme.
+            - Binds the Return key to trigger the passVerify method with the entered passwords, user_id, and itemId when pressed.
+            - Places all widgets within the edit password frame with appropriate configurations.
+        """
         self.editPasswordFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Edit Password")
         self.editPasswordFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1574,6 +2093,25 @@ class View(ctk.CTk):
 
 
     def addWithPass(self, user_id, password):
+        """
+        Sets up the page for adding a new login with a pre-determined password.
+
+        Args:
+            self: The instance of the class.
+            user_id (int): Identifier of the user.
+            password (str): The pre-determined password to be associated with the new login.
+
+        Functionality:
+            - Creates and configures the frame for adding a new login with a pre-determined password.
+            - Sets the title for the application window.
+            - Creates an entry field for entering the site name.
+            - Creates an entry field for entering the login username.
+            - Creates a button for adding the new login to the database.
+            - Creates a button for canceling the addition process.
+            - Creates a button for changing the theme.
+            - Binds the Return key to trigger the addLogDB method with the entered site name, login username, password, user_id, and frame when pressed.
+            - Places all widgets within the add password frame with appropriate configurations.
+        """
         self.addPassFrame = ctk.CTkFrame(master=self.app)
         self.app.title("Login")
         self.addPassFrame.place(in_=self.app, anchor="center", relx=0.5, rely=0.5)
@@ -1652,4 +2190,11 @@ class View(ctk.CTk):
         self.app.bind("<Return>", lambda _: self.addLogDB(user_id, site.get(), login.get(), password, self.addPassFrame))
 
 if __name__ == "__main__":
+    """
+    Entry point of the application.
+    
+    Functionality:
+        - Instantiates the View class.
+        - Starts the application.
+    """
     view = View()
