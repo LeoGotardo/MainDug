@@ -107,19 +107,15 @@ class Model:
         Returns:
             True if credentials are valid, otherwise returns an error message.
         """
-        if login != '':
-            if password == password_confirm:
-                if password != "":
-                    if self.logins.find_one({'Login': login}) is None:
-                        return True
-                    else:
-                        return 'Login already exists.'
-                else:
-                    return "Password can't be empty"
-            else:
-                return 'Password and confirmation do not match.'
-        else:
+        if login == '':
             return "Login can't be empty."
+        if password != password_confirm:
+            return 'Password and confirmation do not match.'
+        if password == '':
+            return "Password can't be empty"
+        if self.logins.find_one({'Login': login}) is None:
+            return True
+
 
     def updateUser(self, user_id: str, parameter: str, new_value: str) -> str:
         """
