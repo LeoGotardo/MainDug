@@ -375,7 +375,50 @@ class Model:
         except Exception as e:
             logging.error(f"Failed to edit log: {e}")
             return f"Failed to edit log: {e}"
+        
+    
+    def filterPasswords(self, filter: str, mode: str, user_id):
+        try:
+            # Retrieve user key
+            key = self.createKey(user_id)
+            cipher_suite = Fernet(key)
 
+            # Construct query based on mode
+            sql_query = f"SELECT id, Site, Login, Password FROM Passwords WHERE user_id = ? AND {mode} LIKE ?"
+            self.cursor.execute(sql_query, (user_id, f'%{filter}%'))
+            logs = self.cursor.fetchall()
+
+            # Process logs and decrypt passwords
+            items = []
+            for log in logs:
+                try:
+                    decrypted_password = cipher_suite.decrypt(log[3].encode()).decode()
+                    items.append([log[0], log[1], log[2], decrypted_password])
+                except Exception as e:
+                    print(f"Error decrypting password for log {log[0]}: {e}")
+            return items
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return []
+        
+        
+    def changeColor(self, user_id, newColor):
+        try:
+            query = f"UPDATE Users SET Color = ? WHERE id = ?"
+            self.cursor.execute(query, (newColor, user_id))
+            self.connection.commit()
+            return True
+        except Exception as e:
+            print(f"An error ocorred: {e}")
+            
+            
+    def findColor(self, user_id):
+        query = "SELECT Color FROM Users WHERE id = ?"
+        self.cursor.execute(query, (user_id))
+        color = self.cursor.fetchone()
+
+        return color[0]
+        
 
 class PasswordGenerator:
     """A class for generating random passwords based on specified criteria.
