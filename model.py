@@ -1,5 +1,4 @@
 from cryptography.fernet import Fernet
-from pymongo.cursor import Cursor
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from hashlib import sha256
@@ -223,6 +222,7 @@ class Model:
             decrypted_password = Cryptography.decryptSentence(item[3], key)
             results[i][3] = decrypted_password
             i+=1
+        print(results)
         return results
 
 

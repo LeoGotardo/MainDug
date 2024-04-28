@@ -1,6 +1,4 @@
 from cryptography.fernet import Fernet
-
-from PIL import Image
  
 import random as r
 import pyperclip
@@ -16,7 +14,7 @@ class Model:
         # Clear screen in a cross-platform way
         os.system('cls' if os.name == 'nt' else 'clear')
 
-        self.connection = sqlite3.connect('database.db')
+        self.connection = sqlite3.connect('database.db', timeout=30)
         self.cursor = self.connection.cursor()
         self.setup_tables()
 
@@ -35,13 +33,22 @@ class Model:
             CREATE TABLE IF NOT EXISTS Passwords (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
-                site TEXT NOT NULL,
-                login TEXT NOT NULL,
-                password TEXT NOT NULL,
+                Site TEXT NOT NULL,
+                Login TEXT NOT NULL,
+                Password TEXT NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES Users (id)
             )
         ''')
         self.connection.commit()
+        
+        
+    def createKey(self, user_id: str):
+        self.cursor.execute("SELECT Login FROM Users WHERE id = ?", (user_id))
+        secret = self.cursor.fetchone()
+
+        key = Cryptography.keyGenerator(secret[0])
+    
+        return key 
         
         
     def darkColor(self, hex_color: str, darken_by: int) -> str:
@@ -136,7 +143,7 @@ class Model:
             return 'Login already exists.'
         
 
-    def updateUser(self, user_id: str, parameter: str, new_value: str) -> str:
+    def updateUser(self, user_id: int, parameter: str, new_value: str) -> str:
         """
         Updates a specific user's information in the 'users' table.
 
@@ -144,15 +151,15 @@ class Model:
         the new value for it. If updating the password, the new password is hashed before storage.
 
         Args:
-            user_id (str): The unique identifier of the user to update.
+            user_id (int): The unique identifier of the user to update.
             parameter (str): The column of the user's information to update (e.g., 'password').
             new_value (str): The new value to set for the specified parameter.
 
         Returns:
             str: A success message if the update was successful, or an error message if it failed.
         """
-        if parameter == 'password':
-            new_value = hashlib.sha256(new_value.encode()).hexdigest()  # Corrected the hashing syntax
+        if parameter == 'Password':
+            new_value = hashlib.sha256(new_value.encode()).hexdigest()
 
         try:
             # Assuming 'conn' is your SQLite database connection object
@@ -167,7 +174,207 @@ class Model:
         except Exception as e:
             logging.error(f"Failed to update user: {e}")
             return str(e)
+        
+        
+    def findUserId(self, login: str, password: str) -> str:
+        """
+        Finds and returns the unique identifier (ID) of a user based on their login and password.
 
+        This method attempts to find a user in the 'Logins' collection matching the provided login
+        and password. If the password is not a special case ('EXISTS'), it will be hashed before 
+        comparison. 
+
+        Args:
+            login (str): The login name of the user.
+            password (str): The password of the user. If '$exists', the password check is bypassed.
+
+        Returns:
+            str: The user's ID if a match is found, None otherwise.
+        """
+        query = "SELECT id FROM Users WHERE Login = ? AND Password = ?"
+        
+        if password != "EXISTS":
+            password = hashlib.sha256(password.encode()).hexdigest()
+            user = self.cursor.execute(query, (login, password))
+        else:
+            user = self.cursor.execute(query, (login, password))
+            
+        user = self.cursor.fetchone()
+
+        if user:
+            return user[0]
+        return None
+
+
+    def deleteUser(self, user_id: int) -> bool:
+        """
+        Deletes a user and their associated data based on the user ID.
+
+        This method attempts to delete a user from the 'Logins' collection and any related data 
+        from the 'Passwords' collection using the user's ID. 
+
+        Args:
+            user_id (in): The unique identifier of the user to delete.
+
+        Returns:
+            bool: True if the user was successfully deleted, False otherwise.
+        """
+        try:
+            self.cursor.execute("DELETE * FROM Users WHERE id = ?", (user_id))
+            self.cursor.execute("DELETE * FROM Passwords WHERE user_id = ?", (user_id))
+            self.connection.commit()
+            return self.cursor.rowcount > 0
+        except Exception as e:
+            logging.error(f"Failed to delete user: {e}")
+            return False
+
+
+    def findPasswords(self, user_id: int) -> list:
+        """
+        Retrieves a list of password information for a specific user.
+
+        This method searches the 'passwords' collection for documents matching the specified user ID. It then extracts
+        the first three login entries for each matching document, if available, and returns a list of these entries
+        along with their document IDs.
+
+        Args:
+            user_id (int): The unique identifier of the user to retrieve passwords for.
+
+        Returns:
+            list: A list of lists, each containing the document ID and the first three logins for each matching document.
+        """
+        key = self.createKey(user_id)
+        
+        self.cursor.execute("SELECT id, Site, Login, Password FROM Passwords WHERE user_id = ?", (user_id,))
+        rows = self.cursor.fetchall()
+
+        results = []
+        for row in rows:
+            if row:
+                results.append([row[0], row[1], row[2], row[3]])  # Append document ID and login details
+
+
+        for i, item in enumerate(results):
+            decrypted_password = Cryptography.decryptSentence(item[3], key)
+            results[i][3] = decrypted_password
+        
+        return results
+    
+    def deleteItem(self, logged_user_id: int, item_id: int) -> tuple:
+        """
+        Attempts to delete a specified item for a logged-in user.
+
+        This method first verifies that the logged-in user is the owner of the item by comparing user IDs.
+        If the user is the owner, it then attempts to delete the item from the 'logins' collection.
+
+        Args:
+            logged_user_id (int): The ID of the logged-in user attempting the deletion.
+            item_id (int): The ID of the item to be deleted.
+
+        Returns:
+            tuple: A tuple containing a boolean indicating success or failure, and a message describing the outcome.
+        """
+        try:
+            query = "DELETE FROM Passwords WHERE id = ? AND user_id = ?"
+            self.cursor.execute(query, (item_id, logged_user_id))
+            self.connection.commit()
+            if self.cursor.rowcount > 0:
+                return "Item deleted successfully."
+            else:
+                return "Item not found."
+
+        except Exception as e:
+            logging.error(f"Failed to delete item: {e}")
+            return f"Failed to delete item: {e}"
+        
+    
+    def addNewLog(self, user_id: int, site: str, login: str, password: str) -> str:
+        """
+        Adds a new login entry for a specific user.
+
+        This method creates a new document in the 'passwords' collection containing the user ID, site, login,
+        and password information.
+
+        Args:
+            user_id (str): The ID of the user to add the log for.
+            site (str): The website or application associated with the log.
+            login (str): The login name or identifier.
+            password (str): The password for the site/login.
+
+        Returns:
+            str: A message indicating the completion of the process or describing any errors encountered.
+        """
+        self.cursor.execute("SELECT Login FROM Users WHERE id = ?", (user_id))
+        secret = self.cursor.fetchone()
+        key = Cryptography.keyGenerator(secret[0])
+        password = Cryptography.encryptSentence(password, key)
+        
+        try:
+            query = "INSERT INTO Passwords (user_id, Site, Login, Password) VALUES (?, ?, ?, ?)"
+            self.cursor.execute(query, (user_id, site, login, password))
+            self.connection.commit()
+            if self.cursor.rowcount > 0:
+                return 'Log added successfully.'
+        except Exception as e:
+            logging.error(f"Failed to add new log: {e}")
+            return str(e)
+        
+    
+    def validEditArgs(self, user_id: int, log_id: str):
+        """
+        Validates credential editing based on information provided by the user
+        
+        Args:
+            log_entry: Check if the log entry exists and belongs to the user.
+
+        Returns:
+            Edit the credentials of login if true, show error message otherwise.
+        """
+        try:
+            query = f"SELECT user_id FROM Passwords WHERE id = {log_id}"
+            self.cursor.execute(query)
+            log_entry = self.cursor.fetchone()
+            if log_entry and log_entry[0] == user_id:
+                return True
+            else:
+                return False, "Cannot find matching log entry or user mismatch. Please try again."
+        except Exception as e:
+            return e
+        
+    
+    def editLog(self, user_id: int, parameter: str, log_id: int, new_value: str) -> str:
+        """
+       Edits a specific field ('site', 'login', or 'password') of a log entry for a user.
+
+        Args:
+            parameter (str): The field of the log entry to update ('site', 'login', or 'password').
+            log_id (int): The ID of the log entry to be edited.
+            new_value (str): The new value to be set for the specified field.
+
+        Returns:
+            str: A message indicating the outcome of the operation, whether success or failure.
+
+        Raises:
+            Exception: If an error occurs during the find or update operations on the database.
+        """
+        if parameter == 'password':
+            key = self.createKey(user_id)
+            new_value = Cryptography.encryptSentence(new_value, key)
+
+        try:
+            # Attempt to find and update the log entry
+            query = f"UPDATE Passwords SET {parameter} = ? WHERE id = ?"
+            self.cursor.execute(query, (new_value, log_id))
+            self.connection.commit()
+            # Check if the update was successful
+            if self.cursor.rowcount > 0:
+                return f"{parameter.capitalize()} updated successfully."
+            else:
+                return "Log entry not found or no update required."
+
+        except Exception as e:
+            logging.error(f"Failed to edit log: {e}")
+            return f"Failed to edit log: {e}"
 
 
 class PasswordGenerator:
