@@ -6,5 +6,6 @@ cryptography
 pyperclip
 CTktable
 pymongo
+sqlite3
 Pillow
 tk
