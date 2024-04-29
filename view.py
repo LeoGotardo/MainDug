@@ -3,6 +3,7 @@ from controller import Controller
 from PIL import Image as img
 from threading import Thread
 from CTkColorPicker import *
+from icecream import ic
 from CTkTable import *
 
 import customtkinter as ctk
@@ -333,7 +334,7 @@ class View(ctk.CTk):
                     self.alert("ERROR",f'This login alredy exists.')
             if paramter == "Password":
                 if self.passVerifyFunc(newPar[0], newPar[1]):
-                    sull = self.c.updateUser(user_id, paramter, newPar)
+                    sull = self.c.updateUser(user_id, paramter, newPar[0])
                     self.alert("Info", sull)
 
                     self.editPasswordFrame.destroy()

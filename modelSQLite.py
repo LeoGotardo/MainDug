@@ -106,11 +106,11 @@ class Model:
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
         
         query = "SELECT id FROM Users WHERE Login = ? AND Password = ?"
-        id = self.cursor.execute(query, (login, hashed_password))
+        valid = self.cursor.execute(query, (login, hashed_password))
         valid = self.cursor.fetchone()
         
         if valid is not None:
-            return [True, id]
+            return [True, str(valid[0])]
         else:
             return [False, 'Invalid Credentials']
         
@@ -159,6 +159,7 @@ class Model:
             str: A success message if the update was successful, or an error message if it failed.
         """
         if parameter == 'Password':
+            print(new_value)
             new_value = hashlib.sha256(new_value.encode()).hexdigest()
 
         try:
@@ -220,8 +221,8 @@ class Model:
             bool: True if the user was successfully deleted, False otherwise.
         """
         try:
-            self.cursor.execute("DELETE * FROM Users WHERE id = ?", (user_id))
-            self.cursor.execute("DELETE * FROM Passwords WHERE user_id = ?", (user_id))
+            self.cursor.execute("DELETE FROM Users WHERE id = ?", (user_id))
+            self.cursor.execute("DELETE FROM Passwords WHERE user_id = ?", (user_id))
             self.connection.commit()
             return self.cursor.rowcount > 0
         except Exception as e:
@@ -229,7 +230,7 @@ class Model:
             return False
 
 
-    def findPasswords(self, user_id: int) -> list:
+    def findPasswords(self, user_id: str) -> list:
         """
         Retrieves a list of password information for a specific user.
 
@@ -381,7 +382,7 @@ class Model:
         try:
             # Retrieve user key
             key = self.createKey(user_id)
-            cipher_suite = Fernet(key)
+
 
             # Construct query based on mode
             sql_query = f"SELECT id, Site, Login, Password FROM Passwords WHERE user_id = ? AND {mode} LIKE ?"
@@ -392,7 +393,7 @@ class Model:
             items = []
             for log in logs:
                 try:
-                    decrypted_password = cipher_suite.decrypt(log[3].encode()).decode()
+                    decrypted_password = Cryptography.decryptSentence(log[3] ,key)
                     items.append([log[0], log[1], log[2], decrypted_password])
                 except Exception as e:
                     print(f"Error decrypting password for log {log[0]}: {e}")
