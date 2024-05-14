@@ -3,7 +3,6 @@ from controller import Controller
 from PIL import Image as img
 from threading import Thread
 from CTkColorPicker import *
-from icecream import ic
 from CTkTable import *
 
 import customtkinter as ctk

@@ -1,12 +1,12 @@
 from cryptography.fernet import Fernet
  
 import random as r
-import pyperclip
 import sqlite3
 import logging
 import hashlib
 import base64
 import os
+
 
 class Model:
     def __init__(self) -> None:
