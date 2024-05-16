@@ -322,15 +322,6 @@ class Model:
         
     
     def validEditArgs(self, user_id: int, log_id: str):
-        """
-        Validates credential editing based on information provided by the user
-        
-        Args:
-            log_entry: Check if the log entry exists and belongs to the user.
-
-        Returns:
-            Edit the credentials of login if true, show error message otherwise.
-        """
         try:
             query = f"SELECT user_id FROM Passwords WHERE id = {log_id}"
             self.cursor.execute(query)

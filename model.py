@@ -2,7 +2,7 @@ from cryptography.fernet import Fernet
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from hashlib import sha256
-from PIL import Image
+
  
 import random as r
 import pyperclip
