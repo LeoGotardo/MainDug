@@ -13,7 +13,32 @@ import os
 
 class Model:
     def __init__(self) -> None:
-        self.setupTables()
+        self.connect()
+        
+        self.cursor.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
+        
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Users (
+                id UUID PRIMARY KEY,
+                Login TEXT UNIQUE NOT NULL,
+                Password TEXT NOT NULL,
+                Color TEXT DEFAULT '#1b1b1b'
+            )
+        ''')
+        
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Passwords (
+                id SERIAL PRIMARY KEY,
+                user_id UUID NOT NULL,
+                Site TEXT NOT NULL,
+                Login TEXT NOT NULL,
+                Password TEXT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+            )
+        ''')
+        
+        self.connection.commit()
+        self.close()
         
     
     def connect(self):
@@ -45,35 +70,6 @@ class Model:
             self.cursor.close()
         if self.connection is not None:
             self.connection.close()
-
-            
-    def setupTables(self):
-        self.connect()
-        
-        self.cursor.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
-        
-        self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS Users (
-                id UUID PRIMARY KEY,
-                Login TEXT UNIQUE NOT NULL,
-                Password TEXT NOT NULL,
-                Color TEXT DEFAULT '#1b1b1b'
-            )
-        ''')
-        
-        self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS Passwords (
-                id SERIAL PRIMARY KEY,
-                user_id UUID NOT NULL,
-                Site TEXT NOT NULL,
-                Login TEXT NOT NULL,
-                Password TEXT NOT NULL,
-                FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
-            )
-        ''')
-        
-        self.connection.commit()
-        self.close()
         
         
     def createKey(self, user_id: str):
@@ -149,6 +145,40 @@ class Model:
             return [True, str(valid[0])]
         else:
             return [False, 'Invalid Credentials']
+        
+        
+    def isCredentialValid(self, login: str, password: str, password_confirm: str) -> bool or str: # type: ignore
+        """
+        Validates if the password matches the confirmation password and checks for unique login.
+
+        Args:
+            login (str): The login name to validate.
+            password (str): The password to check.
+            password_confirm (str): The password confirmation to match against.
+
+        Returns:
+            True if credentials are valid, otherwise returns an error message.
+        """
+        try:
+            self.connect()
+            if login == '':
+                return "Login can't be empty."
+            if password != password_confirm:
+                return 'Password and confirmation do not match.'
+            if password == '':
+                return "Password can't be empty"
+            
+            query = "SELECT id FROM Users WHERE Login = %s"
+            self.cursor.execute(query, (login,))
+            if self.cursor.fetchone() is None:
+                # If no existing user is found, the credentials are considered valid for new user creation.
+                return True
+            else:
+                return 'Login already exists.'
+        except Exception as e:
+            print(f'An error occured:{e}')
+        finally:
+            self.close()
             
             
     def updateUser(self, user_id: str, parameter: str, new_value: str) -> str:

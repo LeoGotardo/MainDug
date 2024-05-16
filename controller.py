@@ -1,4 +1,4 @@
-from modelSQLite import Model, PasswordGenerator
+from modelPostgre import Model, PasswordGenerator
 
 class Controller:
     def __init__(self):
@@ -20,7 +20,7 @@ class Controller:
         item = self.model.isCredentialValid(login, password, password_confirm)
         if item == True:
             user_add_result = self.model.addUser(login, password)
-            if type(user_add_result) != str:
+            if type(user_add_result) != None:
                 return True
             else:
                 return user_add_result

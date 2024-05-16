@@ -321,7 +321,7 @@ class View(ctk.CTk):
         """
         if newPar != '':
             if paramter == "Login":
-                new = self.c.findUserId(newPar, "$exists")
+                new = self.c.findUserId(newPar, "EXISTS")
                 if new == None:
                     sull = self.c.updateUser(user_id, paramter, newPar)
                     self.alert("Info", sull)
@@ -549,7 +549,8 @@ class View(ctk.CTk):
                 - Calls the signup method to return to the signup screen.
         """
         error = self.c.addUser(login, password, passwordConfirm)
-        if error == True:
+
+        if error != False:
             self.alert("Susses","Sussesfull Signup")
             self.signupFrame.destroy()
             self.login()
