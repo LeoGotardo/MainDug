@@ -72,7 +72,7 @@ class Model:
             return result.inserted_id
         except Exception as e:
             logging.error(f"Failed to add user: {e}")
-            return str(e)
+            return None
 
 
     def isLoginValid(self, login: str, password: str) -> list:

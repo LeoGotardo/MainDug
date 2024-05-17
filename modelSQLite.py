@@ -89,7 +89,7 @@ class Model:
             return self.cursor.lastrowid
         except sqlite3.IntegrityError as e:
             logging.error(f"Failed to add user: {e}")
-            return str(e)
+            return None
         
     
     def isLoginValid(self, login: str, password: str) -> list:
