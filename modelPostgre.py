@@ -1,7 +1,6 @@
 from psycopg2.extras import RealDictCursor
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
-from hashlib import sha256
  
 import random as r
 import psycopg2
@@ -32,7 +31,7 @@ class Model:
                 user_id UUID NOT NULL,
                 Site TEXT NOT NULL,
                 Login TEXT NOT NULL,
-                Password TEXT NOT NULL,
+                Password BYTEA NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
             )
         ''')
@@ -198,7 +197,6 @@ class Model:
         """
         self.connect()
         if parameter == 'Password':
-            print(new_value)
             new_value = hashlib.sha256(new_value.encode()).hexdigest()
 
         try:
@@ -316,7 +314,7 @@ class Model:
         return results
     
     
-    def deleteItem(self, logged_user_id: int, item_id: int) -> tuple:
+    def deleteItem(self, logged_user_id: str, item_id: int) -> tuple:
         """
         Attempts to delete a specified item for a logged-in user.
 
@@ -347,7 +345,7 @@ class Model:
             self.close()
             
 
-    def addNewLog(self, user_id: int, site: str, login: str, password: str) -> str:
+    def addNewLog(self, user_id: str, site: str, login: str, password: str) -> str:
         """
         Adds a new login entry for a specific user.
 
@@ -363,10 +361,8 @@ class Model:
         Returns:
             str: A message indicating the completion of the process or describing any errors encountered.
         """
+        key = self.createKey(user_id)
         self.connect()
-        self.cursor.execute("SELECT Login FROM Users WHERE id = %s", (user_id,))
-        secret = self.cursor.fetchone()
-        key = Cryptography.keyGenerator(secret[0])
         password = Cryptography.encryptSentence(password, key)
         
         try:
@@ -538,7 +534,9 @@ class PasswordGenerator:
 class Cryptography:
     def __init__(self) -> None:
         pass
+    
 
+    @staticmethod
     def keyGenerator(secret: str) -> bytes:
         """Generates a secure key from a given secret using SHA-256 hashing and Base64 encoding.
 
@@ -551,15 +549,14 @@ class Cryptography:
         Returns:
             bytes: The generated secure key in Base64 format.
         """
-        # Step 1: Hash the string using SHA-256 to ensure 32 bytes
-        hash_bytes = sha256(secret.encode('utf-8')).digest()
-        
-        # Step 2: Encode the hash result in base64 to be used as a Fernet key
+
+        hash_bytes = hashlib.sha256(secret.encode('utf-8')).digest()
         base64_key = base64.urlsafe_b64encode(hash_bytes)
         
         return base64_key
     
     
+    @staticmethod
     def encryptSentence(message: str, key: bytes) -> bytes:
         """Encrypts a message using Fernet symmetric encryption with the provided key.
 
@@ -575,8 +572,9 @@ class Cryptography:
 
         return encrypted_message
     
-
-    def decryptSentence(encrypted_string: bytes, key: bytes) -> str:
+    
+    @staticmethod
+    def decryptSentence(encrypted_string: str, key: bytes) -> str:
         """Decrypts an encrypted message using Fernet symmetric decryption with the provided key.
 
         Args:
@@ -587,7 +585,7 @@ class Cryptography:
             str: The decrypted plaintext message.
         """
         cipher = Fernet(key)
-        decrypted_message = cipher.decrypt(encrypted_string).decode('utf-8')
+        decrypted_message = cipher.decrypt(bytes(encrypted_string)).decode('utf-8')
 
         return decrypted_message
 
