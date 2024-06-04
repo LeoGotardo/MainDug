@@ -4,6 +4,7 @@ from PIL import Image as img
 from threading import Thread
 from CTkColorPicker import *
 from CTkTable import *
+from icecream import ic
 
 import customtkinter as ctk
 import os
@@ -54,7 +55,7 @@ class View(ctk.CTk):
             - Sets the geometry of the application window and prevents resizing.
             - Starts the main event loop of the application.
         """
-        os.system("cls")
+        
 
         self.c = Controller()
         self.app = ctk.CTk()
@@ -82,6 +83,7 @@ class View(ctk.CTk):
         self.mode = 'dark'
         self.login()
 
+        self.app.protocol("WM_DELETE_WINDOW", self.askClose)
         self.app.geometry("500x600")
         self.app.resizable(width=False, height=False)
         self.app.mainloop()
@@ -679,6 +681,25 @@ class View(ctk.CTk):
             msg.showinfo(message=copy[1])
         except Exception as e:
             msg.showerror(title="ERROR", message=e)
+            
+    
+    def askClose(self):
+        """
+        Prompts the user to confirm the application's exit.
+
+        Args:
+            self: The instance of the class.
+
+        Functionality:
+            - Prompts the user to confirm the application's exit.
+            - If the user confirms the exit, the application is closed.
+            - If the user cancels the exit, the application remains open.
+        """
+        response = msg.askyesno(title="Exit", message="Are you sure you want to exit?")
+        if response == True:
+            self.app.destroy()
+        else:
+            pass
 
 
     def login(self):
@@ -948,7 +969,7 @@ class View(ctk.CTk):
         self.secColor = self.c.darkColor(self.priColor, 50)
 
         
-        modes = ['Filter', 'Site', 'Login']
+        modes = ['Filter', 'Site', 'Login', 'Password']
      
         title = ctk.CTkLabel(
             master=self.loggedFrame, 

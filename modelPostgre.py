@@ -1,83 +1,82 @@
+from sqlalchemy import create_engine, Column, String, Text, ForeignKey, UniqueConstraint, and_, or_
+from sqlalchemy.orm import relationship, sessionmaker, declarative_base 
+from sqlalchemy.dialects.postgresql import UUID, BYTEA
 from psycopg2.extras import RealDictCursor
+from sqlalchemy.exc import SQLAlchemyError
 from cryptography.fernet import Fernet
+from sqlalchemy.sql import text
 from dotenv import load_dotenv
+from icecream import ic
  
+import sqlalchemy as sa
 import random as r
 import psycopg2
 import hashlib
 import logging
 import base64
+import re
 import os
+
+Base = declarative_base()
+
+class Users(Base):
+    __tablename__ = 'users'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=sa.text("uuid_generate_v4()"))
+    login = Column(Text, unique=True, nullable=False)
+    password = Column(Text, nullable=False)
+    color = Column(Text, default='#1b1b1b', nullable=False)
+    passwords = relationship('Passwords', back_populates='user', cascade='all, delete-orphan')
+
+
+class Passwords(Base):
+    __tablename__ = 'passwords'
+    id = Column(sa.Integer, primary_key=True, autoincrement=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    site = Column(Text, nullable=False)
+    login = Column(Text, nullable=False)
+    password = Column(BYTEA, nullable=False)
+    user = relationship('Users', back_populates='passwords')
 
 
 class Model:
     def __init__(self) -> None:
+        os.system('cls' if os.name == 'nt' else 'clear')
         self.connect()
+        self.session.execute(text('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'))
+        Base.metadata.create_all(self.engine)
         
-        self.cursor.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
-        
-        self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS Users (
-                id UUID PRIMARY KEY,
-                Login TEXT UNIQUE NOT NULL,
-                Password TEXT NOT NULL,
-                Color TEXT DEFAULT '#1b1b1b'
-            )
-        ''')
-        
-        self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS Passwords (
-                id SERIAL PRIMARY KEY,
-                user_id UUID NOT NULL,
-                Site TEXT NOT NULL,
-                Login TEXT NOT NULL,
-                Password BYTEA NOT NULL,
-                FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
-            )
-        ''')
-        
-        self.connection.commit()
-        self.close()
-        
-    
     def connect(self):
         load_dotenv()
         
-        hostname = os.getenv('DB_HOST')
-        database = os.getenv('DB_NAME')
         username = os.getenv('DB_USER')
         password = os.getenv('DB_PASSWORD')
+        hostname = os.getenv('DB_HOST')
         port = os.getenv('DB_PORT')
+        database = os.getenv('DB_NAME')
 
         try:
-            self.connection = psycopg2.connect(
-                host = hostname,
-                dbname = database,
-                user = username,
-                password = password,
-                port = port
-            )
-            
-            self.cursor = self.connection.cursor()
+            # Criar URL de conexão para o SQLAlchemy
+            url = f"postgresql://{username}:{password}@{hostname}:{port}/{database}"
+            # Criar engine
+            self.engine = create_engine(url)
+            # Criar uma sessão configurada
+            Session = sessionmaker(bind=self.engine)
+            self.session = Session()
 
-        except (Exception, psycopg2.DatabaseError) as e:
+            # Testar a conexão executando uma simples consulta
+            result = self.session.execute(text("SELECT version()"))
+            for row in result:
+                print(f"Connected to: {row[0]}\n")
+        
+        except Exception as e:
             print(f"Failed to connect to Database: {e}")
-
-
-    def close(self):
-        if self.cursor is not None:
-            self.cursor.close()
-        if self.connection is not None:
-            self.connection.close()
         
         
     def createKey(self, user_id: str):
-        self.connect()
-        self.cursor.execute("SELECT Login FROM Users WHERE id = %s", (user_id,))
-        secret = self.cursor.fetchone()
+        query = sa.select(Users.login).where(Users.id == user_id)
+        secret = self.session.execute(query).all()
 
-        key = Cryptography.keyGenerator(secret[0])
-        self.close()
+        key = Cryptography.keyGenerator(secret[0][0])
     
         return key
     
@@ -101,21 +100,19 @@ class Model:
     
     
     def addUser(self, login: str, password: str) -> str:
-        self.connect()
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        user = (login, hashed_password)
+        user_data = {'login': login, 'password': hashed_password}  
         try:
-            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-                cursor.execute("INSERT INTO Users (id, Login, Password) VALUES (uuid_generate_v4(), %s, %s) RETURNING id", user)
-                result = cursor.fetchone()
-                self.connection.commit()
-                self.close()
-                if result:
-                    return result['id']
-                else:
-                    print("No UUID returned.")
-                    return None
-        except psycopg2.IntegrityError as e:
+            query = sa.insert(Users).values(**user_data).returning(Users.id)
+            result = self.session.execute(query).fetchone()
+            self.session.commit()
+
+            if result:
+                return str(result[0])
+            else:
+                print("No UUID returned.")
+                return None
+        except Exception as e:
             logging.error(f"Failed to add user: {e}")
             return None
         
@@ -132,13 +129,9 @@ class Model:
             A list containing a boolean of validity and either the user's ID or an error message.
         """
         
-        self.connect()
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        
-        query = "SELECT id FROM Users WHERE Login = %s AND Password = %s"
-        valid = self.cursor.execute(query, (login, hashed_password))
-        valid = self.cursor.fetchone()
-        self.close()
+        query = sa.select(Users.id).where(and_(Users.login == login, Users.password == hashed_password))
+        valid = self.session.execute(query).fetchone()
         
         if valid is not None:
             return [True, str(valid[0])]
@@ -159,7 +152,6 @@ class Model:
             True if credentials are valid, otherwise returns an error message.
         """
         try:
-            self.connect()
             if login == '':
                 return "Login can't be empty."
             if password != password_confirm:
@@ -167,17 +159,17 @@ class Model:
             if password == '':
                 return "Password can't be empty"
             
-            query = "SELECT id FROM Users WHERE Login = %s"
-            self.cursor.execute(query, (login,))
-            if self.cursor.fetchone() is None:
+            query = sa.select(Users.id).where(Users.login == login)
+            logins = self.session.execute(query).all()
+            
+            if len(logins) == 0:
                 # If no existing user is found, the credentials are considered valid for new user creation.
                 return True
             else:
                 return 'Login already exists.'
         except Exception as e:
             print(f'An error occured:{e}')
-        finally:
-            self.close()
+
             
             
     def updateUser(self, user_id: str, parameter: str, new_value: str) -> str:
@@ -195,18 +187,19 @@ class Model:
         Returns:
             str: A success message if the update was successful, or an error message if it failed.
         """
-        self.connect()
-        if parameter == 'Password':
+        if parameter.lower() == 'password':
             new_value = hashlib.sha256(new_value.encode()).hexdigest()
 
         try:
-            # Assuming 'conn' is your SQLite database connection object
-            # Safely constructing the SQL query to prevent SQL injection
-            query = f"UPDATE Users SET {parameter} = %s WHERE id = %s"
-            self.cursor.execute(query, (new_value, user_id))
-            self.connection.commit()  # Commit the changes
-            self.close()
-            if self.cursor.rowcount > 0:
+            if parameter.lower() == 'login':
+                 if self.changeCryptography(user_id, new_value) == False:
+                     return 'An error ocurred, please try again...'
+            query = sa.update(Users).where(Users.id == user_id).values({parameter: new_value})
+            itens = self.session.execute(query)
+            
+            self.session.commit()
+
+            if itens.rowcount > 0:
                 return f'{parameter} successfully updated.'
             else:
                 return 'No update performed. User not found.'
@@ -214,6 +207,23 @@ class Model:
             logging.error(f"Failed to update user: {e}")
             return str(e)
         
+    
+    def changeCryptography(self, user_id: str, new_login: str):
+        try:
+            logs = self.findPasswords(user_id)
+            key = Cryptography.keyGenerator(new_login)
+            for log in logs:
+                password_id = log[0]
+                password = log[3]
+                hashed_password = Cryptography.encryptSentence(password, key)
+                self.session.execute(sa.update(Passwords).where(Passwords.id == password_id).values({'password': hashed_password}))
+            self.session.commit()
+            return True
+        except Exception as e:
+            print(f'An error occurred: {e}')
+            self.session.rollback()
+            return False
+    
         
     def findUserId(self, login: str, password: str) -> str:
         """
@@ -230,28 +240,24 @@ class Model:
         Returns:
             str: The user's ID if a match is found, None otherwise.
         """
-        self.connect()
 
         if password == "EXISTS":
-            query = "SELECT id FROM Users WHERE Login = %s"
-            params = (login,)
+            query = sa.select(Users.id).where(Users.login == login)
         else:
-            query = "SELECT id FROM Users WHERE Login = %s AND Password = %s"
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
-            params = (login, hashed_password)
+            query = sa.select(Users.id).where(and_(Users.login == login, Users.passwords == hashed_password))
+
 
         try:
-            self.cursor.execute(query, params)
-            user = self.cursor.fetchone()
-            if user:
-                return user[0]
+            id = self.session.execute(query).all()
+            if id:
+                return id[0][0]
             else:
                 return None
         except (Exception, psycopg2.DatabaseError) as error:
             print(f"Error: {error}")
             return None
-        finally:
-            self.close()
+
             
             
     def deleteUser(self, user_id: str) -> bool:
@@ -268,15 +274,16 @@ class Model:
             bool: True if the user was successfully deleted, False otherwise.
         """
         try:
-            self.connect()
-            self.cursor.execute("DELETE FROM Users WHERE id = %s", (user_id,))
-            self.connection.commit()
-            return self.cursor.rowcount > 0
+            query = sa.delete(Users).where(Users.id == user_id)
+            
+            result = self.session.execute(query)
+            self.session.commit()
+            
+            return result.rowcount > 0
         except Exception as e:
             logging.error(f"Failed to delete user: {e}")
             return False
-        finally:
-            self.close()
+
             
     
     def findPasswords(self, user_id: str) -> list:
@@ -293,23 +300,23 @@ class Model:
         Returns:
             list: A list of lists, each containing the document ID and the first three logins for each matching document.
         """
-        key = self.createKey(user_id)
-        
-        self.connect()
-        self.cursor.execute("SELECT id, Site, Login, Password FROM Passwords WHERE user_id = %s", (user_id,))
-        rows = self.cursor.fetchall()
-
-        results = []
-        for row in rows:
-            if row:
-                results.append([row[0], row[1], row[2], row[3]])  # Append document ID and login details
-
-
-        for i, item in enumerate(results):
-            decrypted_password = Cryptography.decryptSentence(item[3], key)
-            results[i][3] = decrypted_password
+        try:
+            key = self.createKey(user_id)
             
-        self.close()
+            query = sa.select(Passwords.id, Passwords.site, Passwords.login, Passwords.password).where(Passwords.user_id == user_id)
+            rows = self.session.execute(query).all()
+            results = []
+            for row in rows:
+                if row:
+                    results.append([row[0], row[1], row[2], row[3]])  # Append document ID and login details
+
+
+            for i, item in enumerate(results):
+                decrypted_password = Cryptography.decryptSentence(item[3], key)
+                results[i][3] = decrypted_password
+        except Exception as e:
+            print(f"An error occured: {e}")
+            
         
         return results
     
@@ -330,10 +337,10 @@ class Model:
         """
         try:
             self.connect()
-            query = "DELETE FROM Passwords WHERE id = %s AND user_id = %s"
-            self.cursor.execute(query, (item_id, logged_user_id))
-            self.connection.commit()
-            if self.cursor.rowcount > 0:
+            query = sa.delete(Passwords).where(and_(Passwords.id == item_id, Passwords.user_id == logged_user_id))
+            result = self.session.execute(query)
+            self.session.commit()
+            if result.rowcount > 0:
                 return "Item deleted successfully."
             else:
                 return "Item not found."
@@ -341,8 +348,7 @@ class Model:
         except Exception as e:
             logging.error(f"Failed to delete item: {e}")
             return f"Failed to delete item: {e}"
-        finally:
-            self.close()
+
             
 
     def addNewLog(self, user_id: str, site: str, login: str, password: str) -> str:
@@ -361,37 +367,32 @@ class Model:
         Returns:
             str: A message indicating the completion of the process or describing any errors encountered.
         """
-        key = self.createKey(user_id)
-        self.connect()
-        password = Cryptography.encryptSentence(password, key)
         
         try:
-            query = "INSERT INTO Passwords (user_id, Site, Login, Password) VALUES (%s, %s, %s, %s)"
-            self.cursor.execute(query, (user_id, site, login, password))
-            self.connection.commit()
-            if self.cursor.rowcount > 0:
+            key = self.createKey(user_id)
+            password = Cryptography.encryptSentence(password, key)
+            query = sa.insert(Passwords).values({'user_id': user_id, 'site': site, 'login': login, 'password': password})
+            result = self.session.execute(query)
+            self.session.commit()
+            if result.rowcount > 0:
                 return 'Log added successfully.'
         except Exception as e:
             logging.error(f"Failed to add new log: {e}")
-            return str(e)          
-        finally:
-            self.close()
+            return e          
+
             
             
     def validEditArgs(self, user_id: int, log_id: str):
         try:
-            self.connect()
-            query = f"SELECT user_id FROM Passwords WHERE id = {log_id}"
-            self.cursor.execute(query)
-            log_entry = self.cursor.fetchone()
-            if log_entry and log_entry[0] == user_id:
+            query = sa.select(Passwords.user_id).where(Passwords.id == log_id)
+            log_entry = self.session.execute(query).all()
+            if log_entry and str(log_entry[0][0]) == user_id:
                 return True
             else:
                 return False, "Cannot find matching log entry or user mismatch. Please try again."
         except Exception as e:
             return e
-        finally:
-            self.close()
+
             
     
     def editLog(self, user_id: int, parameter: str, log_id: int, new_value: str) -> str:
@@ -414,13 +415,12 @@ class Model:
             new_value = Cryptography.encryptSentence(new_value, key)
 
         try:
-            self.connect()
             # Attempt to find and update the log entry
-            query = f"UPDATE Passwords SET {parameter} = %s WHERE id = %s"
-            self.cursor.execute(query, (new_value, log_id))
-            self.connection.commit()
+            query = sa.update(Passwords).where(Passwords.id == log_id).values({parameter: new_value})
+            results = self.session.execute(query)
+            self.session.commit()
             # Check if the update was successful
-            if self.cursor.rowcount > 0:
+            if results.rowcount > 0:
                 return f"{parameter.capitalize()} updated successfully."
             else:
                 return "Log entry not found or no update required."
@@ -428,63 +428,77 @@ class Model:
         except Exception as e:
             logging.error(f"Failed to edit log: {e}")
             return f"Failed to edit log: {e}"
-        finally:
-            self.close()
-            
 
-    def filterPasswords(self, filter: str, mode: str, user_id):
+
+    def filterPasswords(self, filter: str, mode: str, user_id: str) -> list or None:  # type: ignore
         try:
             # Retrieve user key
             key = self.createKey(user_id)
+            if mode.lower() == 'password':  
+                passwords = self.findPasswords(user_id)
+                filtered_passwords = []
+                pattern = re.compile(re.escape(filter), re.IGNORECASE)  # Case insensitive regex pattern
+                for password in passwords:
+                    if pattern.search(password[3]):  # Use regex search to check if filter is in the password
+                        filtered_passwords.append(password)
+                return filtered_passwords      
+            else:
+                # Construct condition based on mode
+                if mode.lower() == "site":
+                    condition = Passwords.site.like(f"%{filter}%")
+                elif mode.lower() == "login":
+                    condition = Passwords.login.like(f"%{filter}%")
+                else:
+                    raise ValueError("Invalid mode. Choose 'site', 'login', or 'password'.")
 
+                # Construct query based on mode
+                query = (
+                    sa.select(Passwords.id, Passwords.site, Passwords.login, Passwords.password)
+                    .where(and_(Passwords.user_id == user_id, condition))
+                )
+                logs = self.session.execute(query).fetchall()
 
-            # Construct query based on mode
-            self.connect()
-            sql_query = f"SELECT id, Site, Login, Password FROM Passwords WHERE user_id = %s AND {mode} LIKE %s"
-            self.cursor.execute(sql_query, (user_id, filter))
-            logs = self.cursor.fetchall()
+                # Process logs and decrypt passwords
+                items = []
+                for log in logs:
+                    try:
+                        decrypted_password = Cryptography.decryptSentence(log.password, key)
+                        items.append([log.id, log.site, log.login, decrypted_password])
+                    except Exception as e:
+                        print(f"Error decrypting password for log {log.id}: {e}")
+                return items
 
-            # Process logs and decrypt passwords
-            items = []
-            for log in logs:
-                try:
-                    decrypted_password = Cryptography.decryptSentence(log[3] ,key)
-                    items.append([log[0], log[1], log[2], decrypted_password])
-                except Exception as e:
-                    print(f"Error decrypting password for log {log[0]}: {e}")
-            return items
+        except SQLAlchemyError as e:
+            print(f"SQLAlchemy error occurred: {e}")
+            return []
         except Exception as e:
             print(f"An error occurred: {e}")
             return []
-        finally:
-            self.close()
+
+
+
             
 
     def changeColor(self, user_id, newColor):
         try:
-            self.connect()
-            query = f"UPDATE Users SET Color = %s WHERE id = %s"
-            self.cursor.execute(query, (newColor, user_id))
-            self.connection.commit()
+            query = sa.update(Users).where(Users.id == user_id).values({'color': newColor})
+            self.session.execute(query)
+            self.session.commit()
             return True
         except Exception as e:
             print(f"An error ocorred: {e}")
-        finally:
-            self.close()
+
             
     
     def findColor(self, user_id):
         try:
-            self.connect()
-            query = "SELECT Color FROM Users WHERE id = %s"
-            self.cursor.execute(query, (user_id,))
-            color = self.cursor.fetchone()
+            query = sa.select(Users.color).where(Users.id == user_id)
+            color = self.session.execute(query).all()
 
-            return color[0]
+            return color[0][0]
         except Exception as e:
             print(f'An error occurred:{e}')
-        finally:
-            self.close()
+
         
             
 class PasswordGenerator:
@@ -574,7 +588,7 @@ class Cryptography:
     
     
     @staticmethod
-    def decryptSentence(encrypted_string: str, key: bytes) -> str:
+    def decryptSentence(encrypted_string: str, key: str) -> str:
         """Decrypts an encrypted message using Fernet symmetric decryption with the provided key.
 
         Args:
@@ -595,9 +609,8 @@ if __name__ == "__main__":
     # Initialize logging
     logging.basicConfig(level=logging.INFO)
 
-    generator = PasswordGenerator()
     model = Model()
-
+    print(model.filterPasswords('1','password', '119864e9-5f05-4659-8359-ed1a15dff34c'))
 
 
 

@@ -3,6 +3,7 @@ alive_progress
 python-dotenv
 customtkinter
 cryptography
+SQLAlchemy
 pyperclip
 CTktable
 pymongo
