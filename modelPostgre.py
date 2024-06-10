@@ -257,8 +257,7 @@ class Model:
         except (Exception, psycopg2.DatabaseError) as error:
             print(f"Error: {error}")
             return None
-
-            
+       
             
     def deleteUser(self, user_id: str) -> bool:
         """
@@ -476,9 +475,6 @@ class Model:
             return []
 
 
-
-            
-
     def changeColor(self, user_id, newColor):
         try:
             query = sa.update(Users).where(Users.id == user_id).values({'color': newColor})
@@ -487,8 +483,7 @@ class Model:
             return True
         except Exception as e:
             print(f"An error ocorred: {e}")
-
-            
+         
     
     def findColor(self, user_id):
         try:

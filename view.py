@@ -7,7 +7,7 @@ from CTkTable import *
 from icecream import ic
 
 import customtkinter as ctk
-import os
+import time
 
 
 class CustomThread(Thread):
@@ -87,6 +87,21 @@ class View(ctk.CTk):
         self.app.geometry("500x600")
         self.app.resizable(width=False, height=False)
         self.app.mainloop()
+        
+    
+    def callloading(self, frame, screen, func):
+        frame.destroy()
+        self.loading()
+        self.thread = Thread(target=func)
+        self.thread.start()
+        self.app.after(100, self.is_alive, screen)
+    
+    def is_alive(self, screen):
+        if self.thread.is_alive():
+            self.app.after(100, self.is_alive)
+        else:
+            self.loading_complete()
+            screen
 
 
     def selectMode(self, mode):
@@ -489,6 +504,8 @@ class View(ctk.CTk):
         self.passwords = self.c.findPasswords(user_id)
         self.title = ['ID', 'Site', 'Login', 'Password']
         self.passwords.insert(0, self.title)
+        time.sleep(5)
+
 
     def validLogin(self, login, password):
         """
@@ -519,14 +536,17 @@ class View(ctk.CTk):
                 self.findPasswords(itens[1])
 
                 self.logged(itens[1])
+                return True
             elif itens[0] == False:
                 self.alert("ERROR",itens[1])
                 self.loginFrame.destroy()
                 self.login()
+                return False
         else:
             self.alert("ERROR", "Login or Password can't be empty")
             self.loginFrame.destroy()
             self.login()
+            return False
 
 
     def addCad(self, login, password, passwordConfirm):
@@ -763,7 +783,7 @@ class View(ctk.CTk):
         loginButton = ctk.CTkButton(
             master=self.loginFrame,
             text="Login",
-            command=lambda: [self.validLogin(loginEntry.get(), passwordEntry.get())],
+            command=lambda: [ self.callloading(self.loginFrame, self.logged, self.validLogin(loginEntry.get(), passwordEntry.get()))],
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -805,7 +825,7 @@ class View(ctk.CTk):
         signupButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _: self.validLogin(loginEntry.get(), passwordEntry.get()))
+        self.app.bind("<Return>", lambda _: [self.callloading(self.loginFrame, lambda : self.logged, self.validLogin(loginEntry.get(), passwordEntry.get()))])
 
 
     def signup(self):
@@ -2211,6 +2231,53 @@ class View(ctk.CTk):
 
         self.app.bind("<Return>", lambda _: self.addLogDB(user_id, site.get(), login.get(), password, self.addPassFrame))
 
+    
+    def loading(self):
+        """
+        Sets up the loading page for displaying a loading animation.
+
+        Args:
+            self: The instance of the class.
+
+        Functionality:
+            - Creates and configures the loading frame.
+            - Sets the title for the application window.
+            - Creates a loading animation using the tkinter.Animation module.
+            - Creates a button for exiting the application.
+            - Binds the Return key to trigger the exit method when pressed.
+            - Places all widgets within the loading frame with appropriate configurations.
+        """
+        print("Loading...")
+        self.loadingFrame = ctk.CTkFrame(master=self.app)
+        self.app.title("Loading...")
+        self.loadingFrame.place(relx=0.5, rely=0.5, anchor="center")
+        self.app.iconbitmap(default="icons/Alien.ico")
+
+        title = ctk.CTkLabel(
+            master=self.loadingFrame, 
+            text="Loading...",
+            font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
+        )
+        
+        wait = ctk.CTkLabel(
+            master=self.loadingFrame,
+            text='Please wait',
+            font=ctk.CTkFont(family="Helvetica", size=16)
+        )
+
+        self.loadingbar = ctk.CTkProgressBar(master=self.loadingFrame, mode='indeterminate', progress_color=self.priColor)
+        self.loadingbar.start()
+
+        title.pack(padx=100, pady=5)
+        wait.pack(padx=50, pady=0)
+        self.loadingbar.pack(padx=50, pady=10)
+        
+
+    def loading_complete(self):
+        self.loadingbar.stop()
+        self.loadingFrame.destroy()
+
+    
 if __name__ == "__main__":
     """
     Entry point of the application.
