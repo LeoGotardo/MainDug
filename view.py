@@ -91,14 +91,24 @@ class View(ctk.CTk):
         self.app.resizable(width=False, height=False)
         self.app.mainloop()
         
+        
+    def getValue(self, *entryes):
+        self.values = []
+        for entry in entryes:
+            self.values.append(entry.get())
+
     
     def callloading(self, lastscreen, frame, screen, func):
         if func:
-            self.thread = CustomThread(target=func)
-            self.thread.start()
-            frame.destroy()
-            self.loading()
-            self.app.after(200, self.is_alive, screen, lastscreen)
+            try:
+                self.thread = CustomThread(target=func)
+                self.thread.start()
+                frame.destroy()
+                self.loading()
+                self.app.after(200, self.is_alive, screen, lastscreen)
+            except Exception as e:
+                print(f"Error: {e}")
+                return False
         else:
             lastscreen
     
@@ -112,7 +122,7 @@ class View(ctk.CTk):
             if result == False:
                 lastscreen
             else:
-                screen
+                screen()
 
 
     def selectMode(self, mode):
@@ -539,7 +549,6 @@ class View(ctk.CTk):
             - Calls the login method to return to the login screen.
         - If the login or password is empty, displays an error message.
         """
-        
         print('valid login')
         if login != '' or password != '':
             itens = self.c.isLoginValid(login, password)
@@ -753,7 +762,7 @@ class View(ctk.CTk):
             font=ctk.CTkFont(family="Helvetica", size=36, weight="bold", slant="italic")
         )
 
-        loginEntry = ctk.CTkEntry(
+        self.loginEntry = ctk.CTkEntry(
             master=self.loginFrame,
             placeholder_text="Login",
             font=("RobotoSlab", 12),
@@ -763,9 +772,9 @@ class View(ctk.CTk):
             width=200
         )
         
-        self.loginvar = loginEntry.get()
+        self.loginvar = self.loginEntry.get()
 
-        passwordEntry = ctk.CTkEntry(
+        self.passwordEntry = ctk.CTkEntry(
             master=self.loginFrame,
             placeholder_text="Password",
             font=("RobotoSlab", 12),
@@ -776,12 +785,12 @@ class View(ctk.CTk):
             show="*"
         )
         
-        self.passwordvar = passwordEntry.get()
+        self.passwordvar = self.passwordEntry.get()
 
         showPass = ctk.CTkButton(
             master=self.loginFrame,
             text="",
-            command=lambda:[self.seePass(passwordEntry, showPass)],
+            command=lambda:[self.seePass(self.passwordEntry, showPass)],
             font=("RobotoSlab", 12),
             corner_radius=50,
             fg_color=self.priColor,
@@ -829,14 +838,14 @@ class View(ctk.CTk):
         )
 
         title.pack(padx=50, pady=10)
-        loginEntry.pack(padx=50, pady=10)
-        passwordEntry.pack(padx=50, pady=10)
+        self.loginEntry.pack(padx=50, pady=10)
+        self.passwordEntry.pack(padx=50, pady=10)
         showPass.place(relx=0.85, rely=0.39)
         loginButton.pack(padx=50, pady=10)
         signupButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _: [print(f"login:{self.loginvar}\npassword:{self.passwordvar}"), self.callloading(self.login, self.loginFrame, lambda:self.logged(self.user_id), lambda : self.validLogin(self.loginvar, self.passwordvar))])
+        self.app.bind("<Return>", lambda _: [ self.getValue(self.loginEntry, self.passwordEntry), self.callloading(self.login, self.loginFrame, lambda: self.logged(self.user_id), lambda : self.validLogin(self.values[0], self.values[1]))])
 
 
     def signup(self):
