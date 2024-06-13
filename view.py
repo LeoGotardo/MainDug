@@ -7,7 +7,6 @@ from CTkTable import *
 from icecream import ic
 
 import customtkinter as ctk
-import time
 
 
 class CustomThread(Thread):
@@ -28,6 +27,7 @@ class CustomThread(Thread):
     def __init__(self, group=None, target= None, name=None, args=(), kwargs={}, Verbose=None):
         Thread.__init__(self, group, target, name, args, kwargs)
         self._return = None
+
 
     def run(self):
         if self._target is not None:
@@ -77,10 +77,13 @@ class View(ctk.CTk):
         self.priColor = '#1b1b1b'
         self.secColor = self.c.darkColor(self.priColor, 50)
         self.filterMode = 'Filter'
+        self.user_id = None
+        self.mode = 'dark'
+        self.loginvar = None
+        self.passwordvar = None
 
         ctk.set_appearance_mode('dark')
 
-        self.mode = 'dark'
         self.login()
 
         self.app.protocol("WM_DELETE_WINDOW", self.askClose)
@@ -89,19 +92,27 @@ class View(ctk.CTk):
         self.app.mainloop()
         
     
-    def callloading(self, frame, screen, func):
-        frame.destroy()
-        self.loading()
-        self.thread = Thread(target=func)
-        self.thread.start()
-        self.app.after(100, self.is_alive, screen)
-    
-    def is_alive(self, screen):
-        if self.thread.is_alive():
-            self.app.after(100, self.is_alive)
+    def callloading(self, lastscreen, frame, screen, func):
+        if func:
+            self.thread = CustomThread(target=func)
+            self.thread.start()
+            frame.destroy()
+            self.loading()
+            self.app.after(200, self.is_alive, screen, lastscreen)
         else:
+            lastscreen
+    
+    def is_alive(self, screen, lastscreen):
+        if self.thread.is_alive():
+            self.app.after(200, self.is_alive, screen, lastscreen)
+        else:
+            result = self.thread.join()
+            print(self.user_id, result)
             self.loading_complete()
-            screen
+            if result == False:
+                lastscreen
+            else:
+                screen
 
 
     def selectMode(self, mode):
@@ -504,7 +515,6 @@ class View(ctk.CTk):
         self.passwords = self.c.findPasswords(user_id)
         self.title = ['ID', 'Site', 'Login', 'Password']
         self.passwords.insert(0, self.title)
-        time.sleep(5)
 
 
     def validLogin(self, login, password):
@@ -529,24 +539,21 @@ class View(ctk.CTk):
             - Calls the login method to return to the login screen.
         - If the login or password is empty, displays an error message.
         """
+        
+        print('valid login')
         if login != '' or password != '':
             itens = self.c.isLoginValid(login, password)
+            self.user_id = itens[1]
             if itens[0] == True:
-                self.loginFrame.destroy()
                 self.findPasswords(itens[1])
-
-                self.logged(itens[1])
                 return True
-            elif itens[0] == False:
+            else:
                 self.alert("ERROR",itens[1])
-                self.loginFrame.destroy()
-                self.login()
                 return False
         else:
             self.alert("ERROR", "Login or Password can't be empty")
-            self.loginFrame.destroy()
-            self.login()
             return False
+        
 
 
     def addCad(self, login, password, passwordConfirm):
@@ -755,6 +762,8 @@ class View(ctk.CTk):
             height=40,
             width=200
         )
+        
+        self.loginvar = loginEntry.get()
 
         passwordEntry = ctk.CTkEntry(
             master=self.loginFrame,
@@ -766,6 +775,8 @@ class View(ctk.CTk):
             width=200,
             show="*"
         )
+        
+        self.passwordvar = passwordEntry.get()
 
         showPass = ctk.CTkButton(
             master=self.loginFrame,
@@ -783,7 +794,7 @@ class View(ctk.CTk):
         loginButton = ctk.CTkButton(
             master=self.loginFrame,
             text="Login",
-            command=lambda: [ self.callloading(self.loginFrame, self.logged, self.validLogin(loginEntry.get(), passwordEntry.get()))],
+            command= lambda: [self.callloading(self.login, self.loginFrame, self.logged, self.validLogin(self.loginvar, self.passwordvar))], 
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
@@ -825,7 +836,7 @@ class View(ctk.CTk):
         signupButton.pack(padx=50, pady=10)
         changeTheme.pack(padx=50, pady=10)
 
-        self.app.bind("<Return>", lambda _: [self.callloading(self.loginFrame, lambda : self.logged, self.validLogin(loginEntry.get(), passwordEntry.get()))])
+        self.app.bind("<Return>", lambda _: [print(f"login:{self.loginvar}\npassword:{self.passwordvar}"), self.callloading(self.login, self.loginFrame, lambda:self.logged(self.user_id), lambda : self.validLogin(self.loginvar, self.passwordvar))])
 
 
     def signup(self):
@@ -987,7 +998,6 @@ class View(ctk.CTk):
         self.app.iconbitmap(default="icons/Star.ico")
         self.priColor = self.c.findColor(user_id)
         self.secColor = self.c.darkColor(self.priColor, 50)
-
         
         modes = ['Filter', 'Site', 'Login', 'Password']
      
@@ -2276,6 +2286,7 @@ class View(ctk.CTk):
     def loading_complete(self):
         self.loadingbar.stop()
         self.loadingFrame.destroy()
+        print("Loading finished")
 
     
 if __name__ == "__main__":
