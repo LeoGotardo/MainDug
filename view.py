@@ -1,41 +1,16 @@
 from tkinter import messagebox as msg
 from controller import Controller
 from PIL import Image as img
-from threading import Thread
+from customThread import CustomThread
 from CTkColorPicker import *
 from CTkTable import *
 from icecream import ic
 
 import customtkinter as ctk
+import time
 
 
-class CustomThread(Thread):
-    """
-    Initialize CustomThread Object
-    
-    Args:
-        group(object): Thread Group.
-        target(callabe): Target Function to call when thread starts.
-        name(str): Thread name.
-        args(tuple): arguments to pass to the target function
-        kwargs(dict): keyword arguments to pass to the target function.
-        verbose(bool): Verbosity level.
-        
-    Returns:
-        The return value of the target function if it exists.
-    """
-    def __init__(self, group=None, target= None, name=None, args=(), kwargs={}, Verbose=None):
-        Thread.__init__(self, group, target, name, args, kwargs)
-        self._return = None
 
-
-    def run(self):
-        if self._target is not None:
-            self._return = self._target(*self._args, **self._kwargs)
-
-    def join(self):
-        Thread.join(self)
-        return self._return
 
 
 class View(ctk.CTk):
@@ -550,6 +525,7 @@ class View(ctk.CTk):
         - If the login or password is empty, displays an error message.
         """
         print('valid login')
+        time.sleep(5)
         if login != '' or password != '':
             itens = self.c.isLoginValid(login, password)
             self.user_id = itens[1]
@@ -719,7 +695,7 @@ class View(ctk.CTk):
             msg.showerror(title="ERROR", message=e)
             
     
-    def askClose(self):
+    def askClose(self): 
         """
         Prompts the user to confirm the application's exit.
 
@@ -731,8 +707,11 @@ class View(ctk.CTk):
             - If the user confirms the exit, the application is closed.
             - If the user cancels the exit, the application remains open.
         """
-        response = msg.askyesno(title="Exit", message="Are you sure you want to exit?")
+        response = msg.askyesno(title="Exit?", message="Are you sure you want to exit?")
         if response == True:
+            if self.thread is not None:
+                if self.thread.is_alive():
+                    self.thread.raise_exception()
             self.app.destroy()
         else:
             pass
@@ -803,7 +782,7 @@ class View(ctk.CTk):
         loginButton = ctk.CTkButton(
             master=self.loginFrame,
             text="Login",
-            command= lambda: [self.callloading(self.login, self.loginFrame, self.logged, self.validLogin(self.loginvar, self.passwordvar))], 
+            command= lambda: [self.getValue(self.loginEntry, self.passwordEntry), self.callloading(self.login, self.loginFrame, lambda: self.logged(self.user_id), lambda : self.validLogin(self.values[0], self.values[1]))], 
             font=("RobotoSlab", 12),
             fg_color=self.priColor,
             hover_color=self.secColor,
