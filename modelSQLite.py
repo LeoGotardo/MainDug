@@ -14,7 +14,7 @@ class Model:
         # Clear screen in a cross-platform way
         os.system('cls' if os.name == 'nt' else 'clear')
 
-        self.connection = sqlite3.connect('database.db', timeout=30)
+        self.connection = sqlite3.connect('database.db', timeout=30, check_same_thread=False)
         self.cursor = self.connection.cursor()
         self.setup_tables()
 

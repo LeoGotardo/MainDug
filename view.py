@@ -80,7 +80,7 @@ class View(ctk.CTk):
                 self.thread.start()
                 frame.destroy()
                 self.loading()
-                self.app.after(200, self.is_alive, screen, lastscreen)
+                self.app.after(100, self.is_alive, screen, lastscreen)
             except Exception as e:
                 print(f"Error: {e}")
                 return False
@@ -94,8 +94,9 @@ class View(ctk.CTk):
             result = self.thread.join()
             print(self.user_id, result)
             self.loading_complete()
+            print(result)
             if result == False:
-                lastscreen
+                lastscreen()
             else:
                 screen()
 

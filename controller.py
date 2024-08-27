@@ -1,4 +1,4 @@
-from modelPostgre import Model, PasswordGenerator
+from modelSQLite import Model, PasswordGenerator
 
 class Controller:
     def __init__(self):
