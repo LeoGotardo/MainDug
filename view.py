@@ -56,6 +56,7 @@ class View(ctk.CTk):
         self.mode = 'dark'
         self.loginvar = None
         self.passwordvar = None
+        self.thread = None
 
         ctk.set_appearance_mode('dark')
 
