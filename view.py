@@ -291,20 +291,21 @@ class View(ctk.CTk):
         """
         dialog = ctk.CTkInputDialog(title="Delete Item", text="What's the item ID that you want to delete?")
         item_id = dialog.get_input()
-        try:
-            item_id = int(item_id)
-        except:
-            msg.showerror(title="Error", message="ID must be a number.")
-            dialog
-            return 0
-        try:
-            deleted = self.c.deleteItem(user_id, item_id)
-            msg.showinfo(title='Info', message=deleted)
-            self.loggedFrame.destroy()
-            self.findPasswords(user_id)
-            self.logged(user_id)
-        except Exception as e:
-            msg.showerror(title="Error", message=e)
+        if item_id is not None:
+            try:
+                item_id = int(item_id)
+            except:
+                msg.showerror(title="Error", message="ID must be a number.")
+                dialog
+                return 0
+            try:
+                deleted = self.c.deleteItem(user_id, item_id)
+                msg.showinfo(title='Info', message=deleted)
+                self.loggedFrame.destroy()
+                self.findPasswords(user_id)
+                self.logged(user_id)
+            except Exception as e:
+                msg.showerror(title="Error", message=e)
     
     
     def editCred(self, user_id, paramter, newPar):
@@ -475,15 +476,16 @@ class View(ctk.CTk):
         """
         dialog = ctk.CTkInputDialog(text="What's the item ID:", title='Edit item')
         itemID = dialog.get_input()
-        try:
-            int(itemID)
-        except:
-            msg.showerror(text='Item must be a number')
-        if self.c.validEditArgs(user_id, itemID) == True:
-            self.loggedFrame.destroy()
-            self.editItem(user_id, itemID)
-        else:
-            msg.showerror(title="Error", message=self.c.validEditArgs(user_id, itemID))
+        if itemID is not None:
+            try:
+                int(itemID)
+            except:
+                msg.showerror(text='Item must be a number')
+            if self.c.validEditArgs(user_id, itemID) == True:
+                self.loggedFrame.destroy()
+                self.editItem(user_id, itemID)
+            else:
+                msg.showerror(title="Error", message=self.c.validEditArgs(user_id, itemID))
 
 
     def findPasswords(self, user_id):
@@ -691,8 +693,14 @@ class View(ctk.CTk):
         try:
             dialog = ctk.CTkInputDialog(text="What's the item ID:", title='Copy item credentials...')
             itemID = dialog.get_input()
-            copy = self.c.copy(user_id, itemID)
-            msg.showinfo(message=copy[1])
+            if itemID is not None:
+                try:
+                    int(itemID)
+                except:
+                    msg.showinfo(title="Error",message="ID must be a number.")
+                    return 0
+                copy = self.c.copy(user_id, itemID)
+                msg.showinfo(title='Success', message=copy)
         except Exception as e:
             msg.showerror(title="ERROR", message=e)
             

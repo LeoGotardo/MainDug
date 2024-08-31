@@ -10,6 +10,7 @@ from icecream import ic
  
 import sqlalchemy as sa
 import random as r
+import pyperclip
 import psycopg2
 import hashlib
 import logging
@@ -223,7 +224,36 @@ class Model:
             print(f'An error occurred: {e}')
             self.session.rollback()
             return False
-    
+        
+    def copy(self, userID: str, itemID: int) -> bool or str: # type: ignore
+        """
+        A function do copy login credentials stored in DB to clipboard.
+        
+        Attributes:
+            item: Login of the user.
+            password: Password of the user.
+            Key: Create a key for get the Login of the user and encrypt the password.
+            Copy: The Login and Password already copied to the clipboard.
+
+        Returns:
+            The login credentials copied to the clipboard if True, False otherwise.
+        """
+        try:
+            query = sa.select(Passwords.login, Passwords.password).where(and_(Passwords.id == itemID, Passwords.user_id == userID))
+            item = self.session.execute(query).all()
+            if item:
+                print(item)
+                password = item[0][1]
+                key = self.createKey(userID)
+                password = Cryptography.decryptSentence(password, key)
+                copy = f"Login: {item[0][0]} \nPassword: {password}"
+                pyperclip.copy(copy)
+                return "Login and Password copied to your clipboard"
+            else:
+                return "Cant find any matching item"
+        except Exception as e: 
+            print(f"An error ocurred: {e}")
+            return False
         
     def findUserId(self, login: str, password: str) -> str:
         """

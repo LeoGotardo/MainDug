@@ -1,6 +1,7 @@
 from cryptography.fernet import Fernet
  
 import random as r
+import pyperclip
 import sqlite3
 import logging
 import hashlib
@@ -49,6 +50,36 @@ class Model:
         key = Cryptography.keyGenerator(secret[0])
     
         return key 
+    
+    def copy(self, userID: str, itemID: int) -> bool or str: # type: ignore
+        """
+        A function do copy login credentials stored in DB to clipboard.
+        
+        Attributes:
+            item: Login of the user.
+            password: Password of the user.
+            Key: Create a key for get the Login of the user and encrypt the password.
+            Copy: The Login and Password already copied to the clipboard.
+
+        Returns:
+            The login credentials copied to the clipboard if True, False otherwise.
+        """
+        try:
+            query = "SELECT Login, Password FROM Passwords WHERE id = ? AND user_id = ?"
+            item = self.cursor.execute(query, (itemID, userID,))
+            item = item.fetchall()
+            if item:
+                password = item[0][1]
+                key = self.createKey(userID)
+                password = Cryptography.decryptSentence(password, key)
+                copy = f"Login: {item[0][0]} \n Password: {password}"
+                pyperclip.copy(copy)
+                return "Login and Password copied to your clipboard"
+            else:
+                return "Cant find any matching item"
+        except Exception as e:
+            print(f"An error ocurred: {e}")
+            return False
         
         
     def darkColor(self, hex_color: str, darken_by: int) -> str:
