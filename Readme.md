@@ -1,4 +1,4 @@
-# Password Manager Application
+# MainDug (SQLite)
 
 ## Table of Contents
 - [Overview](#overview)
