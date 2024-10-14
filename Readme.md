@@ -1,85 +1,116 @@
+---
+# Password Manager Application
 
-# MainDug
+## Overview
 
-MainDug is a Python application that helps users manage and store their passwords securely using modern encryption techniques. The application features a graphical user interface built with CustomTkinter, providing a user-friendly way to handle login credentials for various websites.
+This project is a **Password Manager Application** developed using Python and the `tkinter` library for the GUI. The application allows users to manage their passwords securely by generating, storing, and managing login credentials for various websites. It supports features like encrypted password storage, login authentication, password generation, and more.
 
-## Table of Contents
-
-- [Installation](#installation)
-- [Features](#features)
-- [Usage](#usage)
-- [Dependencies](#dependencies)
-- [Configuration](#configuration)
-- [Documentation](#documentation)
-- [Contributors](#contributors)
-- [License](#license)
-
-## Installation
-
-Before installing, ensure you have Python 3.6+ and pip installed on your system.
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/LeoGotardo/MainDug.git
-   cd MainDug
-   ```
-
-2. **Install the required packages:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Run the application:**
-   ```bash
-   python view.py
-   ```
+The project is divided into four main modules:
+- `append.py`: Handles database operations and encryptions.
+- `controller.py`: Acts as the controller, managing logic between the model and view.
+- `model.py`: Contains the data models and operations such as user management, password storage, and encryption.
+- `view.py`: Manages the GUI components of the application.
 
 ## Features
 
-- **Secure login system:** Authentication to access stored passwords.
-- **Encryption:** Uses Fernet encryption to securely store passwords.
-- **Customizable UI:** Users can choose themes and customize the UI color.
-- **Password generation:** Generate strong passwords based on user-selected criteria.
-- **Password storage and management:** Add, edit, delete, and search for stored passwords.
+- **User Authentication**: Users can sign up, log in, and store their credentials.
+- **Password Management**: Users can add, delete, update, and view their stored passwords.
+- **Password Generation**: A built-in random password generator with customizable criteria (length, symbols, numbers, etc.).
+- **Encryption**: Passwords are stored securely using AES encryption provided by the `cryptography` package.
+- **Clipboard Support**: Users can copy credentials to their clipboard for quick access.
+- **User Interface Customization**: Dark and light modes for user interface customization.
+- **Color Configuration**: Users can change the interface color for a personalized experience.
+
+## Installation
+
+### Prerequisites
+
+- Python 3.x installed on your system.
+- The following Python packages are required:
+  - `cryptography`
+  - `sqlite3`
+  - `hashlib`
+  - `pyperclip`
+  - `tkinter`
+  - `Pillow`
+  - `customtkinter`
+  - `CTkColorPicker`
+  - `CTkTable`
+  
+  You can install the necessary dependencies using:
+
+  ```bash
+  pip install cryptography pyperclip Pillow customtkinter
+
+### Database Setup
+
+The application uses an SQLite database to store user information and passwords. The database is automatically set up when the application is run for the first time.
 
 ## Usage
 
-Upon launching the application, users will be prompted to log in or sign up. Once authenticated, users can:
+### Running the Application
 
-- **Add new passwords:** Click on the 'Add' button and fill in the details.
-- **View passwords:** All stored passwords are listed in the main window.
-- **Edit passwords:** Select a password entry and use the 'Edit' button.
-- **Delete passwords:** Select a password entry and use the 'Delete' button.
-- **Change themes:** Toggle between light and dark modes.
+To start the application, run the `view.py` file:
 
-## Dependencies
-
-- Python 3.6+
-- CustomTkinter
-- PyMongo
-- Cryptography
-- Dotenv
-- Python Imaging Library (PIL)
-
-## Configuration
-
-The application requires a MongoDB database. Configure the database connection by setting environment variables in a `.env` file:
-
-```plaintext
-DB_USER=your_username
-DB_PASSWORD=your_password
+```bash
+python view.py
 ```
 
-## Documentation
+### User Authentication
 
-Further documentation is available in the `docs` folder. This includes API documentation, detailed setup instructions, and user guides.
+- **Sign Up**: New users can sign up by providing a unique login and password.
+- **Log In**: Existing users can log in with their credentials.
+- **Password Encryption**: User passwords are encrypted using the `Fernet` encryption method before being stored.
 
+### Password Management
 
-## Contributors
+- **Add New Password**: Users can add a new website login, along with the site name, username, and password.
+- **Edit Password**: Users can edit the stored credentials for any site.
+- **Delete Password**: Users can delete a password from their list.
+- **Copy to Clipboard**: Quickly copy login credentials to the clipboard for easy use.
 
-- **Leonardo Gorardo** - Programation and documentacion.
-- **Pablo Romero** - Programation and documentacion.
+### Password Generation
+
+- Users can generate a new random password using the password generator.
+- Customizable password length and character inclusion (uppercase, lowercase, numbers, symbols).
+
+### Customization
+
+- **Dark/Light Mode**: Toggle between dark and light themes for the application.
+- **Color Picker**: Users can choose a custom color theme for the application interface.
+
+## File Descriptions
+
+### `append.py`
+
+This script manages interactions with the SQLite database, including adding users and storing encrypted passwords. It uses the `cryptography` library to encrypt and decrypt password strings.
+
+### `controller.py`
+
+The controller serves as the intermediary between the model and the view. It handles user input, interacts with the model for data operations, and updates the view accordingly.
+
+### `model.py`
+
+Contains the logic for user and password management, including:
+- User authentication (login, signup).
+- Storing and retrieving passwords.
+- Encryption and decryption of sensitive data.
+- Managing database connections and queries.
+
+### `view.py`
+
+Implements the graphical user interface (GUI) using `tkinter` and `customtkinter`. It allows users to interact with the application, providing functions such as logging in, managing passwords, and more.
+
+## Contributing
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add some feature'`).
+5. Push to the branch (`git push origin feature-branch`).
+6. Open a pull request.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License. See the LICENSE file for details.
+---
