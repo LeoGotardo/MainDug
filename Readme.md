@@ -10,6 +10,26 @@ The project is divided into four main modules:
 - `model.py`: Contains the data models and operations such as user management, password storage, and encryption.
 - `view.py`: Manages the GUI components of the application.
 
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Database Setup](#database-setup)
+- [Usage](#usage)
+  - [Running the Application](#running-the-application)
+  - [User Authentication](#user-authentication)
+  - [Password Management](#password-management)
+  - [Password Generation](#password-generation)
+  - [Customization](#customization)
+- [File Descriptions](#file-descriptions)
+  - [`append.py`](#appendpy)
+  - [`controller.py`](#controllerpy)
+  - [`model.py`](#modelpy)
+  - [`view.py`](#viewpy)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Features
 
 - **User Authentication**: Users can sign up, log in, and store their credentials.
