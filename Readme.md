@@ -1,7 +1,13 @@
 # MainDug (SQLite)
+This project is a **Password Manager Application** developed using Python and the `tkinter` library for the GUI. The application allows users to manage their passwords securely by generating, storing, and managing login credentials for various websites. It supports features like encrypted password storage, login authentication, password generation, and more.
+
+The project is divided into four main modules:
+- `append.py`: Handles database operations and encryptions.
+- `controller.py`: Acts as the controller, managing logic between the model and view.
+- `model.py`: Contains the data models and operations such as user management, password storage, and encryption.
+- `view.py`: Manages the GUI components of the application.
 
 ## Table of Contents
-- [Overview](#overview)
 - [Features](#features)
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
@@ -20,15 +26,6 @@
 - [Contributing](#contributing)
 - [License](#license)
 
-## Overview
-
-This project is a **Password Manager Application** developed using Python and the `tkinter` library for the GUI. The application allows users to manage their passwords securely by generating, storing, and managing login credentials for various websites. It supports features like encrypted password storage, login authentication, password generation, and more.
-
-The project is divided into four main modules:
-- `append.py`: Handles database operations and encryptions.
-- `controller.py`: Acts as the controller, managing logic between the model and view.
-- `model.py`: Contains the data models and operations such as user management, password storage, and encryption.
-- `view.py`: Manages the GUI components of the application.
 
 ## Features
 
