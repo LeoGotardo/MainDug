@@ -7,9 +7,7 @@ cryptography
 SQLAlchemy
 db-sqlite3
 pyperclip
-psycopg2
 icecream
 CTktable
-pymongo
 Pillow
 tk
