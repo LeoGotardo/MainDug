@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from tkinter import messagebox as msg
 from controller import Controller
 from PIL import Image as img

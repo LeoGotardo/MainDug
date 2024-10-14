@@ -2,6 +2,7 @@ CTkColorPicker
 alive_progress
 python-dotenv
 customtkinter
+CustomThread
 cryptography
 SQLAlchemy
 db-sqlite3

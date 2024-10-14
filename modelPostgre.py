@@ -14,6 +14,7 @@ import pyperclip
 import psycopg2
 import hashlib
 import logging
+import bcrypt
 import base64
 import re
 import os
@@ -25,6 +26,7 @@ class Users(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=sa.text("uuid_generate_v4()"))
     login = Column(Text, unique=True, nullable=False)
     password = Column(Text, nullable=False)
+    salt = Column(BYTEA, nullable=False)
     color = Column(Text, default='#1b1b1b', nullable=False)
     passwords = relationship('Passwords', back_populates='user', cascade='all, delete-orphan')
 
@@ -100,9 +102,14 @@ class Model:
         return f'#{r:02x}{g:02x}{b:02x}'
     
     
-    def addUser(self, login: str, password: str) -> str:
-        hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        user_data = {'login': login, 'password': hashed_password}  
+    def addUser(self, login: str, password: str) -> str or None: # type: ignore
+        # Generate a salt for this user
+        salt = bcrypt.gensalt()  # This is already in bytes
+        hashed_password = bcrypt.hashpw(password.encode(), salt).decode('utf-8')
+
+        # Store both hashed password and salt in the database
+        user_data = {'login': login, 'password': hashed_password, 'salt': salt}
+
         try:
             query = sa.insert(Users).values(**user_data).returning(Users.id)
             result = self.session.execute(query).fetchone()
@@ -116,28 +123,32 @@ class Model:
         except Exception as e:
             logging.error(f"Failed to add user: {e}")
             return None
+
         
         
     def isLoginValid(self, login: str, password: str) -> list:
         """
-        Checks if the given login and password are valid.
-        
-        Args:
-            login (str): The login to check.
-            password (str): The password to check, will be hashed.
-            
-        Returns:
-            A list containing a boolean of validity and either the user's ID or an error message.
+        Checks if the given login and password are valid by retrieving the stored salt
+        and comparing the stored hashed password with the bcrypt hash of the provided password.
         """
-        
-        hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        query = sa.select(Users.id).where(and_(Users.login == login, Users.password == hashed_password))
-        valid = self.session.execute(query).fetchone()
-        
-        if valid is not None:
-            return [True, str(valid[0])]
+        query = sa.select(Users.id, Users.password, Users.salt).where(Users.login == login)
+        user_record = self.session.execute(query).fetchone()
+
+        if user_record is not None:
+            stored_password = user_record['password'].encode('utf-8')
+            salt = user_record['salt']  # Salt is stored as bytes in the database
+            
+            # Hash the provided password using the stored salt
+            hashed_input_password = bcrypt.hashpw(password.encode(), salt)
+            
+            # Compare the hashed input password with the stored hashed password
+            if hashed_input_password == stored_password:
+                return [True, str(user_record['id'])]
+            else:
+                return [False, 'Invalid Credentials']
         else:
             return [False, 'Invalid Credentials']
+
         
         
     def isCredentialValid(self, login: str, password: str, password_confirm: str) -> bool or str: # type: ignore
