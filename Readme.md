@@ -39,7 +39,7 @@ The project is divided into four main modules:
   You can install the necessary dependencies using:
 
   ```bash
-  pip install cryptography pyperclip Pillow customtkinter
+  pip install -r requirements.txt
 
 ### Database Setup
 
