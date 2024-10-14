@@ -1,4 +1,3 @@
----
 # Password Manager Application
 
 ## Overview
@@ -113,4 +112,3 @@ Implements the graphical user interface (GUI) using `tkinter` and `customtkinter
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
----
